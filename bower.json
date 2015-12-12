@@ -1,3 +1,24 @@
 {
-    
+  "name": "imageditor",
+  "homepage": "https://github.com/andela-ashuaib/photo-editing-application",
+  "description": "bower front end components",
+  "main": "manage.py",
+  "moduleType": [
+    "amd",
+    "es6",
+    "globals",
+    "node",
+    "yui"
+  ],
+  "authors": [
+    "abiodun"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
 }
