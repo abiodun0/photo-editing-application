@@ -27,7 +27,7 @@ deploy:
     repo: andela-ashuaib/photo-editing-application
     branch: master
   run:
-    - "export DJANGO_SETTINGS_MODULE=django_bucketlist.settings.production"
+    - "export DJANGO_SETTINGS_MODULE=imageditor.settings.production"
     - "python image_editor/manage.py collectstatic --noinput"
     - "python image_editor/manage.py makemigrations"
     - "python image_editor/manage.py migrate"
