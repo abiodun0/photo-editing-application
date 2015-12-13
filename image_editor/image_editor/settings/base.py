@@ -39,6 +39,9 @@ STATICFILES_FINDERS = (
 
 BOWER_COMPONENTS_ROOT = os.path.join(PROJECT_ROOT)
 
+BOWER_INSTALLED_APPS = (
+    'bootstrap#v4.0.0-alpha.2'
+)
 # Application definition
 
 INSTALLED_APPS = [
