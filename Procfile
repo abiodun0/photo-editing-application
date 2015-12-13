@@ -1,0 +1,1 @@
+web: gunicorn django_bucketlist.wsgi --pythonpath=image_editor --log-file -
