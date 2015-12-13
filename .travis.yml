@@ -1,0 +1,36 @@
+language: python
+python:
+- '2.7'
+env:
+- DJANGO_SETTINGS_MODULE=image_editor.settings.test
+install:
+- pip install --upgrade pip
+- pip install --upgrade virtualenv
+- pip install -r requirements.txt
+- pip install coveralls
+- npm install bower
+script:
+- bower install --settings=image_editor.settings.test
+- python image_editor/manage.py collectstatic --noinput --settings=image_editor.settings.test
+- coverage run --source="image_editor" image_editor/manage.py test image_editor
+after_success:
+- coveralls
+deploy:
+  provider: heroku
+  buildpack:
+    - node
+    - python
+  api_key:
+    secure: lnJvu3zD0nx1wdZjPQ2ETCmgvEI2O8S6UMBfTN+9P2R2FMn/8u94aIX0WsrVAd/OU8hIIBkSA51ivPlMpjmvNWt5ahmUObdFCC2BIi34+R38DYQMG+siTFozJzrw2gr3IregznuLu7Co7NmHbRq/8n6j18J0xZHJnTcnLChAO5oib/DjrcpIAAjcCpjv8o/HGh+6oY0gaZTz9OUQp0oQlr3uLl0Npt0vMFECU/h9Dx1V0S2jnEC/0EYCN3/2UE7LYES1ZVVcBVgmVH8EBdn+OXkvJskUpV3U/0yA5Js0RQ+QgBHmvyh3mcZ87uGogZuYwSRHN8aoZeEGYNtFAHyPXNZb2VExA1aHOhZNZGsDoVC02x1zqt56+pwNFoUZUmrl5an5kMXNeYr/Yse/SNYKfdXe5RO0NoBhEp/8fm+zuwQqBjALH9yXtSKtcdR1oJFtX0upPV/GAyyCl3fivGF8a2PXl5KvcAbOAGp+517/ABhdxr3VPwhLMQRGQ16VXkKy8QMNE/NK+F46PTGYOhdkzNhEcgN4eyFeH+EIayKgcgyJ60+luN+2KCaJ+1FF/TnxPLAzpjVIEai5TiVGYp4SEv+5wO1AB6u3ex5Ctf6nh0UtdHXgM6sYT0PLIgdtt5UgvfMYBa0Fg4HhTDdi+2FnNDJ7VJhi7vAYObjTfGvM6Eo=
+  app: imageditor
+  on:
+    repo: andela-ashuaib/photo-editing-application
+    branch: master
+  run:
+    - "export DJANGO_SETTINGS_MODULE=image_editor.settings.production"
+    - "python image_editor/manage.py collectstatic --noinput"
+    - "python image_editor/manage.py makemigrations"
+    - "python image_editor/manage.py migrate"
+    - "python image_editor/manage.py syncdb --noinput"
+  after_deploy:
+    - "heroku ps:scale web=1 --app imageditor"

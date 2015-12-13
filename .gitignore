@@ -1,0 +1,89 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# C extensions
+*.so
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+bower_components/
+dist/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+codango/codango/settings/development.py
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*,cover
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Virtual environment
+venv/
+
+# psycopg2 exe file
+*.exe
+
+# Ide environment
+*.idea/
+
+# media files
+codango/media
+*.pdf
+
+# environment variables
+.env.yml
+
+# sqldatabase
+codango/mydatabase
+
+# db data
+codango/db-data.json
+codango/codangodb-backup.json
+codango/celerybeat-schedule
+
+# mac file
+.DS_Store
+
+# codango miscellaneous
+codango/bin
+codango/lib
+codango/include

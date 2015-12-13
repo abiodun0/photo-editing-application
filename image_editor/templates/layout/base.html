@@ -1,0 +1,25 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" type="text/css" rel="stylesheet" />
+    <title>
+    Image Editing App
+    </title>
+</head>
+
+<body>
+    {% block content %} 
+    {% endblock content %}
+    <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/tether.min.js' %}"></script>
+    <script src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}"></script>
+     <script src="{% static 'js/main.js' %}"></script>
+</body>
+      <footer class="text-center">
+        <p>©  2015</p>
+      </footer>
+</html>

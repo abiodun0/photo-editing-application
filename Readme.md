@@ -1,1 +1,1 @@
-###Django Powered Bucketlist Application
+##Django Powered Bucketlist Application [![Build Status](https://travis-ci.org/andela-ashuaib/photo-editing-application.svg?branch=feature-configuration-setup)](https://travis-ci.org/andela-ashuaib/photo-editing-application)
