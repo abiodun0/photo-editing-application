@@ -17,6 +17,9 @@ BASE_DIR = os.path.dirname(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
+PROJECT_ROOT = os.path.dirname(BASE_DIR)
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
@@ -28,6 +31,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'djangobower.finders.BowerFinder',
+)
+
+BOWER_COMPONENTS_ROOT = os.path.join(PROJECT_ROOT)
 
 # Application definition
 
@@ -38,6 +48,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'userprofile',
+    'images',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -56,7 +68,7 @@ ROOT_URLCONF = 'image_editor.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates'), ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -70,8 +82,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'image_editor.wsgi.application'
-
-
 
 
 # Password validation
