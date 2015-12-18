@@ -21,5 +21,4 @@ import userprofile.urls
 urlpatterns = [
  url(r'^', include(userprofile.urls)),
     url(r'^admin/', admin.site.urls),
-    url(r'^/', admin.site.urls),
 ]
