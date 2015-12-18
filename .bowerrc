@@ -1,6 +1,6 @@
 {
-    "directory": "bower_components",
-    "analytics": false,
-    "timeout": 120000,
-    "interactive": false
+  "directory": "image_editor/static/lib",
+  "analytics": false,
+  "timeout": 120000,
+  "interactive": false
 }
