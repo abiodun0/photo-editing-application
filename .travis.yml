@@ -33,4 +33,4 @@ deploy:
     - "python image_editor/manage.py migrate"
     - "python image_editor/manage.py syncdb --noinput"
   after_deploy:
-    - "heroku ps:scale web=1 --app django-bucketlist"
+    - "heroku ps:scale web=1 --app imageditor"
