@@ -133,4 +133,3 @@ APPEND_SLASH = False
 
 STATIC_ROOT = 'staticfiles'
 
-STATIC_URL = '/static/'
