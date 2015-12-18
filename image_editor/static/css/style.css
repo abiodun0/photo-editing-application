@@ -70,7 +70,18 @@ body{
   text-align: center;
 }
 #owl-demo{
+  background-color:#fff;
   margin-top:20px;
+}
+#owl-demo .btn{
+  position:absolute;
+  font-size:20px;
+}
+.prev{
+  left:0;
+}
+.next{
+  right:0;
 }
 #owl-demo .item{
   width:10%;
