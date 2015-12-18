@@ -132,4 +132,3 @@ STATIC_URL = '/static/'
 APPEND_SLASH = False
 
 STATIC_ROOT = 'staticfiles'
-
