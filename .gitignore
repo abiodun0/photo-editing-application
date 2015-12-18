@@ -10,7 +10,7 @@ staticfiles/
 env/
 build/
 develop-eggs/
-bower_components/
+lib/
 dist/
 downloads/
 eggs/
