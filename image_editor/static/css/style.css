@@ -4,7 +4,7 @@ body{
 }
 
 .index-content{
-    width:600px;
+    width:450px;
 }
 
 
@@ -21,7 +21,9 @@ body{
 }
 .upload-div button{
   position:absolute;
-  bottom:0;
+  bottom:40px;
+  left:5%;
+  width:90%;
 }
 .navbar.navbar-light{
     background-color:#fff;
@@ -45,8 +47,19 @@ body{
    }
 
 .edit-div{
-  padding:70px 30px 40px 30px;
+  padding:40px 30px 40px 30px;
   max-height:400px;
+}
+.edit-div .edit-buttons{
+
+  margin-bottom:10px;
+}
+.edit-buttons button{
+  background-color:#fff;
+}
+.edit-buttons button:not(:first-child){
+  margin-left:20px;
+
 }
 .edit{
   background-color:#fff;
@@ -70,18 +83,19 @@ body{
   text-align: center;
 }
 #owl-demo{
+  padding:0 30px;
   background-color:#fff;
   margin-top:20px;
 }
 #owl-demo .btn{
   position:absolute;
-  font-size:20px;
+  font-size:50px;
 }
 .prev{
-  left:0;
+  left:20px;
 }
 .next{
-  right:0;
+  right:20px;
 }
 #owl-demo .item{
   width:10%;
