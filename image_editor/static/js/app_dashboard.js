@@ -5,3 +5,4 @@ import {data} from './components/data';
 // Filterable CheatSheet Component
 ReactDOM.render(<SearchableTable data={data}/>, document.getElementById('searchableTable'));
 //require('./modules.js')
+

@@ -1,4 +1,5 @@
 import React from 'react';
+
 export default class SearchableTable extends React.Component {
     constructor() {
         super();
@@ -55,6 +56,7 @@ class Table extends React.Component {
         let data = this.props.data;
         data.forEach(function(product){
             if (product.title.indexOf(this.props.filterText) === -1) {
+
                 return;
             }
             sections.push(<Section data={product} />);
@@ -70,6 +72,7 @@ class Section extends React.Component {
         return(
             <div>
                 <p>{this.props.data.title} = {this.props.data.src} </p>
+
             </div>
         );
     }
