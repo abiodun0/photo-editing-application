@@ -11,8 +11,9 @@ function socialLogin(user) {
         type: "POST",
         data: user,
         success: function(data) {
+            console.log(data);
             if (data == "success") {
-                location.reload();
+                location.href = "/dashboard";
             }
             if (data == "register") {
                 $("#tab_link").trigger("click");
@@ -33,7 +34,7 @@ function socialLogin(user) {
         }
     };
     console.log(user);
-    //$.ajax(ajaxinfo);
+    $.ajax(ajaxinfo);
 }
 
 
