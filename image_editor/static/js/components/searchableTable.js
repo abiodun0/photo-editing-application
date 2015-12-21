@@ -1,3 +1,4 @@
+import React from 'react';
 export default class SearchableTable extends React.Component {
     constructor() {
         super();
