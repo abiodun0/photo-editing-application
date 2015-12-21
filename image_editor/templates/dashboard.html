@@ -1,11 +1,14 @@
+
 {% extends "layout/base.html" %} 
+{% load staticfiles %}
 {% block content %}
+<div id="searchableTable" style="display:none"></div>
 <div class="container">
     <nav class="navbar navbar-light navbar-full navbar-light">
         <a class="navbar-brand" href="#">Logo</a>
         <form class="form-inline pull-xs-right">
-            <img src="http://placehold.it/50x50" alt="..." class="img-fluid img-circle" style="display:inline"> Logged In as Abiodun Shuaib Mustapha
-            <button type="button" class="btn btn-link">Logout</button>
+            <img src="http://placehold.it/50x50" alt="..." class="img-fluid img-circle" style="display:inline"> Logged In as {{request.user.first_name}} {{ request.user.last_name}}
+            <a type="button" class="btn btn-link">Logout</a>
         </form>
     </nav>
 </div>
@@ -93,3 +96,7 @@
 </div>
 </div>
 {% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'js/bundle.js' %}"></script>
+{% endblock scripts %}
