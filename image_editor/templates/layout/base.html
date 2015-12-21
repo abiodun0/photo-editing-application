@@ -13,12 +13,20 @@
 </head>
 
 <body>
+<div id="container"></div>
     {% block content %} 
     {% endblock content %}
     <script src="{% static 'lib/jquery/dist/jquery.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/tether.min.js' %}"></script>
     <script src="{% static 'lib/bootstrap/dist/js/bootstrap.min.js' %}"></script>
-     <script src="{% static 'js/main.js' %}"></script>
+
+    {% block scripts %}
+    {% endblock scripts %}
+    <!--script src="https://fb.me/react-0.14.3.js"></script>
+    }
+<!-- The ReactDOM Library -->
+<!--script src="https://fb.me/react-dom-0.14.3.js"></script-->
+
 
 </body>
 

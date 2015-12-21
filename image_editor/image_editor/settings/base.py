@@ -34,15 +34,8 @@ ALLOWED_HOSTS = []
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'djangobower.finders.BowerFinder',
 )
 
-BOWER_COMPONENTS_ROOT = os.path.join(PROJECT_ROOT)
-
-BOWER_INSTALLED_APPS = (
-    'bootstrap#v4.0.0-alpha.2',
-    'mdi',
-)
 # Application definition
 
 INSTALLED_APPS = [
