@@ -1,5 +1,6 @@
 
 {% extends "layout/base.html" %}
+{% load staticfiles %}
 
 {% block content %}
 
@@ -16,7 +17,7 @@
       <footer>Someone famous in <cite title="Source Title">Source Title</cite></footer>
     </blockquote>
   </div>
-  <a href="#" class="btn btn-primary btn-lg"><i class="mdi mdi-facebook"></i> Login with facebook to get started</a>
+  <a href="#" id="facebook-login" class="btn btn-primary btn-lg"><i class="mdi mdi-facebook"></i> Login with facebook to get started</a>
 </div>
 
 </div>
@@ -24,3 +25,7 @@
 
 
 {% endblock content %}
+
+    {% block scripts %}
+    <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+    {% endblock scripts %}
