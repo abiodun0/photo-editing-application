@@ -1,4 +1,6 @@
+
 {% extends "layout/base.html" %} 
+{% load staticfiles %}
 {% block content %}
 <div class="container">
     <nav class="navbar navbar-light navbar-full navbar-light">
@@ -93,3 +95,7 @@
 </div>
 </div>
 {% endblock content %}
+
+{% block scripts %}
+<script src="{% static 'js/bundle.js' %}"></script>
+{% endblock scripts %}
