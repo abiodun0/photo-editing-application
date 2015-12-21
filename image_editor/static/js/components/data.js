@@ -1,8 +1,32 @@
 export const data = [
-  {category: "Sporting Goods", price: "$49.99", stocked: true, name: "Football"},
-  {category: "Sporting Goods", price: "$9.99", stocked: true, name: "Baseball"},
-  {category: "Sporting Goods", price: "$29.99", stocked: false, name: "Basketball"},
-  {category: "Electronics", price: "$99.99", stocked: true, name: "iPod Touch"},
-  {category: "Electronics", price: "$399.99", stocked: false, name: "iPhone 5"},
-  {category: "Electronics", price: "$199.99", stocked: true, name: "Nexus 7"}
+ {
+    title: 'Image 1',
+    src: 'http://placehold.it/20x20',
+    date: new Date()
+
+ },
+  {
+    title: 'Image 2',
+    src: 'http://placehold.it/20x20',
+    date: new Date()
+
+ },
+   {
+    title: 'Image 3',
+    src: 'http://placehold.it/20x20',
+    date: new Date()
+
+ },
+{
+    title: 'Image 4',
+    src: 'http://placehold.it/20x20',
+    date: new Date()
+
+ },
+ {
+    title: 'Image 5',
+    src: 'http://placehold.it/20x20',
+    date: new Date()
+
+ },
 ];
