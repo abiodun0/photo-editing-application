@@ -54,7 +54,7 @@ class Table extends React.Component {
         let sections = [];
         let data = this.props.data;
         data.forEach(function(product){
-            if (product.name.indexOf(this.props.filterText) === -1) {
+            if (product.title.indexOf(this.props.filterText) === -1) {
                 return;
             }
             sections.push(<Section data={product} />);
@@ -69,7 +69,7 @@ class Section extends React.Component {
     render(){
         return(
             <div>
-                <p>{this.props.data.name} = {this.props.data.price} </p>
+                <p>{this.props.data.title} = {this.props.data.src} </p>
             </div>
         );
     }
