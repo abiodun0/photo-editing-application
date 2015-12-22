@@ -58,12 +58,15 @@
 
 	var _SearchableTable2 = _interopRequireDefault(_SearchableTable);
 
-	var _data = __webpack_require__(160);
+	var _SearchableImage = __webpack_require__(160);
+
+	var _SearchableImage2 = _interopRequireDefault(_SearchableImage);
+
+	var _data = __webpack_require__(161);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	// Filterable CheatSheet Component
-	_reactDom2.default.render(_react2.default.createElement(_SearchableTable2.default, { data: _data.data }), document.getElementById('searchableTable'));
+	_reactDom2.default.render(_react2.default.createElement(_SearchableImage2.default, { data: _data.data }), document.getElementById('upload'));
 	//require('./modules.js')
 
 /***/ },
@@ -19875,6 +19878,197 @@
 
 /***/ },
 /* 160 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var SearchableImage = (function (_React$Component) {
+	    _inherits(SearchableImage, _React$Component);
+
+	    function SearchableImage() {
+	        _classCallCheck(this, SearchableImage);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SearchableImage).call(this));
+
+	        _this.state = { filterText: '' };
+	        return _this;
+	    }
+
+	    _createClass(SearchableImage, [{
+	        key: 'handleUserInput',
+	        value: function handleUserInput(filterText) {
+	            this.setState({ filterText: filterText });
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                _react2.default.createElement(SearchBar, { filterText: this.state.filterText,
+	                    onUserInput: this.handleUserInput.bind(this)
+	                }),
+	                _react2.default.createElement(UploadDiv, { data: this.props.data,
+	                    filterText: this.state.filterText
+	                })
+	            );
+	        }
+	    }]);
+
+	    return SearchableImage;
+	})(_react2.default.Component);
+
+	exports.default = SearchableImage;
+
+	var SearchBar = (function (_React$Component2) {
+	    _inherits(SearchBar, _React$Component2);
+
+	    function SearchBar() {
+	        _classCallCheck(this, SearchBar);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(SearchBar).apply(this, arguments));
+	    }
+
+	    _createClass(SearchBar, [{
+	        key: 'handleChange',
+	        value: function handleChange() {
+	            this.props.onUserInput(this.refs.filterTextInput.getDOMNode().value);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'form',
+	                { className: 'form-inline' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'form-group' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'input-group' },
+	                        _react2.default.createElement('input', { type: 'text', className: 'form-control', placeholder: 'Search',
+	                            placeholder: 'Search for one keyword...',
+	                            ref: 'filterTextInput',
+	                            value: this.props.filterText,
+	                            onChange: this.handleChange.bind(this)
+	                        }),
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'input-group-addon' },
+	                            _react2.default.createElement('i', { className: 'mdi mdi-magnify' })
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return SearchBar;
+	})(_react2.default.Component);
+
+	var UploadDiv = (function (_React$Component3) {
+	    _inherits(UploadDiv, _React$Component3);
+
+	    function UploadDiv() {
+	        _classCallCheck(this, UploadDiv);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(UploadDiv).apply(this, arguments));
+	    }
+
+	    _createClass(UploadDiv, [{
+	        key: 'render',
+	        value: function render() {
+	            var sections = [];
+	            var data = this.props.data;
+	            data.forEach((function (image) {
+	                if (image.title.indexOf(this.props.filterText) == -1) return;
+
+	                sections.push(_react2.default.createElement(SectionDiv, { image: image }));
+	            }).bind(this));
+
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'upload-div' },
+	                sections,
+	                _react2.default.createElement(
+	                    'button',
+	                    { className: 'btn btn-primary' },
+	                    _react2.default.createElement('i', { className: 'mdi mdi-upload' }),
+	                    ' Upload '
+	                )
+	            );
+	        }
+	    }]);
+
+	    return UploadDiv;
+	})(_react2.default.Component);
+
+	var SectionDiv = (function (_React$Component4) {
+	    _inherits(SectionDiv, _React$Component4);
+
+	    function SectionDiv() {
+	        _classCallCheck(this, SectionDiv);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(SectionDiv).apply(this, arguments));
+	    }
+
+	    _createClass(SectionDiv, [{
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'uploaded' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'media' },
+	                    _react2.default.createElement(
+	                        'a',
+	                        { className: 'media-left', href: '#' },
+	                        _react2.default.createElement('img', { className: 'media-object', src: this.props.image.src, alt: 'Generic placeholder image' })
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'media-body' },
+	                        _react2.default.createElement(
+	                            'p',
+	                            { className: 'media-heading' },
+	                            this.props.image.title,
+	                            _react2.default.createElement('br', null),
+	                            _react2.default.createElement(
+	                                'small',
+	                                null,
+	                                ' Uploaded on '
+	                            )
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return SectionDiv;
+	})(_react2.default.Component);
+
+/***/ },
+/* 161 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -19883,28 +20077,28 @@
 	   value: true
 	});
 	var data = exports.data = [{
-	   title: 'Image 1',
-	   src: 'http://placehold.it/20x20',
+	   title: 'Abiodun',
+	   src: 'http://placehold.it/100x100',
 	   date: new Date()
 
 	}, {
-	   title: 'Image 2',
-	   src: 'http://placehold.it/20x20',
+	   title: 'Sheriff',
+	   src: 'http://placehold.it/100x100',
 	   date: new Date()
 
 	}, {
-	   title: 'Image 3',
-	   src: 'http://placehold.it/20x20',
+	   title: 'Abbey',
+	   src: 'http://placehold.it/100x100',
 	   date: new Date()
 
 	}, {
-	   title: 'Image 4',
-	   src: 'http://placehold.it/20x20',
+	   title: 'New Man',
+	   src: 'http://placehold.it/100x100',
 	   date: new Date()
 
 	}, {
-	   title: 'Image 5',
-	   src: 'http://placehold.it/20x20',
+	   title: 'Free man',
+	   src: 'http://placehold.it/100x100',
 	   date: new Date()
 
 	}];

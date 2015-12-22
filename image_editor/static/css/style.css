@@ -18,6 +18,7 @@ body{
   position:relative;
   height:600px;
   background-color:#fff;
+  overflow-y:visible;
 }
 .upload-div button{
   position:absolute;

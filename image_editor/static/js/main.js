@@ -15,19 +15,6 @@ function socialLogin(user) {
             if (data == "success") {
                 location.href = "/dashboard";
             }
-            if (data == "register") {
-                $("#tab_link").trigger("click");
-                if (user.first_name !== undefined) {
-                    $("#signup-form").append("<input type='hidden' name='first_name' value='" + user.first_name + "'>");
-                    $("#signup-form").append("<input type='hidden' name='last_name' value='" + user.last_name + "'>");
-                } else {
-                    $("#signup-form").append("<input type='hidden' name='first_name' value='" + user.given_name + "'>");
-                    $("#signup-form").append("<input type='hidden' name='last_name' value='" + user.family_name + "'>");
-                }
-
-                $("#signup-form").append("<input type='hidden' name='social_id' value='" + user.id + "'>");
-                $("#id_email").val(user.email);
-            }
         },
         error: function(error) {
             console.log(error.responseText)
