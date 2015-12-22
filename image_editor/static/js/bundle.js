@@ -54,20 +54,25 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _SearchableTable = __webpack_require__(159);
-
-	var _SearchableTable2 = _interopRequireDefault(_SearchableTable);
-
-	var _SearchableImage = __webpack_require__(160);
+	var _SearchableImage = __webpack_require__(159);
 
 	var _SearchableImage2 = _interopRequireDefault(_SearchableImage);
 
-	var _data = __webpack_require__(161);
+	var _editableDiv = __webpack_require__(161);
+
+	var _editableDiv2 = _interopRequireDefault(_editableDiv);
+
+	var _data = __webpack_require__(160);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	_reactDom2.default.render(_react2.default.createElement(_SearchableImage2.default, { data: _data.data }), document.getElementById('upload'));
-	//require('./modules.js')
+	_reactDom2.default.render(_react2.default.createElement(_editableDiv2.default, null), document.getElementById('editor'));
+
+	$(document).ready(function (e) {
+	    console.log("ready");
+	});
+	//
 
 /***/ },
 /* 1 */
@@ -19733,173 +19738,6 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var SearchableTable = (function (_React$Component) {
-	    _inherits(SearchableTable, _React$Component);
-
-	    function SearchableTable() {
-	        _classCallCheck(this, SearchableTable);
-
-	        // Initial state of the component
-
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SearchableTable).call(this));
-
-	        _this.state = { filterText: '' };
-	        return _this;
-	    }
-
-	    _createClass(SearchableTable, [{
-	        key: 'handleUserInput',
-	        value: function handleUserInput(filterText) {
-	            // When there's a change in the state, the component and all its
-	            // sub-components get updated.
-	            this.setState({ filterText: filterText });
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                'div',
-	                null,
-	                _react2.default.createElement(SearchBar, {
-	                    filterText: this.state.filterText,
-	                    onUserInput: this.handleUserInput.bind(this)
-	                }),
-	                _react2.default.createElement(Table, {
-	                    data: this.props.data,
-	                    filterText: this.state.filterText
-	                })
-	            );
-	        }
-	    }]);
-
-	    return SearchableTable;
-	})(_react2.default.Component);
-
-	exports.default = SearchableTable;
-
-	var SearchBar = (function (_React$Component2) {
-	    _inherits(SearchBar, _React$Component2);
-
-	    function SearchBar() {
-	        _classCallCheck(this, SearchBar);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(SearchBar).apply(this, arguments));
-	    }
-
-	    _createClass(SearchBar, [{
-	        key: 'handleChange',
-	        value: function handleChange() {
-	            // passing filter data up by using a callback
-	            this.props.onUserInput(
-	            // ref is like the id
-	            this.refs.filterTextInput.getDOMNode().value);
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                'form',
-	                null,
-	                _react2.default.createElement('input', {
-	                    type: 'text',
-	                    placeholder: 'Search for one keyword...',
-	                    ref: 'filterTextInput',
-	                    value: this.props.filterText,
-	                    onChange: this.handleChange.bind(this)
-	                })
-	            );
-	        }
-	    }]);
-
-	    return SearchBar;
-	})(_react2.default.Component);
-
-	var Table = (function (_React$Component3) {
-	    _inherits(Table, _React$Component3);
-
-	    function Table() {
-	        _classCallCheck(this, Table);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Table).apply(this, arguments));
-	    }
-
-	    _createClass(Table, [{
-	        key: 'render',
-	        value: function render() {
-	            var sections = [];
-	            var data = this.props.data;
-	            data.forEach((function (product) {
-	                if (product.title.indexOf(this.props.filterText) === -1) {
-
-	                    return;
-	                }
-	                sections.push(_react2.default.createElement(Section, { data: product }));
-	            }).bind(this));
-	            return _react2.default.createElement(
-	                'div',
-	                null,
-	                sections
-	            );
-	        }
-	    }]);
-
-	    return Table;
-	})(_react2.default.Component);
-
-	var Section = (function (_React$Component4) {
-	    _inherits(Section, _React$Component4);
-
-	    function Section() {
-	        _classCallCheck(this, Section);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Section).apply(this, arguments));
-	    }
-
-	    _createClass(Section, [{
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                'div',
-	                null,
-	                _react2.default.createElement(
-	                    'p',
-	                    null,
-	                    this.props.data.title,
-	                    ' = ',
-	                    this.props.data.src,
-	                    ' '
-	                )
-	            );
-	        }
-	    }]);
-
-	    return Section;
-	})(_react2.default.Component);
-
-/***/ },
-/* 160 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
 	var SearchableImage = (function (_React$Component) {
 	    _inherits(SearchableImage, _React$Component);
 
@@ -19964,6 +19802,11 @@
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'input-group' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'input-group-addon' },
+	                            _react2.default.createElement('i', { className: 'mdi mdi-eye' })
+	                        ),
 	                        _react2.default.createElement('input', { type: 'text', className: 'form-control', placeholder: 'Search',
 	                            placeholder: 'Search for one keyword...',
 	                            ref: 'filterTextInput',
@@ -19999,7 +19842,7 @@
 	            var sections = [];
 	            var data = this.props.data;
 	            data.forEach((function (image) {
-	                if (image.title.indexOf(this.props.filterText) == -1) return;
+	                if (image.title.toLowerCase().indexOf(this.props.filterText.toLowerCase()) == -1) return;
 
 	                sections.push(_react2.default.createElement(SectionDiv, { image: image }));
 	            }).bind(this));
@@ -20007,12 +19850,16 @@
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'upload-div' },
-	                sections,
 	                _react2.default.createElement(
-	                    'button',
-	                    { className: 'btn btn-primary' },
-	                    _react2.default.createElement('i', { className: 'mdi mdi-upload' }),
-	                    ' Upload '
+	                    'div',
+	                    { className: 'upload-img' },
+	                    sections,
+	                    _react2.default.createElement(
+	                        'button',
+	                        { className: 'btn btn-primary' },
+	                        _react2.default.createElement('i', { className: 'mdi mdi-upload' }),
+	                        ' Upload '
+	                    )
 	                )
 	            );
 	        }
@@ -20068,7 +19915,7 @@
 	})(_react2.default.Component);
 
 /***/ },
-/* 161 */
+/* 160 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -20101,7 +19948,232 @@
 	   src: 'http://placehold.it/100x100',
 	   date: new Date()
 
+	}, {
+	   title: 'Abiodun',
+	   src: 'http://placehold.it/100x100',
+	   date: new Date()
+
+	}, {
+	   title: 'Sheriff',
+	   src: 'http://placehold.it/100x100',
+	   date: new Date()
+
+	}, {
+	   title: 'Abbey',
+	   src: 'http://placehold.it/100x100',
+	   date: new Date()
+
+	}, {
+	   title: 'New Man',
+	   src: 'http://placehold.it/100x100',
+	   date: new Date()
+
+	}, {
+	   title: 'Free man',
+	   src: 'http://placehold.it/100x100',
+	   date: new Date()
+
+	}, {
+	   title: 'Abiodun',
+	   src: 'http://placehold.it/100x100',
+	   date: new Date()
+
+	}, {
+	   title: 'Sheriff',
+	   src: 'http://placehold.it/100x100',
+	   date: new Date()
+
+	}, {
+	   title: 'Abbey',
+	   src: 'http://placehold.it/100x100',
+	   date: new Date()
+
+	}, {
+	   title: 'New Man',
+	   src: 'http://placehold.it/100x100',
+	   date: new Date()
+
+	}, {
+	   title: 'Free man',
+	   src: 'http://placehold.it/100x100',
+	   date: new Date()
+
 	}];
+
+/***/ },
+/* 161 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var EditImage = (function (_React$Component) {
+	    _inherits(EditImage, _React$Component);
+
+	    function EditImage() {
+	        _classCallCheck(this, EditImage);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(EditImage).call(this));
+
+	        _this.state = { image: {} };
+	        return _this;
+	    }
+
+	    _createClass(EditImage, [{
+	        key: "handleSelectedDiv",
+	        value: function handleSelectedDiv(image) {
+	            thisSetSate({ filter: image });
+	        }
+	    }, {
+	        key: "render",
+	        value: function render() {
+	            return _react2.default.createElement(
+	                "div",
+	                null,
+	                _react2.default.createElement(ImageDiv, { image: this.state.image }),
+	                _react2.default.createElement(FilterDiv, { changeFilter: this.handleSelectedDiv.bind(this) })
+	            );
+	        }
+	    }]);
+
+	    return EditImage;
+	})(_react2.default.Component);
+
+	exports.default = EditImage;
+
+	var ImageDiv = (function (_React$Component2) {
+	    _inherits(ImageDiv, _React$Component2);
+
+	    function ImageDiv() {
+	        _classCallCheck(this, ImageDiv);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(ImageDiv).apply(this, arguments));
+	    }
+
+	    _createClass(ImageDiv, [{
+	        key: "render",
+	        value: function render() {
+
+	            return _react2.default.createElement(
+	                "div",
+	                null,
+	                _react2.default.createElement(
+	                    "div",
+	                    { className: "edit-buttons" },
+	                    _react2.default.createElement(
+	                        "button",
+	                        { className: "btn" },
+	                        _react2.default.createElement("span", { className: "mdi mdi-pencil" })
+	                    ),
+	                    _react2.default.createElement(
+	                        "button",
+	                        { className: "btn" },
+	                        _react2.default.createElement("span", { className: "mdi mdi-delete" })
+	                    ),
+	                    _react2.default.createElement(
+	                        "button",
+	                        { className: "btn pull-sm-right" },
+	                        _react2.default.createElement("span", { className: "mdi mdi-share-variant" })
+	                    ),
+	                    _react2.default.createElement(
+	                        "button",
+	                        { className: "btn pull-sm-right" },
+	                        _react2.default.createElement("span", { className: "mdi mdi-download" })
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    "div",
+	                    { className: "edit text-center" },
+	                    _react2.default.createElement("img", { src: this.props.image.src || 'http://placehold.it/500x500' })
+	                )
+	            );
+	        }
+	    }]);
+
+	    return ImageDiv;
+	})(_react2.default.Component);
+
+	var FilterDiv = (function (_React$Component3) {
+	    _inherits(FilterDiv, _React$Component3);
+
+	    function FilterDiv() {
+	        _classCallCheck(this, FilterDiv);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(FilterDiv).apply(this, arguments));
+	    }
+
+	    _createClass(FilterDiv, [{
+	        key: "render",
+	        value: function render() {
+	            var filterSection = [];
+	            var filters = ['gray', 'Hd', 'blacknwhite', 'hue'];
+	            filters.forEach(function (filter) {
+	                filterSection.push(_react2.default.createElement(FilterItem, { filter: filter }));
+	            });
+	            return _react2.default.createElement(
+	                "div",
+	                { id: "owl-demo", className: "owl-carousel owl-theme" },
+	                filterSection,
+	                _react2.default.createElement(
+	                    "a",
+	                    { className: "btn prev" },
+	                    _react2.default.createElement("span", { className: "mdi mdi-chevron-left" })
+	                ),
+	                _react2.default.createElement(
+	                    "a",
+	                    { className: "btn next" },
+	                    _react2.default.createElement("span", { className: "mdi mdi-chevron-right" })
+	                )
+	            );
+	        }
+	    }]);
+
+	    return FilterDiv;
+	})(_react2.default.Component);
+
+	var FilterItem = (function (_React$Component4) {
+	    _inherits(FilterItem, _React$Component4);
+
+	    function FilterItem() {
+	        _classCallCheck(this, FilterItem);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(FilterItem).apply(this, arguments));
+	    }
+
+	    _createClass(FilterItem, [{
+	        key: "render",
+	        value: function render() {
+	            return _react2.default.createElement(
+	                "div",
+	                { className: "item" },
+	                _react2.default.createElement(
+	                    "h4",
+	                    null,
+	                    this.props.filter
+	                )
+	            );
+	        }
+	    }]);
+
+	    return FilterItem;
+	})(_react2.default.Component);
 
 /***/ }
 /******/ ]);

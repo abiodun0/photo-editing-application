@@ -14,3 +14,11 @@ class UserProfile(models.Model):
         return User.objects.get(id=self.user_id)
 
 User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
+
+
+class Images(models.Model):
+    owner = models.ForeignKey(User,related_name="images")
+    image = models.ImageField(upload_to='uploads/')
+    title = models.CharField(max_length=100, null=True)
+    date_created = models.DateTimeField(
+        auto_now_add=True)

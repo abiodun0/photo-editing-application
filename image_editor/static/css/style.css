@@ -16,9 +16,14 @@ body{
 }
 .upload-div{
   position:relative;
-  height:600px;
+  height:700px;
   background-color:#fff;
   overflow-y:visible;
+}
+.upload-img{
+  height:600px;
+  background-color:#fff;
+  overflow-y:scroll;
 }
 .upload-div button{
   position:absolute;

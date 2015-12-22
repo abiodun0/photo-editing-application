@@ -25,7 +25,6 @@ export default class SearchableImage extends React.Component{
             );
     }
 }
-
 class SearchBar extends React.Component{
 
     handleChange(){
@@ -34,12 +33,12 @@ class SearchBar extends React.Component{
         )
 
     }
-
     render(){
         return (
             <form className="form-inline">
               <div className="form-group">
                 <div className="input-group">
+                <div className="input-group-addon"><i className="mdi mdi-eye"></i></div>
                   <input type="text" className="form-control" placeholder="Search"
                     placeholder="Search for one keyword..." 
                     ref="filterTextInput"
@@ -50,13 +49,8 @@ class SearchBar extends React.Component{
                 </div>
               </div>
             </form>
-
-
-
-
             );
     }
-
 }
 
 class UploadDiv extends React.Component{
@@ -65,14 +59,16 @@ class UploadDiv extends React.Component{
         let sections = [];
         let data = this.props.data;
         data.forEach(function(image){
-            if(image.title.indexOf(this.props.filterText) == -1) return;
+            if(image.title.toLowerCase().indexOf(this.props.filterText.toLowerCase()) == -1) return;
 
             sections.push(<SectionDiv image={image} />);
         }.bind(this));
 
         return(
-            <div className="upload-div">{sections}
+            <div className="upload-div">
+            <div className="upload-img">{sections}
             <button className="btn btn-primary"><i className="mdi mdi-upload"></i> Upload </button>
+            </div>
             </div>
             );
 
