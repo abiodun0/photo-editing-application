@@ -2,9 +2,7 @@
 {% extends "layout/base.html" %} 
 {% load staticfiles %}
 {% block content %}
-<div id="searchableTable"></div>
-<div id="menu"></div>
-<div class="container">
+<div class="container-fluid">
     <nav class="navbar navbar-light navbar-full navbar-light">
         <a class="navbar-brand" href="#">Image Editor</a>
         <form class="form-inline pull-xs-right">
@@ -13,7 +11,7 @@
         </form>
     </nav>
 </div>
-<div class="container">
+<div class="container-fluid" id="appeditor">
     <div class="row">
         <div class="col-sm-3" id="upload">
          <form class="form-inline">

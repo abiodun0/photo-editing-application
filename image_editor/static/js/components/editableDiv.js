@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default class EditImage extends React.Component{
+export default class EditableDiv extends React.Component{
 
     constructor(){
         super();
@@ -9,7 +9,7 @@ export default class EditImage extends React.Component{
     }
 
     handleSelectedDiv(image){
-        thisSetSate({filter: image});
+        thisSetSate({image: image});
     }
 
     render(){
@@ -33,7 +33,7 @@ class ImageDiv extends React.Component{
             <button className="btn pull-sm-right"><span className="mdi mdi-share-variant"></span></button>
             <button className="btn pull-sm-right"><span className="mdi mdi-download"></span></button></div>
             <div className="edit text-center">
-            <img src={this.props.image.src || 'http://placehold.it/500x500'} />
+            <img src={this.props.image.src || 'http://placehold.it/800x800'} />
             </div>
             </div>
             );
@@ -44,7 +44,7 @@ class FilterDiv extends React.Component{
 
     render(){
         let filterSection = [];
-        let filters = ['gray', 'Hd', 'blacknwhite' ,'hue'];
+        let filters = ['gray', 'Hd', 'serpia' ,'hue'];
         filters.forEach(function(filter){
             filterSection.push(<FilterItem filter={filter} />);
         });

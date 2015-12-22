@@ -11,7 +11,7 @@ export default class SearchableImage extends React.Component{
     }
     render(){
         return (
-            <div>
+            <div className="upload-div">
 
                 <SearchBar filterText={this.state.filterText}
                 onUserInput={this.handleUserInput.bind(this)} 
@@ -35,12 +35,12 @@ class SearchBar extends React.Component{
     }
     render(){
         return (
-            <form className="form-inline">
+            <form className="form">
               <div className="form-group">
                 <div className="input-group">
-                <div className="input-group-addon"><i className="mdi mdi-eye"></i></div>
+                
                   <input type="text" className="form-control" placeholder="Search"
-                    placeholder="Search for one keyword..." 
+                    placeholder="Search your pictures..." 
                     ref="filterTextInput"
                     value= {this.props.filterText}
                     onChange= {this.handleChange.bind(this)} 
@@ -63,14 +63,22 @@ class UploadDiv extends React.Component{
 
             sections.push(<SectionDiv image={image} />);
         }.bind(this));
-
+        if(sections.length < 1){
         return(
-            <div className="upload-div">
-            <div className="upload-img">{sections}
+          
+            <div className="upload-imag"> <div className="uploaded"> <h5> No Images matches your criteria </h5></div>
             <button className="btn btn-primary"><i className="mdi mdi-upload"></i> Upload </button>
             </div>
-            </div>
-            );
+
+            
+            )
+           }
+           else {
+            return (
+            <div className="upload-img">{sections}
+            <button className="btn btn-primary"><i className="mdi mdi-upload"></i> Upload </button>
+            </div>);
+        }
 
         
     }

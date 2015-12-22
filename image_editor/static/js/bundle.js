@@ -58,16 +58,22 @@
 
 	var _SearchableImage2 = _interopRequireDefault(_SearchableImage);
 
-	var _editableDiv = __webpack_require__(161);
+	var _editableDiv = __webpack_require__(160);
 
 	var _editableDiv2 = _interopRequireDefault(_editableDiv);
 
-	var _data = __webpack_require__(160);
+	var _appEditor = __webpack_require__(161);
+
+	var _appEditor2 = _interopRequireDefault(_appEditor);
+
+	var _data = __webpack_require__(163);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	_reactDom2.default.render(_react2.default.createElement(_SearchableImage2.default, { data: _data.data }), document.getElementById('upload'));
-	_reactDom2.default.render(_react2.default.createElement(_editableDiv2.default, null), document.getElementById('editor'));
+	// ReactDOM.render(<SearchableImage data={data}/>, document.getElementById('upload'));
+	// ReactDOM.render(<EditableDiv />, document.getElementById('editor'));
+
+	_reactDom2.default.render(_react2.default.createElement(_appEditor2.default, { data: _data.data }), document.getElementById('appeditor'));
 
 	$(document).ready(function (e) {
 	    console.log("ready");
@@ -19760,7 +19766,7 @@
 	        value: function render() {
 	            return _react2.default.createElement(
 	                'div',
-	                null,
+	                { className: 'upload-div' },
 	                _react2.default.createElement(SearchBar, { filterText: this.state.filterText,
 	                    onUserInput: this.handleUserInput.bind(this)
 	                }),
@@ -19795,20 +19801,15 @@
 	        value: function render() {
 	            return _react2.default.createElement(
 	                'form',
-	                { className: 'form-inline' },
+	                { className: 'form' },
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'form-group' },
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'input-group' },
-	                        _react2.default.createElement(
-	                            'div',
-	                            { className: 'input-group-addon' },
-	                            _react2.default.createElement('i', { className: 'mdi mdi-eye' })
-	                        ),
 	                        _react2.default.createElement('input', { type: 'text', className: 'form-control', placeholder: 'Search',
-	                            placeholder: 'Search for one keyword...',
+	                            placeholder: 'Search your pictures...',
 	                            ref: 'filterTextInput',
 	                            value: this.props.filterText,
 	                            onChange: this.handleChange.bind(this)
@@ -19846,11 +19847,30 @@
 
 	                sections.push(_react2.default.createElement(SectionDiv, { image: image }));
 	            }).bind(this));
-
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'upload-div' },
-	                _react2.default.createElement(
+	            if (sections.length < 1) {
+	                return _react2.default.createElement(
+	                    'div',
+	                    { className: 'upload-imag' },
+	                    ' ',
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'uploaded' },
+	                        ' ',
+	                        _react2.default.createElement(
+	                            'h5',
+	                            null,
+	                            ' No Images matches your criteria '
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'button',
+	                        { className: 'btn btn-primary' },
+	                        _react2.default.createElement('i', { className: 'mdi mdi-upload' }),
+	                        ' Upload '
+	                    )
+	                );
+	            } else {
+	                return _react2.default.createElement(
 	                    'div',
 	                    { className: 'upload-img' },
 	                    sections,
@@ -19860,8 +19880,8 @@
 	                        _react2.default.createElement('i', { className: 'mdi mdi-upload' }),
 	                        ' Upload '
 	                    )
-	                )
-	            );
+	                );
+	            }
 	        }
 	    }]);
 
@@ -19916,6 +19936,468 @@
 
 /***/ },
 /* 160 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var EditableDiv = (function (_React$Component) {
+	    _inherits(EditableDiv, _React$Component);
+
+	    function EditableDiv() {
+	        _classCallCheck(this, EditableDiv);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(EditableDiv).call(this));
+
+	        _this.state = { image: {} };
+	        return _this;
+	    }
+
+	    _createClass(EditableDiv, [{
+	        key: "handleSelectedDiv",
+	        value: function handleSelectedDiv(image) {
+	            thisSetSate({ image: image });
+	        }
+	    }, {
+	        key: "render",
+	        value: function render() {
+	            return _react2.default.createElement(
+	                "div",
+	                null,
+	                _react2.default.createElement(ImageDiv, { image: this.state.image }),
+	                _react2.default.createElement(FilterDiv, { changeFilter: this.handleSelectedDiv.bind(this) })
+	            );
+	        }
+	    }]);
+
+	    return EditableDiv;
+	})(_react2.default.Component);
+
+	exports.default = EditableDiv;
+
+	var ImageDiv = (function (_React$Component2) {
+	    _inherits(ImageDiv, _React$Component2);
+
+	    function ImageDiv() {
+	        _classCallCheck(this, ImageDiv);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(ImageDiv).apply(this, arguments));
+	    }
+
+	    _createClass(ImageDiv, [{
+	        key: "render",
+	        value: function render() {
+
+	            return _react2.default.createElement(
+	                "div",
+	                null,
+	                _react2.default.createElement(
+	                    "div",
+	                    { className: "edit-buttons" },
+	                    _react2.default.createElement(
+	                        "button",
+	                        { className: "btn" },
+	                        _react2.default.createElement("span", { className: "mdi mdi-pencil" })
+	                    ),
+	                    _react2.default.createElement(
+	                        "button",
+	                        { className: "btn" },
+	                        _react2.default.createElement("span", { className: "mdi mdi-delete" })
+	                    ),
+	                    _react2.default.createElement(
+	                        "button",
+	                        { className: "btn pull-sm-right" },
+	                        _react2.default.createElement("span", { className: "mdi mdi-share-variant" })
+	                    ),
+	                    _react2.default.createElement(
+	                        "button",
+	                        { className: "btn pull-sm-right" },
+	                        _react2.default.createElement("span", { className: "mdi mdi-download" })
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    "div",
+	                    { className: "edit text-center" },
+	                    _react2.default.createElement("img", { src: this.props.image.src || 'http://placehold.it/800x800' })
+	                )
+	            );
+	        }
+	    }]);
+
+	    return ImageDiv;
+	})(_react2.default.Component);
+
+	var FilterDiv = (function (_React$Component3) {
+	    _inherits(FilterDiv, _React$Component3);
+
+	    function FilterDiv() {
+	        _classCallCheck(this, FilterDiv);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(FilterDiv).apply(this, arguments));
+	    }
+
+	    _createClass(FilterDiv, [{
+	        key: "render",
+	        value: function render() {
+	            var filterSection = [];
+	            var filters = ['gray', 'Hd', 'serpia', 'hue'];
+	            filters.forEach(function (filter) {
+	                filterSection.push(_react2.default.createElement(FilterItem, { filter: filter }));
+	            });
+	            return _react2.default.createElement(
+	                "div",
+	                { id: "owl-demo", className: "owl-carousel owl-theme" },
+	                filterSection,
+	                _react2.default.createElement(
+	                    "a",
+	                    { className: "btn prev" },
+	                    _react2.default.createElement("span", { className: "mdi mdi-chevron-left" })
+	                ),
+	                _react2.default.createElement(
+	                    "a",
+	                    { className: "btn next" },
+	                    _react2.default.createElement("span", { className: "mdi mdi-chevron-right" })
+	                )
+	            );
+	        }
+	    }]);
+
+	    return FilterDiv;
+	})(_react2.default.Component);
+
+	var FilterItem = (function (_React$Component4) {
+	    _inherits(FilterItem, _React$Component4);
+
+	    function FilterItem() {
+	        _classCallCheck(this, FilterItem);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(FilterItem).apply(this, arguments));
+	    }
+
+	    _createClass(FilterItem, [{
+	        key: "render",
+	        value: function render() {
+	            return _react2.default.createElement(
+	                "div",
+	                { className: "item" },
+	                _react2.default.createElement(
+	                    "h4",
+	                    null,
+	                    this.props.filter
+	                )
+	            );
+	        }
+	    }]);
+
+	    return FilterItem;
+	})(_react2.default.Component);
+
+/***/ },
+/* 161 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _searchableimage = __webpack_require__(162);
+
+	var _searchableimage2 = _interopRequireDefault(_searchableimage);
+
+	var _editableDiv = __webpack_require__(160);
+
+	var _editableDiv2 = _interopRequireDefault(_editableDiv);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var AppEditor = (function (_React$Component) {
+	    _inherits(AppEditor, _React$Component);
+
+	    function AppEditor() {
+	        _classCallCheck(this, AppEditor);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AppEditor).call(this));
+
+	        _this.state = { img: {} };
+	        return _this;
+	    }
+
+	    _createClass(AppEditor, [{
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'row' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'col-sm-3' },
+	                    _react2.default.createElement(_searchableimage2.default, { data: this.props.data })
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'col-sm-9' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'edit-div' },
+	                        _react2.default.createElement(_editableDiv2.default, null)
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return AppEditor;
+	})(_react2.default.Component);
+
+	exports.default = AppEditor;
+
+/***/ },
+/* 162 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var SearchableImage = (function (_React$Component) {
+	    _inherits(SearchableImage, _React$Component);
+
+	    function SearchableImage() {
+	        _classCallCheck(this, SearchableImage);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SearchableImage).call(this));
+
+	        _this.state = { filterText: '' };
+	        return _this;
+	    }
+
+	    _createClass(SearchableImage, [{
+	        key: 'handleUserInput',
+	        value: function handleUserInput(filterText) {
+	            this.setState({ filterText: filterText });
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'upload-div' },
+	                _react2.default.createElement(SearchBar, { filterText: this.state.filterText,
+	                    onUserInput: this.handleUserInput.bind(this)
+	                }),
+	                _react2.default.createElement(UploadDiv, { data: this.props.data,
+	                    filterText: this.state.filterText
+	                })
+	            );
+	        }
+	    }]);
+
+	    return SearchableImage;
+	})(_react2.default.Component);
+
+	exports.default = SearchableImage;
+
+	var SearchBar = (function (_React$Component2) {
+	    _inherits(SearchBar, _React$Component2);
+
+	    function SearchBar() {
+	        _classCallCheck(this, SearchBar);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(SearchBar).apply(this, arguments));
+	    }
+
+	    _createClass(SearchBar, [{
+	        key: 'handleChange',
+	        value: function handleChange() {
+	            this.props.onUserInput(this.refs.filterTextInput.getDOMNode().value);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'form',
+	                { className: 'form' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'form-group' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'input-group' },
+	                        _react2.default.createElement('input', { type: 'text', className: 'form-control', placeholder: 'Search',
+	                            placeholder: 'Search your pictures...',
+	                            ref: 'filterTextInput',
+	                            value: this.props.filterText,
+	                            onChange: this.handleChange.bind(this)
+	                        }),
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'input-group-addon' },
+	                            _react2.default.createElement('i', { className: 'mdi mdi-magnify' })
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return SearchBar;
+	})(_react2.default.Component);
+
+	var UploadDiv = (function (_React$Component3) {
+	    _inherits(UploadDiv, _React$Component3);
+
+	    function UploadDiv() {
+	        _classCallCheck(this, UploadDiv);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(UploadDiv).apply(this, arguments));
+	    }
+
+	    _createClass(UploadDiv, [{
+	        key: 'render',
+	        value: function render() {
+	            var sections = [];
+	            var data = this.props.data;
+	            data.forEach((function (image) {
+	                if (image.title.toLowerCase().indexOf(this.props.filterText.toLowerCase()) == -1) return;
+
+	                sections.push(_react2.default.createElement(SectionDiv, { image: image }));
+	            }).bind(this));
+	            if (sections.length < 1) {
+	                return _react2.default.createElement(
+	                    'div',
+	                    { className: 'upload-imag' },
+	                    ' ',
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'uploaded' },
+	                        ' ',
+	                        _react2.default.createElement(
+	                            'h5',
+	                            null,
+	                            ' No Images matches your criteria '
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'button',
+	                        { className: 'btn btn-primary' },
+	                        _react2.default.createElement('i', { className: 'mdi mdi-upload' }),
+	                        ' Upload '
+	                    )
+	                );
+	            } else {
+	                return _react2.default.createElement(
+	                    'div',
+	                    { className: 'upload-img' },
+	                    sections,
+	                    _react2.default.createElement(
+	                        'button',
+	                        { className: 'btn btn-primary' },
+	                        _react2.default.createElement('i', { className: 'mdi mdi-upload' }),
+	                        ' Upload '
+	                    )
+	                );
+	            }
+	        }
+	    }]);
+
+	    return UploadDiv;
+	})(_react2.default.Component);
+
+	var SectionDiv = (function (_React$Component4) {
+	    _inherits(SectionDiv, _React$Component4);
+
+	    function SectionDiv() {
+	        _classCallCheck(this, SectionDiv);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(SectionDiv).apply(this, arguments));
+	    }
+
+	    _createClass(SectionDiv, [{
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'uploaded' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'media' },
+	                    _react2.default.createElement(
+	                        'a',
+	                        { className: 'media-left', href: '#' },
+	                        _react2.default.createElement('img', { className: 'media-object', src: this.props.image.src, alt: 'Generic placeholder image' })
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'media-body' },
+	                        _react2.default.createElement(
+	                            'p',
+	                            { className: 'media-heading' },
+	                            this.props.image.title,
+	                            _react2.default.createElement('br', null),
+	                            _react2.default.createElement(
+	                                'small',
+	                                null,
+	                                ' Uploaded on '
+	                            )
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return SectionDiv;
+	})(_react2.default.Component);
+
+/***/ },
+/* 163 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -19999,181 +20481,6 @@
 	   date: new Date()
 
 	}];
-
-/***/ },
-/* 161 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var EditImage = (function (_React$Component) {
-	    _inherits(EditImage, _React$Component);
-
-	    function EditImage() {
-	        _classCallCheck(this, EditImage);
-
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(EditImage).call(this));
-
-	        _this.state = { image: {} };
-	        return _this;
-	    }
-
-	    _createClass(EditImage, [{
-	        key: "handleSelectedDiv",
-	        value: function handleSelectedDiv(image) {
-	            thisSetSate({ filter: image });
-	        }
-	    }, {
-	        key: "render",
-	        value: function render() {
-	            return _react2.default.createElement(
-	                "div",
-	                null,
-	                _react2.default.createElement(ImageDiv, { image: this.state.image }),
-	                _react2.default.createElement(FilterDiv, { changeFilter: this.handleSelectedDiv.bind(this) })
-	            );
-	        }
-	    }]);
-
-	    return EditImage;
-	})(_react2.default.Component);
-
-	exports.default = EditImage;
-
-	var ImageDiv = (function (_React$Component2) {
-	    _inherits(ImageDiv, _React$Component2);
-
-	    function ImageDiv() {
-	        _classCallCheck(this, ImageDiv);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(ImageDiv).apply(this, arguments));
-	    }
-
-	    _createClass(ImageDiv, [{
-	        key: "render",
-	        value: function render() {
-
-	            return _react2.default.createElement(
-	                "div",
-	                null,
-	                _react2.default.createElement(
-	                    "div",
-	                    { className: "edit-buttons" },
-	                    _react2.default.createElement(
-	                        "button",
-	                        { className: "btn" },
-	                        _react2.default.createElement("span", { className: "mdi mdi-pencil" })
-	                    ),
-	                    _react2.default.createElement(
-	                        "button",
-	                        { className: "btn" },
-	                        _react2.default.createElement("span", { className: "mdi mdi-delete" })
-	                    ),
-	                    _react2.default.createElement(
-	                        "button",
-	                        { className: "btn pull-sm-right" },
-	                        _react2.default.createElement("span", { className: "mdi mdi-share-variant" })
-	                    ),
-	                    _react2.default.createElement(
-	                        "button",
-	                        { className: "btn pull-sm-right" },
-	                        _react2.default.createElement("span", { className: "mdi mdi-download" })
-	                    )
-	                ),
-	                _react2.default.createElement(
-	                    "div",
-	                    { className: "edit text-center" },
-	                    _react2.default.createElement("img", { src: this.props.image.src || 'http://placehold.it/500x500' })
-	                )
-	            );
-	        }
-	    }]);
-
-	    return ImageDiv;
-	})(_react2.default.Component);
-
-	var FilterDiv = (function (_React$Component3) {
-	    _inherits(FilterDiv, _React$Component3);
-
-	    function FilterDiv() {
-	        _classCallCheck(this, FilterDiv);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(FilterDiv).apply(this, arguments));
-	    }
-
-	    _createClass(FilterDiv, [{
-	        key: "render",
-	        value: function render() {
-	            var filterSection = [];
-	            var filters = ['gray', 'Hd', 'blacknwhite', 'hue'];
-	            filters.forEach(function (filter) {
-	                filterSection.push(_react2.default.createElement(FilterItem, { filter: filter }));
-	            });
-	            return _react2.default.createElement(
-	                "div",
-	                { id: "owl-demo", className: "owl-carousel owl-theme" },
-	                filterSection,
-	                _react2.default.createElement(
-	                    "a",
-	                    { className: "btn prev" },
-	                    _react2.default.createElement("span", { className: "mdi mdi-chevron-left" })
-	                ),
-	                _react2.default.createElement(
-	                    "a",
-	                    { className: "btn next" },
-	                    _react2.default.createElement("span", { className: "mdi mdi-chevron-right" })
-	                )
-	            );
-	        }
-	    }]);
-
-	    return FilterDiv;
-	})(_react2.default.Component);
-
-	var FilterItem = (function (_React$Component4) {
-	    _inherits(FilterItem, _React$Component4);
-
-	    function FilterItem() {
-	        _classCallCheck(this, FilterItem);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(FilterItem).apply(this, arguments));
-	    }
-
-	    _createClass(FilterItem, [{
-	        key: "render",
-	        value: function render() {
-	            return _react2.default.createElement(
-	                "div",
-	                { className: "item" },
-	                _react2.default.createElement(
-	                    "h4",
-	                    null,
-	                    this.props.filter
-	                )
-	            );
-	        }
-	    }]);
-
-	    return FilterItem;
-	})(_react2.default.Component);
 
 /***/ }
 /******/ ]);

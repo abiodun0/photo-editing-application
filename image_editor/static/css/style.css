@@ -1,6 +1,6 @@
 body{
     background-color:#eceeef;
-    font-size:12px;
+    font-size:16px;
 }
 
 .index-content{
@@ -16,12 +16,12 @@ body{
 }
 .upload-div{
   position:relative;
-  height:700px;
+  height:900px;
   background-color:#fff;
   overflow-y:visible;
 }
 .upload-img{
-  height:600px;
+  height:700px;
   background-color:#fff;
   overflow-y:scroll;
 }
@@ -33,12 +33,11 @@ body{
 }
 .navbar.navbar-light{
     background-color:#fff;
-    margin-top:10%;
 }
 .uploaded{
   background-color:#fff;
   min-height: 1px;
-  padding: 10px;
+  padding: 20px;
 }
   .uploaded .media, .uploaded .media-body{
   vertical-align: middle;
@@ -54,7 +53,7 @@ body{
 
 .edit-div{
   padding:40px 30px 40px 30px;
-  max-height:400px;
+  max-height:700px;
 }
 .edit-div .edit-buttons{
 
@@ -69,7 +68,7 @@ body{
 }
 .edit{
   background-color:#fff;
-  max-height:inherit;
+  max-height:700px;
 }
 .edit img{
   max-height:inherit;
@@ -104,18 +103,6 @@ body{
   right:20px;
 }
 #owl-demo .item{
-  width:10%;
+  width:12%;
   display:inline-block;
-}
-.customNavigation{
-  text-align: center;
-}
-//use styles below to disable ugly selection
-.customNavigation a{
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
