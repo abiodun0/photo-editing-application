@@ -19736,6 +19736,10 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _classnames = __webpack_require__(164);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -19771,7 +19775,7 @@
 	                    onUserInput: this.handleUserInput.bind(this)
 	                }),
 	                _react2.default.createElement(UploadDiv, { data: this.props.data,
-	                    filterText: this.state.filterText
+	                    filterText: this.state.filterText, onChange: this.props.onChange.bind(this)
 	                })
 	            );
 	        }
@@ -19794,7 +19798,7 @@
 	    _createClass(SearchBar, [{
 	        key: 'handleChange',
 	        value: function handleChange() {
-	            this.props.onUserInput(this.refs.filterTextInput.getDOMNode().value);
+	            this.props.onUserInput(this.refs.filter.value);
 	        }
 	    }, {
 	        key: 'render',
@@ -19810,7 +19814,7 @@
 	                        { className: 'input-group' },
 	                        _react2.default.createElement('input', { type: 'text', className: 'form-control', placeholder: 'Search',
 	                            placeholder: 'Search your pictures...',
-	                            ref: 'filterTextInput',
+	                            ref: 'filter',
 	                            value: this.props.filterText,
 	                            onChange: this.handleChange.bind(this)
 	                        }),
@@ -19834,23 +19838,56 @@
 	    function UploadDiv() {
 	        _classCallCheck(this, UploadDiv);
 
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(UploadDiv).apply(this, arguments));
+	        var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(UploadDiv).call(this));
+
+	        _this3.state = { activeKey: 'default' };
+	        return _this3;
 	    }
 
 	    _createClass(UploadDiv, [{
+	        key: 'changeActiveKey',
+	        value: function changeActiveKey(key, image) {
+	            this.setState({ activeKey: key });
+	            this.props.onChange(image);
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var sections = [];
 	            var data = this.props.data;
-	            data.forEach((function (image) {
+	            if (data.length < 1) {
+	                return _react2.default.createElement(
+	                    'div',
+	                    { className: 'upload-img' },
+	                    ' ',
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'uploaded' },
+	                        ' ',
+	                        _react2.default.createElement(
+	                            'h5',
+	                            null,
+	                            ' You dont have any images yet '
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'button',
+	                        { className: 'btn btn-primary' },
+	                        _react2.default.createElement('i', { className: 'mdi mdi-upload' }),
+	                        ' Upload '
+	                    )
+	                );
+	            }
+	            data.forEach((function (image, i) {
 	                if (image.title.toLowerCase().indexOf(this.props.filterText.toLowerCase()) == -1) return;
 
-	                sections.push(_react2.default.createElement(SectionDiv, { image: image }));
+	                sections.push(_react2.default.createElement(SectionDiv, { key: i, getKey: i, image: image, activeKey: this.state.activeKey,
+	                    changeKey: this.changeActiveKey.bind(this) }));
 	            }).bind(this));
 	            if (sections.length < 1) {
 	                return _react2.default.createElement(
 	                    'div',
-	                    { className: 'upload-imag' },
+	                    { className: 'upload-img' },
 	                    ' ',
 	                    _react2.default.createElement(
 	                        'div',
@@ -19898,17 +19935,26 @@
 	    }
 
 	    _createClass(SectionDiv, [{
+	        key: 'handleChange',
+	        value: function handleChange() {
+	            this.props.changeKey(this.props.getKey, this.props.image);
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
+	            var activeUpload = (0, _classnames2.default)({
+	                'uploaded': true,
+	                'active': this.props.getKey == this.props.activeKey
+	            });
 	            return _react2.default.createElement(
 	                'div',
-	                { className: 'uploaded' },
+	                { className: activeUpload },
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'media' },
 	                    _react2.default.createElement(
 	                        'a',
-	                        { className: 'media-left', href: '#' },
+	                        { className: 'media-left', href: '#', onClick: this.handleChange.bind(this) },
 	                        _react2.default.createElement('img', { className: 'media-object', src: this.props.image.src, alt: 'Generic placeholder image' })
 	                    ),
 	                    _react2.default.createElement(
@@ -19964,25 +20010,17 @@
 	    function EditableDiv() {
 	        _classCallCheck(this, EditableDiv);
 
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(EditableDiv).call(this));
-
-	        _this.state = { image: {} };
-	        return _this;
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(EditableDiv).call(this));
 	    }
 
 	    _createClass(EditableDiv, [{
-	        key: "handleSelectedDiv",
-	        value: function handleSelectedDiv(image) {
-	            thisSetSate({ image: image });
-	        }
-	    }, {
 	        key: "render",
 	        value: function render() {
 	            return _react2.default.createElement(
 	                "div",
 	                null,
-	                _react2.default.createElement(ImageDiv, { image: this.state.image }),
-	                _react2.default.createElement(FilterDiv, { changeFilter: this.handleSelectedDiv.bind(this) })
+	                _react2.default.createElement(ImageDiv, { image: this.props.image }),
+	                _react2.default.createElement(FilterDiv, null)
 	            );
 	        }
 	    }]);
@@ -20010,6 +20048,19 @@
 	                null,
 	                _react2.default.createElement(
 	                    "div",
+	                    { className: "card text-xs-center" },
+	                    _react2.default.createElement(
+	                        "blockquote",
+	                        { className: "card-blockquote card-text" },
+	                        _react2.default.createElement(
+	                            "h6",
+	                            { className: "text-uppercase" },
+	                            this.props.image.title || 'No image selected'
+	                        )
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    "div",
 	                    { className: "edit-buttons" },
 	                    _react2.default.createElement(
 	                        "button",
@@ -20035,7 +20086,7 @@
 	                _react2.default.createElement(
 	                    "div",
 	                    { className: "edit text-center" },
-	                    _react2.default.createElement("img", { src: this.props.image.src || 'http://placehold.it/800x800' })
+	                    _react2.default.createElement("img", { src: this.props.image.image || 'http://placehold.it/600x600' })
 	                )
 	            );
 	        }
@@ -20058,8 +20109,8 @@
 	        value: function render() {
 	            var filterSection = [];
 	            var filters = ['gray', 'Hd', 'serpia', 'hue'];
-	            filters.forEach(function (filter) {
-	                filterSection.push(_react2.default.createElement(FilterItem, { filter: filter }));
+	            filters.forEach(function (filter, i) {
+	                filterSection.push(_react2.default.createElement(FilterItem, { key: i, filter: filter }));
 	            });
 	            return _react2.default.createElement(
 	                "div",
@@ -20149,20 +20200,27 @@
 
 	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AppEditor).call(this));
 
-	        _this.state = { img: {} };
+	        _this.state = { image: '' };
 	        return _this;
 	    }
 
 	    _createClass(AppEditor, [{
+	        key: 'changeImage',
+	        value: function changeImage(image) {
+
+	            this.setState({ image: image });
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
+
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'row' },
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'col-sm-3' },
-	                    _react2.default.createElement(_searchableimage2.default, { data: this.props.data })
+	                    _react2.default.createElement(_searchableimage2.default, { data: this.props.data, onChange: this.changeImage.bind(this) })
 	                ),
 	                _react2.default.createElement(
 	                    'div',
@@ -20170,7 +20228,7 @@
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'edit-div' },
-	                        _react2.default.createElement(_editableDiv2.default, null)
+	                        _react2.default.createElement(_editableDiv2.default, { image: this.state.image })
 	                    )
 	                )
 	            );
@@ -20197,6 +20255,10 @@
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _classnames = __webpack_require__(164);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -20233,7 +20295,7 @@
 	                    onUserInput: this.handleUserInput.bind(this)
 	                }),
 	                _react2.default.createElement(UploadDiv, { data: this.props.data,
-	                    filterText: this.state.filterText
+	                    filterText: this.state.filterText, onChange: this.props.onChange.bind(this)
 	                })
 	            );
 	        }
@@ -20256,7 +20318,7 @@
 	    _createClass(SearchBar, [{
 	        key: 'handleChange',
 	        value: function handleChange() {
-	            this.props.onUserInput(this.refs.filterTextInput.getDOMNode().value);
+	            this.props.onUserInput(this.refs.filter.value);
 	        }
 	    }, {
 	        key: 'render',
@@ -20272,7 +20334,7 @@
 	                        { className: 'input-group' },
 	                        _react2.default.createElement('input', { type: 'text', className: 'form-control', placeholder: 'Search',
 	                            placeholder: 'Search your pictures...',
-	                            ref: 'filterTextInput',
+	                            ref: 'filter',
 	                            value: this.props.filterText,
 	                            onChange: this.handleChange.bind(this)
 	                        }),
@@ -20296,23 +20358,56 @@
 	    function UploadDiv() {
 	        _classCallCheck(this, UploadDiv);
 
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(UploadDiv).apply(this, arguments));
+	        var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(UploadDiv).call(this));
+
+	        _this3.state = { activeKey: 'default' };
+	        return _this3;
 	    }
 
 	    _createClass(UploadDiv, [{
+	        key: 'changeActiveKey',
+	        value: function changeActiveKey(key, image) {
+	            this.setState({ activeKey: key });
+	            this.props.onChange(image);
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var sections = [];
 	            var data = this.props.data;
-	            data.forEach((function (image) {
+	            if (data.length < 1) {
+	                return _react2.default.createElement(
+	                    'div',
+	                    { className: 'upload-img' },
+	                    ' ',
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'uploaded' },
+	                        ' ',
+	                        _react2.default.createElement(
+	                            'h5',
+	                            null,
+	                            ' You dont have any images yet '
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'button',
+	                        { className: 'btn btn-primary' },
+	                        _react2.default.createElement('i', { className: 'mdi mdi-upload' }),
+	                        ' Upload '
+	                    )
+	                );
+	            }
+	            data.forEach((function (image, i) {
 	                if (image.title.toLowerCase().indexOf(this.props.filterText.toLowerCase()) == -1) return;
 
-	                sections.push(_react2.default.createElement(SectionDiv, { image: image }));
+	                sections.push(_react2.default.createElement(SectionDiv, { key: i, getKey: i, image: image, activeKey: this.state.activeKey,
+	                    changeKey: this.changeActiveKey.bind(this) }));
 	            }).bind(this));
 	            if (sections.length < 1) {
 	                return _react2.default.createElement(
 	                    'div',
-	                    { className: 'upload-imag' },
+	                    { className: 'upload-img' },
 	                    ' ',
 	                    _react2.default.createElement(
 	                        'div',
@@ -20360,17 +20455,26 @@
 	    }
 
 	    _createClass(SectionDiv, [{
+	        key: 'handleChange',
+	        value: function handleChange() {
+	            this.props.changeKey(this.props.getKey, this.props.image);
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
+	            var activeUpload = (0, _classnames2.default)({
+	                'uploaded': true,
+	                'active': this.props.getKey == this.props.activeKey
+	            });
 	            return _react2.default.createElement(
 	                'div',
-	                { className: 'uploaded' },
+	                { className: activeUpload },
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'media' },
 	                    _react2.default.createElement(
 	                        'a',
-	                        { className: 'media-left', href: '#' },
+	                        { className: 'media-left', href: '#', onClick: this.handleChange.bind(this) },
 	                        _react2.default.createElement('img', { className: 'media-object', src: this.props.image.src, alt: 'Generic placeholder image' })
 	                    ),
 	                    _react2.default.createElement(
@@ -20408,79 +20512,213 @@
 	var data = exports.data = [{
 	   title: 'Abiodun',
 	   src: 'http://placehold.it/100x100',
+	   image: 'http://placehold.it/600x700',
 	   date: new Date()
 
 	}, {
 	   title: 'Sheriff',
 	   src: 'http://placehold.it/100x100',
+	   image: 'http://placehold.it/600x600',
 	   date: new Date()
 
 	}, {
 	   title: 'Abbey',
 	   src: 'http://placehold.it/100x100',
+	   image: 'http://placehold.it/500x700',
 	   date: new Date()
 
 	}, {
 	   title: 'New Man',
 	   src: 'http://placehold.it/100x100',
+	   image: 'http://placehold.it/600x400',
 	   date: new Date()
 
 	}, {
 	   title: 'Free man',
 	   src: 'http://placehold.it/100x100',
+	   image: 'http://placehold.it/600x200',
 	   date: new Date()
 
 	}, {
 	   title: 'Abiodun',
 	   src: 'http://placehold.it/100x100',
-	   date: new Date()
-
-	}, {
-	   title: 'Sheriff',
-	   src: 'http://placehold.it/100x100',
-	   date: new Date()
-
-	}, {
-	   title: 'Abbey',
-	   src: 'http://placehold.it/100x100',
-	   date: new Date()
-
-	}, {
-	   title: 'New Man',
-	   src: 'http://placehold.it/100x100',
-	   date: new Date()
-
-	}, {
-	   title: 'Free man',
-	   src: 'http://placehold.it/100x100',
+	   image: 'http://placehold.it/300x400',
 	   date: new Date()
 
 	}, {
 	   title: 'Abiodun',
 	   src: 'http://placehold.it/100x100',
+	   image: 'http://placehold.it/600x700',
 	   date: new Date()
 
 	}, {
 	   title: 'Sheriff',
 	   src: 'http://placehold.it/100x100',
+	   image: 'http://placehold.it/600x600',
 	   date: new Date()
 
 	}, {
 	   title: 'Abbey',
 	   src: 'http://placehold.it/100x100',
+	   image: 'http://placehold.it/500x700',
 	   date: new Date()
 
 	}, {
 	   title: 'New Man',
 	   src: 'http://placehold.it/100x100',
+	   image: 'http://placehold.it/600x400',
 	   date: new Date()
 
 	}, {
 	   title: 'Free man',
 	   src: 'http://placehold.it/100x100',
+	   image: 'http://placehold.it/600x200',
+	   date: new Date()
+
+	}, {
+	   title: 'Abiodun',
+	   src: 'http://placehold.it/100x100',
+	   image: 'http://placehold.it/300x400',
+	   date: new Date()
+
+	}, {
+	   title: 'Abiodun',
+	   src: 'http://placehold.it/100x100',
+	   image: 'http://placehold.it/600x700',
+	   date: new Date()
+
+	}, {
+	   title: 'Sheriff',
+	   src: 'http://placehold.it/100x100',
+	   image: 'http://placehold.it/600x600',
+	   date: new Date()
+
+	}, {
+	   title: 'Abbey',
+	   src: 'http://placehold.it/100x100',
+	   image: 'http://placehold.it/500x700',
+	   date: new Date()
+
+	}, {
+	   title: 'New Man',
+	   src: 'http://placehold.it/100x100',
+	   image: 'http://placehold.it/600x400',
+	   date: new Date()
+
+	}, {
+	   title: 'Free man',
+	   src: 'http://placehold.it/100x100',
+	   image: 'http://placehold.it/600x200',
+	   date: new Date()
+
+	}, {
+	   title: 'Abiodun',
+	   src: 'http://placehold.it/100x100',
+	   image: 'http://placehold.it/300x400',
+	   date: new Date()
+
+	}, {
+	   title: 'Abiodun',
+	   src: 'http://placehold.it/100x100',
+	   image: 'http://placehold.it/600x700',
+	   date: new Date()
+
+	}, {
+	   title: 'Sheriff',
+	   src: 'http://placehold.it/100x100',
+	   image: 'http://placehold.it/600x600',
+	   date: new Date()
+
+	}, {
+	   title: 'Abbey',
+	   src: 'http://placehold.it/100x100',
+	   image: 'http://placehold.it/500x700',
+	   date: new Date()
+
+	}, {
+	   title: 'New Man',
+	   src: 'http://placehold.it/100x100',
+	   image: 'http://placehold.it/600x400',
+	   date: new Date()
+
+	}, {
+	   title: 'Free man',
+	   src: 'http://placehold.it/100x100',
+	   image: 'http://placehold.it/600x200',
+	   date: new Date()
+
+	}, {
+	   title: 'Abiodun',
+	   src: 'http://placehold.it/100x100',
+	   image: 'http://placehold.it/300x400',
 	   date: new Date()
 
 	}];
+
+/***/ },
+/* 164 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+
+	function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
+
+	/*!
+	  Copyright (c) 2015 Jed Watson.
+	  Licensed under the MIT License (MIT), see
+	  http://jedwatson.github.io/classnames
+	*/
+	/* global define */
+
+	(function () {
+		'use strict';
+
+		var hasOwn = ({}).hasOwnProperty;
+
+		function classNames() {
+			var classes = '';
+
+			for (var i = 0; i < arguments.length; i++) {
+				var arg = arguments[i];
+				if (!arg) continue;
+
+				var argType = typeof arg === 'undefined' ? 'undefined' : _typeof(arg);
+
+				if (argType === 'string' || argType === 'number') {
+					classes += ' ' + arg;
+				} else if (Array.isArray(arg)) {
+					classes += ' ' + classNames.apply(null, arg);
+				} else if (argType === 'object') {
+					for (var key in arg) {
+						if (hasOwn.call(arg, key) && arg[key]) {
+							classes += ' ' + key;
+						}
+					}
+				}
+			}
+
+			return classes.substr(1);
+		}
+
+		if (typeof module !== 'undefined' && module.exports) {
+			module.exports = classNames;
+		} else if ("function" === 'function' && _typeof(__webpack_require__(165)) === 'object' && __webpack_require__(165)) {
+			// register as 'classnames', consistent with npm package name
+			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+				return classNames;
+			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else {
+			window.classNames = classNames;
+		}
+	})();
+
+/***/ },
+/* 165 */
+/***/ function(module, exports) {
+
+	/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {module.exports = __webpack_amd_options__;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, {}))
 
 /***/ }
 /******/ ]);

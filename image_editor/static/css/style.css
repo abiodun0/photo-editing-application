@@ -66,9 +66,15 @@ body{
   margin-left:20px;
 
 }
+.edit-div .card{
+  background-color:transparent;
+  color:black;
+  border:none;
+}
 .edit{
   background-color:#fff;
-  max-height:700px;
+  height:600px;
+  overflow-y:hidden;
 }
 .edit img{
   max-height:inherit;
