@@ -1,5 +1,7 @@
 import React from 'react';
+import Dropzone from 'react-dropzone';
 import classNames from 'classnames';
+
 
 export default class SearchableImage extends React.Component{
     constructor(){
@@ -10,6 +12,7 @@ export default class SearchableImage extends React.Component{
     handleUserInput(filterText){
         this.setState({filterText: filterText});
     }
+    
     render(){
         return (
             <div className="upload-div">
@@ -64,6 +67,13 @@ class UploadDiv extends React.Component{
         this.setState({activeKey: key});
         this.props.onChange(image);
     }
+    onDrop(files) {
+      console.log("files", files);
+    }
+
+    onOpenClick() {
+      this.refs.dropzone.open();
+    }
 
     render(){
         let sections = [];
@@ -76,7 +86,7 @@ class UploadDiv extends React.Component{
             </div>
 
             
-            )
+            );
         }
         data.forEach(function(image,i){
             if(image.title.toLowerCase().indexOf(this.props.filterText.toLowerCase()) == -1) return;
@@ -89,7 +99,7 @@ class UploadDiv extends React.Component{
         return(
           
             <div className="upload-img"> <div className="uploaded"> <h5> No Images matches your criteria </h5></div>
-            <button className="btn btn-primary"><i className="mdi mdi-upload"></i> Upload </button>
+            <button className="btn btn-primary"><i className="mdi mdi-upload"></i><p> Upload</p> </button>
             </div>
 
             
@@ -98,7 +108,12 @@ class UploadDiv extends React.Component{
            else {
             return (
             <div className="upload-img">{sections}
-            <button className="btn btn-primary"><i className="mdi mdi-upload"></i> Upload </button>
+            <div className="dropzone text-center">
+            <Dropzone ref="dropzone" className="drop" onDrop={this.onDrop}>
+                    <h5>Click or drop your images here</h5>
+            </Dropzone>
+            </div>
+            
             </div>);
         }
 
@@ -119,15 +134,15 @@ class SectionDiv extends React.Component{
                 'active': this.props.getKey == this.props.activeKey
             });
         return(
-                <div className={activeUpload}>
+                <div className={activeUpload} onClick={this.handleChange.bind(this)}>
                 <div className="media">
-                    <a className="media-left" href="#" onClick={this.handleChange.bind(this)}>
-                    <img className="media-object" src={this.props.image.src} alt="Generic placeholder image" />
+                    <a className="media-left" href="#" >
+                    <img className="media-object" src={this.props.image.thumbail} alt="Generic placeholder image" />
                     </a>
                     <div className="media-body">
                         <p className="media-heading">{this.props.image.title}
                             <br/>
-                            <small> Uploaded on </small>
+                            <small> Uploaded on {this.props.image.registered}</small>
                         </p>
                     </div>
                 </div>

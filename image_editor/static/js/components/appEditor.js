@@ -3,8 +3,8 @@ import SearchableImage from './searchableimage';
 import EditableDiv from './editableDiv';
 
 export default class AppEditor extends React.Component{
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
 
         this.state = {image:''};
     }
