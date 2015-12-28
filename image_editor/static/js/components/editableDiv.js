@@ -1,53 +1,79 @@
 import React from 'react';
 import Slider from 'react-slick';
+import classNames from 'classnames';
 
 export default class EditableDiv extends React.Component{
 
-    constructor(props){
+    constructor(){
         super()
-        console.log(props)
-        this.state = props
-        console.log("is image set", this.state.image);
+        this.state = {image: ''}
        
+    }
+    componentWillReceiveProps(nextProps) {
+        this.setState({image: nextProps.image})
     }
     applyFilter(image){
         this.setState({image: image});
     }
-    componentWillUnmount() {
-        console.log("unmount");  
-    }
-    componentWillReceiveProps(nextProps) {
-        console.log("next", nextProps);
-        this.setState({image: nextProps.image})
-    }
+
     render(){
         return(
             <div>
             <ImageDiv image={this.state.image} />
-            <FilterDiv />
+            <FilterDiv image={this.state.image} changeFilter={this.applyFilter.bind(this)}/>
             </div>
             );
     }
 }
+
+
 class ImageDiv extends React.Component{
+    constructor(){
+        super()
+        this.state = {editMode: false};
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        this.state = {editMode: false};
+          
+    }
+
+
+    toggleEdit(){
+        this.setState({editMode: !this.state.editMode});
+
+    }
 
 
     render(){
-
+        var buttonClass = classNames({
+                'btn':true,
+                'disabled': !this.props.image.title
+            });
         return(
             <div>
             <div className="card text-xs-center">
                 <blockquote className="card-blockquote card-text">
-                  <h6 className="text-uppercase">{this.props.image.title || 'No image selected'} </h6>
-                  <h6 className="text-uppercase">{this.props.image.filter || 'No Filter Applied'} </h6>
+                    <form className={`${!this.state.editMode ? 'hide':''} form-inline`}>
+                      <div className="form-group">
+                        <div className="input-group">
+                          <input type="text" className="form-control" value={this.props.image.title}/>
+                          </div>
+                        </div>
+                      <button type="submit" className="btn btn-default">Save</button>
+                    </form>
+                  <h6 className={`${this.state.editMode ? 'hide':''} text-uppercase`}>{this.props.image.title || 'No image selected'} </h6>
+
+                  <h6 className="text-uppercase">{this.props.image.filter || 'No Filter Applied yet'} </h6>
                 </blockquote>
+
             </div>
             <div className="edit-buttons">
-            <button className="btn"><span className="mdi mdi-pencil"></span></button>
-            <button className="btn"><span className="mdi mdi-delete"></span></button>
+            <button className={buttonClass} onClick={this.toggleEdit.bind(this)}><span className="mdi mdi-pencil"></span></button>
+            <button className={buttonClass}><span className="mdi mdi-delete"></span></button>
 
-            <button className="btn pull-sm-right"><span className="mdi mdi-share-variant"></span></button>
-            <button className="btn pull-sm-right"><span className="mdi mdi-download"></span></button></div>
+            <button className={`${buttonClass} pull-sm-right`}><span className="mdi mdi-share-variant"></span></button>
+            <button className={`${buttonClass} pull-sm-right`}><span className="mdi mdi-download"></span></button></div>
             <div className="edit text-center">
             <img src={this.props.image.picture || ''} />
             </div>
@@ -56,25 +82,33 @@ class ImageDiv extends React.Component{
     }
 }
 class FilterDiv extends React.Component{
-
-    render(){
-        let filterSection = [];
-        let filters = ['gray', 'Hd', 'serpia','black','orange','sunny'];
-        // filters.forEach(function(filter,i){
-        //     filterSection.push(<FilterItem key={i} filter={filter} />);
-        // });
-
-
-    var createFilterDiv = function(filter,i){
+    constructor(){
+        super();
+        this.state = {activeFilter: ''};
+    }
+    activateFilter(filter){
+        console.log(filter, "filters")
+        let image = this.props.image
+        image['filter'] = filter
+        this.setState({activeFilter: filter});
+        this.props.changeFilter(image);
+    }
+    
+    createFilterDiv(filter,i){
+        var activeFilter = classNames({
+                'active': this.state.activeFilter == filter
+            });
             return (
-                <div key={i}>
-                <img src="http://placehold.it/100x100" />
+                <div className={activeFilter} key={i} onClick={this.activateFilter.bind(this,filter)}>
+                <img src={this.props.image.thumbail} width="100" height="100"/>
                 <p className="lead">{filter}</p>
                 </div>
                 );
         }
 
-         var settings = {
+    render(){
+        let filters = ['gray', 'Hd', 'serpia','black','orange','sunny'];
+        var settings = {
             className:'slider',
             infinite: true,
             speed: 500,
@@ -82,16 +116,18 @@ class FilterDiv extends React.Component{
             slidesToScroll: 5,
             arrows:true
         };
+        if (this.props.image){
         return(
             
              <Slider {...settings}>
-             {filters.map(createFilterDiv)}
+             {filters.map(this.createFilterDiv.bind(this))}
             </Slider>
             );
     }
-}
-class FilterItem extends React.Component{
-    render(){
-        return(<div><h3>{this.props.filter}</h3></div>);
+    else{
+        return(<div />)
+    }
+
     }
 }
+

@@ -62,11 +62,11 @@
 
 	var _editableDiv2 = _interopRequireDefault(_editableDiv);
 
-	var _appEditor = __webpack_require__(184);
+	var _appEditor = __webpack_require__(165);
 
 	var _appEditor2 = _interopRequireDefault(_appEditor);
 
-	var _data = __webpack_require__(186);
+	var _data = __webpack_require__(167);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -19776,7 +19776,7 @@
 	                    onUserInput: this.handleUserInput.bind(this)
 	                }),
 	                _react2.default.createElement(UploadDiv, { data: this.props.data,
-	                    filterText: this.state.filterText, onChange: this.props.onChange.bind(this)
+	                    filterText: this.state.filterText, onChange: this.props.onChange
 	                })
 	            );
 	        }
@@ -19797,6 +19797,11 @@
 	    }
 
 	    _createClass(SearchBar, [{
+	        key: 'testDiv',
+	        value: function testDiv() {
+	            console.log("test");
+	        }
+	    }, {
 	        key: 'handleChange',
 	        value: function handleChange() {
 	            this.props.onUserInput(this.refs.filter.value);
@@ -19817,7 +19822,7 @@
 	                            placeholder: 'Search your pictures...',
 	                            ref: 'filter',
 	                            value: this.props.filterText,
-	                            onChange: this.handleChange.bind(this)
+	                            onChange: this.handleChange.bind(this), onClick: this.testDiv
 	                        }),
 	                        _react2.default.createElement(
 	                            'div',
@@ -19874,7 +19879,6 @@
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'uploaded' },
-	                        ' ',
 	                        _react2.default.createElement(
 	                            'h5',
 	                            null,
@@ -19885,7 +19889,7 @@
 	                        'button',
 	                        { className: 'btn btn-primary' },
 	                        _react2.default.createElement('i', { className: 'mdi mdi-upload' }),
-	                        ' Upload '
+	                        ' Upload'
 	                    )
 	                );
 	            }
@@ -19959,7 +19963,9 @@
 
 	    _createClass(SectionDiv, [{
 	        key: 'handleChange',
-	        value: function handleChange() {
+	        value: function handleChange(e) {
+	            e.preventDefault();
+
 	            this.props.changeKey(this.props.getKey, this.props.image);
 	        }
 	    }, {
@@ -19978,7 +19984,7 @@
 	                    _react2.default.createElement(
 	                        'a',
 	                        { className: 'media-left', href: '#' },
-	                        _react2.default.createElement('img', { className: 'media-object', src: this.props.image.thumbail, alt: 'Generic placeholder image' })
+	                        _react2.default.createElement('img', { className: 'media-object', src: this.props.image.thumbail, alt: 'Generic placeholder image', width: '150', height: '150' })
 	                    ),
 	                    _react2.default.createElement(
 	                        'div',
@@ -20590,9 +20596,13 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactSlick = __webpack_require__(165);
+	var _reactSlick = __webpack_require__(168);
 
 	var _reactSlick2 = _interopRequireDefault(_reactSlick);
+
+	var _classnames = __webpack_require__(162);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -20605,33 +20615,25 @@
 	var EditableDiv = (function (_React$Component) {
 	    _inherits(EditableDiv, _React$Component);
 
-	    function EditableDiv(props) {
+	    function EditableDiv() {
 	        _classCallCheck(this, EditableDiv);
 
 	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(EditableDiv).call(this));
 
-	        console.log(props);
-	        _this.state = props;
-	        console.log("is image set", _this.state.image);
+	        _this.state = { image: '' };
 
 	        return _this;
 	    }
 
 	    _createClass(EditableDiv, [{
+	        key: 'componentWillReceiveProps',
+	        value: function componentWillReceiveProps(nextProps) {
+	            this.setState({ image: nextProps.image });
+	        }
+	    }, {
 	        key: 'applyFilter',
 	        value: function applyFilter(image) {
 	            this.setState({ image: image });
-	        }
-	    }, {
-	        key: 'componentWillUnmount',
-	        value: function componentWillUnmount() {
-	            console.log("unmount");
-	        }
-	    }, {
-	        key: 'componentWillReceiveProps',
-	        value: function componentWillReceiveProps(nextProps) {
-	            console.log("next", nextProps);
-	            this.setState({ image: nextProps.image });
 	        }
 	    }, {
 	        key: 'render',
@@ -20640,7 +20642,7 @@
 	                'div',
 	                null,
 	                _react2.default.createElement(ImageDiv, { image: this.state.image }),
-	                _react2.default.createElement(FilterDiv, null)
+	                _react2.default.createElement(FilterDiv, { image: this.state.image, changeFilter: this.applyFilter.bind(this) })
 	            );
 	        }
 	    }]);
@@ -20656,13 +20658,29 @@
 	    function ImageDiv() {
 	        _classCallCheck(this, ImageDiv);
 
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(ImageDiv).apply(this, arguments));
+	        var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(ImageDiv).call(this));
+
+	        _this2.state = { editMode: false };
+	        return _this2;
 	    }
 
 	    _createClass(ImageDiv, [{
+	        key: 'componentDidUpdate',
+	        value: function componentDidUpdate(prevProps, prevState) {
+	            this.state = { editMode: false };
+	        }
+	    }, {
+	        key: 'toggleEdit',
+	        value: function toggleEdit() {
+	            this.setState({ editMode: !this.state.editMode });
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
-
+	            var buttonClass = (0, _classnames2.default)({
+	                'btn': true,
+	                'disabled': !this.props.image.title
+	            });
 	            return _react2.default.createElement(
 	                'div',
 	                null,
@@ -20673,15 +20691,33 @@
 	                        'blockquote',
 	                        { className: 'card-blockquote card-text' },
 	                        _react2.default.createElement(
+	                            'form',
+	                            { className: (!this.state.editMode ? 'hide' : '') + ' form-inline' },
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'form-group' },
+	                                _react2.default.createElement(
+	                                    'div',
+	                                    { className: 'input-group' },
+	                                    _react2.default.createElement('input', { type: 'text', className: 'form-control', value: this.props.image.title })
+	                                )
+	                            ),
+	                            _react2.default.createElement(
+	                                'button',
+	                                { type: 'submit', className: 'btn btn-default' },
+	                                'Save'
+	                            )
+	                        ),
+	                        _react2.default.createElement(
 	                            'h6',
-	                            { className: 'text-uppercase' },
+	                            { className: (this.state.editMode ? 'hide' : '') + ' text-uppercase' },
 	                            this.props.image.title || 'No image selected',
 	                            ' '
 	                        ),
 	                        _react2.default.createElement(
 	                            'h6',
 	                            { className: 'text-uppercase' },
-	                            this.props.image.filter || 'No Filter Applied',
+	                            this.props.image.filter || 'No Filter Applied yet',
 	                            ' '
 	                        )
 	                    )
@@ -20691,22 +20727,22 @@
 	                    { className: 'edit-buttons' },
 	                    _react2.default.createElement(
 	                        'button',
-	                        { className: 'btn' },
+	                        { className: buttonClass, onClick: this.toggleEdit.bind(this) },
 	                        _react2.default.createElement('span', { className: 'mdi mdi-pencil' })
 	                    ),
 	                    _react2.default.createElement(
 	                        'button',
-	                        { className: 'btn' },
+	                        { className: buttonClass },
 	                        _react2.default.createElement('span', { className: 'mdi mdi-delete' })
 	                    ),
 	                    _react2.default.createElement(
 	                        'button',
-	                        { className: 'btn pull-sm-right' },
+	                        { className: buttonClass + ' pull-sm-right' },
 	                        _react2.default.createElement('span', { className: 'mdi mdi-share-variant' })
 	                    ),
 	                    _react2.default.createElement(
 	                        'button',
-	                        { className: 'btn pull-sm-right' },
+	                        { className: buttonClass + ' pull-sm-right' },
 	                        _react2.default.createElement('span', { className: 'mdi mdi-download' })
 	                    )
 	                ),
@@ -20728,31 +20764,42 @@
 	    function FilterDiv() {
 	        _classCallCheck(this, FilterDiv);
 
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(FilterDiv).apply(this, arguments));
+	        var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(FilterDiv).call(this));
+
+	        _this3.state = { activeFilter: '' };
+	        return _this3;
 	    }
 
 	    _createClass(FilterDiv, [{
+	        key: 'activateFilter',
+	        value: function activateFilter(filter) {
+	            console.log(filter, "filters");
+	            var image = this.props.image;
+	            image['filter'] = filter;
+	            this.setState({ activeFilter: filter });
+	            this.props.changeFilter(image);
+	        }
+	    }, {
+	        key: 'createFilterDiv',
+	        value: function createFilterDiv(filter, i) {
+	            var activeFilter = (0, _classnames2.default)({
+	                'active': this.state.activeFilter == filter
+	            });
+	            return _react2.default.createElement(
+	                'div',
+	                { className: activeFilter, key: i, onClick: this.activateFilter.bind(this, filter) },
+	                _react2.default.createElement('img', { src: this.props.image.thumbail, width: '100', height: '100' }),
+	                _react2.default.createElement(
+	                    'p',
+	                    { className: 'lead' },
+	                    filter
+	                )
+	            );
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var filterSection = [];
 	            var filters = ['gray', 'Hd', 'serpia', 'black', 'orange', 'sunny'];
-	            // filters.forEach(function(filter,i){
-	            //     filterSection.push(<FilterItem key={i} filter={filter} />);
-	            // });
-
-	            var createFilterDiv = function createFilterDiv(filter, i) {
-	                return _react2.default.createElement(
-	                    'div',
-	                    { key: i },
-	                    _react2.default.createElement('img', { src: 'http://placehold.it/100x100' }),
-	                    _react2.default.createElement(
-	                        'p',
-	                        { className: 'lead' },
-	                        filter
-	                    )
-	                );
-	            };
-
 	            var settings = {
 	                className: 'slider',
 	                infinite: true,
@@ -20761,42 +20808,19 @@
 	                slidesToScroll: 5,
 	                arrows: true
 	            };
-	            return _react2.default.createElement(
-	                _reactSlick2.default,
-	                settings,
-	                filters.map(createFilterDiv)
-	            );
+	            if (this.props.image) {
+	                return _react2.default.createElement(
+	                    _reactSlick2.default,
+	                    settings,
+	                    filters.map(this.createFilterDiv.bind(this))
+	                );
+	            } else {
+	                return _react2.default.createElement('div', null);
+	            }
 	        }
 	    }]);
 
 	    return FilterDiv;
-	})(_react2.default.Component);
-
-	var FilterItem = (function (_React$Component4) {
-	    _inherits(FilterItem, _React$Component4);
-
-	    function FilterItem() {
-	        _classCallCheck(this, FilterItem);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(FilterItem).apply(this, arguments));
-	    }
-
-	    _createClass(FilterItem, [{
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                'div',
-	                null,
-	                _react2.default.createElement(
-	                    'h3',
-	                    null,
-	                    this.props.filter
-	                )
-	            );
-	        }
-	    }]);
-
-	    return FilterItem;
 	})(_react2.default.Component);
 
 /***/ },
@@ -20805,10 +20829,544 @@
 
 	'use strict';
 
-	module.exports = __webpack_require__(166);
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _searchableimage = __webpack_require__(166);
+
+	var _searchableimage2 = _interopRequireDefault(_searchableimage);
+
+	var _editableDiv = __webpack_require__(164);
+
+	var _editableDiv2 = _interopRequireDefault(_editableDiv);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var AppEditor = (function (_React$Component) {
+	    _inherits(AppEditor, _React$Component);
+
+	    function AppEditor(props) {
+	        _classCallCheck(this, AppEditor);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AppEditor).call(this, props));
+
+	        _this.state = { image: '' };
+	        return _this;
+	    }
+
+	    _createClass(AppEditor, [{
+	        key: 'changeImage',
+	        value: function changeImage(image) {
+
+	            this.setState({ image: image });
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'row' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'col-sm-3' },
+	                    _react2.default.createElement(_searchableimage2.default, { data: this.props.data, onChange: this.changeImage.bind(this) })
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'col-sm-9' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'edit-div' },
+	                        _react2.default.createElement(_editableDiv2.default, { image: this.state.image })
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return AppEditor;
+	})(_react2.default.Component);
+
+	exports.default = AppEditor;
 
 /***/ },
 /* 166 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDropzone = __webpack_require__(160);
+
+	var _reactDropzone2 = _interopRequireDefault(_reactDropzone);
+
+	var _classnames = __webpack_require__(162);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var SearchableImage = (function (_React$Component) {
+	    _inherits(SearchableImage, _React$Component);
+
+	    function SearchableImage() {
+	        _classCallCheck(this, SearchableImage);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SearchableImage).call(this));
+
+	        _this.state = { filterText: '' };
+	        return _this;
+	    }
+
+	    _createClass(SearchableImage, [{
+	        key: 'handleUserInput',
+	        value: function handleUserInput(filterText) {
+	            this.setState({ filterText: filterText });
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'upload-div' },
+	                _react2.default.createElement(SearchBar, { filterText: this.state.filterText,
+	                    onUserInput: this.handleUserInput.bind(this)
+	                }),
+	                _react2.default.createElement(UploadDiv, { data: this.props.data,
+	                    filterText: this.state.filterText, onChange: this.props.onChange
+	                })
+	            );
+	        }
+	    }]);
+
+	    return SearchableImage;
+	})(_react2.default.Component);
+
+	exports.default = SearchableImage;
+
+	var SearchBar = (function (_React$Component2) {
+	    _inherits(SearchBar, _React$Component2);
+
+	    function SearchBar() {
+	        _classCallCheck(this, SearchBar);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(SearchBar).apply(this, arguments));
+	    }
+
+	    _createClass(SearchBar, [{
+	        key: 'testDiv',
+	        value: function testDiv() {
+	            console.log("test");
+	        }
+	    }, {
+	        key: 'handleChange',
+	        value: function handleChange() {
+	            this.props.onUserInput(this.refs.filter.value);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'form',
+	                { className: 'form' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'form-group' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'input-group' },
+	                        _react2.default.createElement('input', { type: 'text', className: 'form-control', placeholder: 'Search',
+	                            placeholder: 'Search your pictures...',
+	                            ref: 'filter',
+	                            value: this.props.filterText,
+	                            onChange: this.handleChange.bind(this), onClick: this.testDiv
+	                        }),
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'input-group-addon' },
+	                            _react2.default.createElement('i', { className: 'mdi mdi-magnify' })
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return SearchBar;
+	})(_react2.default.Component);
+
+	var UploadDiv = (function (_React$Component3) {
+	    _inherits(UploadDiv, _React$Component3);
+
+	    function UploadDiv() {
+	        _classCallCheck(this, UploadDiv);
+
+	        var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(UploadDiv).call(this));
+
+	        _this3.state = { activeKey: 'default' };
+	        return _this3;
+	    }
+
+	    _createClass(UploadDiv, [{
+	        key: 'changeActiveKey',
+	        value: function changeActiveKey(key, image) {
+	            this.setState({ activeKey: key });
+	            this.props.onChange(image);
+	        }
+	    }, {
+	        key: 'onDrop',
+	        value: function onDrop(files) {
+	            console.log("files", files);
+	        }
+	    }, {
+	        key: 'onOpenClick',
+	        value: function onOpenClick() {
+	            this.refs.dropzone.open();
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var sections = [];
+	            var data = this.props.data;
+	            if (data.length < 1) {
+	                return _react2.default.createElement(
+	                    'div',
+	                    { className: 'upload-img' },
+	                    ' ',
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'uploaded' },
+	                        _react2.default.createElement(
+	                            'h5',
+	                            null,
+	                            ' You dont have any images yet '
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'button',
+	                        { className: 'btn btn-primary' },
+	                        _react2.default.createElement('i', { className: 'mdi mdi-upload' }),
+	                        ' Upload'
+	                    )
+	                );
+	            }
+	            data.forEach((function (image, i) {
+	                if (image.title.toLowerCase().indexOf(this.props.filterText.toLowerCase()) == -1) return;
+
+	                sections.push(_react2.default.createElement(SectionDiv, { key: i, getKey: i, image: image, activeKey: this.state.activeKey,
+	                    changeKey: this.changeActiveKey.bind(this) }));
+	            }).bind(this));
+	            if (sections.length < 1) {
+	                return _react2.default.createElement(
+	                    'div',
+	                    { className: 'upload-img' },
+	                    ' ',
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'uploaded' },
+	                        ' ',
+	                        _react2.default.createElement(
+	                            'h5',
+	                            null,
+	                            ' No Images matches your criteria '
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'button',
+	                        { className: 'btn btn-primary' },
+	                        _react2.default.createElement('i', { className: 'mdi mdi-upload' }),
+	                        _react2.default.createElement(
+	                            'p',
+	                            null,
+	                            ' Upload'
+	                        ),
+	                        ' '
+	                    )
+	                );
+	            } else {
+	                return _react2.default.createElement(
+	                    'div',
+	                    { className: 'upload-img' },
+	                    sections,
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'dropzone text-center' },
+	                        _react2.default.createElement(
+	                            _reactDropzone2.default,
+	                            { ref: 'dropzone', className: 'drop', onDrop: this.onDrop },
+	                            _react2.default.createElement(
+	                                'h5',
+	                                null,
+	                                'Click or drop your images here'
+	                            )
+	                        )
+	                    )
+	                );
+	            }
+	        }
+	    }]);
+
+	    return UploadDiv;
+	})(_react2.default.Component);
+
+	var SectionDiv = (function (_React$Component4) {
+	    _inherits(SectionDiv, _React$Component4);
+
+	    function SectionDiv() {
+	        _classCallCheck(this, SectionDiv);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(SectionDiv).apply(this, arguments));
+	    }
+
+	    _createClass(SectionDiv, [{
+	        key: 'handleChange',
+	        value: function handleChange(e) {
+	            e.preventDefault();
+
+	            this.props.changeKey(this.props.getKey, this.props.image);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var activeUpload = (0, _classnames2.default)({
+	                'uploaded': true,
+	                'active': this.props.getKey == this.props.activeKey
+	            });
+	            return _react2.default.createElement(
+	                'div',
+	                { className: activeUpload, onClick: this.handleChange.bind(this) },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'media' },
+	                    _react2.default.createElement(
+	                        'a',
+	                        { className: 'media-left', href: '#' },
+	                        _react2.default.createElement('img', { className: 'media-object', src: this.props.image.thumbail, alt: 'Generic placeholder image', width: '150', height: '150' })
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'media-body' },
+	                        _react2.default.createElement(
+	                            'p',
+	                            { className: 'media-heading' },
+	                            this.props.image.title,
+	                            _react2.default.createElement('br', null),
+	                            _react2.default.createElement(
+	                                'small',
+	                                null,
+	                                ' Uploaded on ',
+	                                this.props.image.registered
+	                            )
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return SectionDiv;
+	})(_react2.default.Component);
+
+/***/ },
+/* 167 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var data = exports.data = [{
+	  "id": 0,
+	  "thumbail": "http://placehold.it/149x167",
+	  "picture": "http://placehold.it/737x652",
+	  "title": "LYRICHORD",
+	  "registered": "Friday, December 18, 2015 12:16 AM"
+	}, {
+	  "id": 1,
+	  "thumbail": "http://placehold.it/111x107",
+	  "picture": "http://placehold.it/601x668",
+	  "title": "INCUBUS",
+	  "registered": "Friday, November 21, 2014 2:05 AM"
+	}, {
+	  "id": 2,
+	  "thumbail": "http://placehold.it/133x132",
+	  "picture": "http://placehold.it/709x703",
+	  "title": "NORALI",
+	  "registered": "Wednesday, September 30, 2015 12:20 AM"
+	}, {
+	  "id": 3,
+	  "thumbail": "http://placehold.it/127x163",
+	  "picture": "http://placehold.it/642x694",
+	  "title": "PRINTSPAN",
+	  "registered": "Tuesday, July 1, 2014 10:39 PM"
+	}, {
+	  "id": 4,
+	  "thumbail": "http://placehold.it/107x183",
+	  "picture": "http://placehold.it/758x710",
+	  "title": "MACRONAUT",
+	  "registered": "Sunday, December 13, 2015 3:24 PM"
+	}, {
+	  "id": 5,
+	  "thumbail": "http://placehold.it/193x173",
+	  "picture": "http://placehold.it/650x763",
+	  "title": "ENDIPINE",
+	  "registered": "Saturday, November 7, 2015 12:19 AM"
+	}, {
+	  "id": 6,
+	  "thumbail": "http://placehold.it/139x128",
+	  "picture": "http://placehold.it/726x794",
+	  "title": "EARGO",
+	  "registered": "Thursday, August 21, 2014 1:46 PM"
+	}, {
+	  "id": 7,
+	  "thumbail": "http://placehold.it/108x179",
+	  "picture": "http://placehold.it/747x685",
+	  "title": "LIMAGE",
+	  "registered": "Saturday, February 21, 2015 9:50 PM"
+	}, {
+	  "id": 8,
+	  "thumbail": "http://placehold.it/153x173",
+	  "picture": "http://placehold.it/743x698",
+	  "title": "FOSSIEL",
+	  "registered": "Friday, October 9, 2015 12:16 PM"
+	}, {
+	  "id": 9,
+	  "thumbail": "http://placehold.it/199x158",
+	  "picture": "http://placehold.it/692x717",
+	  "title": "BOINK",
+	  "registered": "Tuesday, May 26, 2015 12:52 PM"
+	}, {
+	  "id": 10,
+	  "thumbail": "http://placehold.it/139x109",
+	  "picture": "http://placehold.it/698x634",
+	  "title": "PYRAMAX",
+	  "registered": "Wednesday, May 27, 2015 9:12 PM"
+	}, {
+	  "id": 11,
+	  "thumbail": "http://placehold.it/188x172",
+	  "picture": "http://placehold.it/711x601",
+	  "title": "UXMOX",
+	  "registered": "Wednesday, December 3, 2014 7:31 PM"
+	}, {
+	  "id": 12,
+	  "thumbail": "http://placehold.it/187x166",
+	  "picture": "http://placehold.it/736x703",
+	  "title": "COMVERGES",
+	  "registered": "Wednesday, July 8, 2015 9:07 PM"
+	}, {
+	  "id": 13,
+	  "thumbail": "http://placehold.it/110x107",
+	  "picture": "http://placehold.it/778x603",
+	  "title": "DIGITALUS",
+	  "registered": "Monday, May 25, 2015 7:38 AM"
+	}, {
+	  "id": 14,
+	  "thumbail": "http://placehold.it/121x162",
+	  "picture": "http://placehold.it/679x762",
+	  "title": "VALREDA",
+	  "registered": "Friday, July 10, 2015 10:40 PM"
+	}, {
+	  "id": 15,
+	  "thumbail": "http://placehold.it/140x177",
+	  "picture": "http://placehold.it/677x625",
+	  "title": "DOGTOWN",
+	  "registered": "Wednesday, April 23, 2014 7:00 AM"
+	}, {
+	  "id": 16,
+	  "thumbail": "http://placehold.it/151x170",
+	  "picture": "http://placehold.it/740x782",
+	  "title": "COMDOM",
+	  "registered": "Wednesday, August 27, 2014 8:02 AM"
+	}, {
+	  "id": 17,
+	  "thumbail": "http://placehold.it/197x191",
+	  "picture": "http://placehold.it/646x746",
+	  "title": "RODEOMAD",
+	  "registered": "Wednesday, October 29, 2014 12:42 PM"
+	}, {
+	  "id": 18,
+	  "thumbail": "http://placehold.it/127x105",
+	  "picture": "http://placehold.it/750x604",
+	  "title": "DECRATEX",
+	  "registered": "Sunday, September 6, 2015 6:18 PM"
+	}, {
+	  "id": 19,
+	  "thumbail": "http://placehold.it/147x107",
+	  "picture": "http://placehold.it/615x644",
+	  "title": "NORSUP",
+	  "registered": "Monday, April 7, 2014 8:54 AM"
+	}, {
+	  "id": 20,
+	  "thumbail": "http://placehold.it/168x109",
+	  "picture": "http://placehold.it/660x617",
+	  "title": "KANGLE",
+	  "registered": "Thursday, October 1, 2015 11:45 AM"
+	}, {
+	  "id": 21,
+	  "thumbail": "http://placehold.it/166x143",
+	  "picture": "http://placehold.it/648x681",
+	  "title": "VIOCULAR",
+	  "registered": "Thursday, August 28, 2014 12:56 AM"
+	}, {
+	  "id": 22,
+	  "thumbail": "http://placehold.it/108x113",
+	  "picture": "http://placehold.it/779x685",
+	  "title": "ORBALIX",
+	  "registered": "Wednesday, July 1, 2015 12:46 AM"
+	}, {
+	  "id": 23,
+	  "thumbail": "http://placehold.it/191x150",
+	  "picture": "http://placehold.it/692x640",
+	  "title": "CYTRAK",
+	  "registered": "Tuesday, April 8, 2014 8:24 AM"
+	}, {
+	  "id": 24,
+	  "thumbail": "http://placehold.it/194x139",
+	  "picture": "http://placehold.it/690x683",
+	  "title": "ROBOID",
+	  "registered": "Thursday, July 3, 2014 7:00 PM"
+	}];
+
+/***/ },
+/* 168 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = __webpack_require__(169);
+
+/***/ },
+/* 169 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20821,21 +21379,21 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _innerSlider = __webpack_require__(167);
+	var _innerSlider = __webpack_require__(170);
 
-	var _objectAssign = __webpack_require__(171);
+	var _objectAssign = __webpack_require__(174);
 
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 
-	var _json2mq = __webpack_require__(179);
+	var _json2mq = __webpack_require__(182);
 
 	var _json2mq2 = _interopRequireDefault(_json2mq);
 
-	var _reactResponsiveMixin = __webpack_require__(181);
+	var _reactResponsiveMixin = __webpack_require__(184);
 
 	var _reactResponsiveMixin2 = _interopRequireDefault(_reactResponsiveMixin);
 
-	var _defaultProps = __webpack_require__(175);
+	var _defaultProps = __webpack_require__(178);
 
 	var _defaultProps2 = _interopRequireDefault(_defaultProps);
 
@@ -20904,7 +21462,7 @@
 	module.exports = Slider;
 
 /***/ },
-/* 167 */
+/* 170 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20931,19 +21489,19 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _mixinsEventHandlers = __webpack_require__(168);
+	var _mixinsEventHandlers = __webpack_require__(171);
 
 	var _mixinsEventHandlers2 = _interopRequireDefault(_mixinsEventHandlers);
 
-	var _mixinsHelpers = __webpack_require__(172);
+	var _mixinsHelpers = __webpack_require__(175);
 
 	var _mixinsHelpers2 = _interopRequireDefault(_mixinsHelpers);
 
-	var _initialState = __webpack_require__(174);
+	var _initialState = __webpack_require__(177);
 
 	var _initialState2 = _interopRequireDefault(_initialState);
 
-	var _defaultProps = __webpack_require__(175);
+	var _defaultProps = __webpack_require__(178);
 
 	var _defaultProps2 = _interopRequireDefault(_defaultProps);
 
@@ -20951,11 +21509,11 @@
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
-	var _track = __webpack_require__(176);
+	var _track = __webpack_require__(179);
 
-	var _dots = __webpack_require__(177);
+	var _dots = __webpack_require__(180);
 
-	var _arrows = __webpack_require__(178);
+	var _arrows = __webpack_require__(181);
 
 	var InnerSlider = _react2['default'].createClass({
 	  displayName: 'InnerSlider',
@@ -21088,7 +21646,7 @@
 	exports.InnerSlider = InnerSlider;
 
 /***/ },
-/* 168 */
+/* 171 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21101,9 +21659,9 @@
 	  return obj && obj.__esModule ? obj : { 'default': obj };
 	}
 
-	var _trackHelper = __webpack_require__(169);
+	var _trackHelper = __webpack_require__(172);
 
-	var _objectAssign = __webpack_require__(171);
+	var _objectAssign = __webpack_require__(174);
 
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 
@@ -21257,7 +21815,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 169 */
+/* 172 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21270,7 +21828,7 @@
 	  return obj && obj.__esModule ? obj : { 'default': obj };
 	}
 
-	var _ReactDOM = __webpack_require__(170);
+	var _ReactDOM = __webpack_require__(173);
 
 	var _ReactDOM2 = _interopRequireDefault(_ReactDOM);
 
@@ -21386,7 +21944,7 @@
 	exports.getTrackLeft = getTrackLeft;
 
 /***/ },
-/* 170 */
+/* 173 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21413,7 +21971,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 171 */
+/* 174 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21444,7 +22002,7 @@
 	};
 
 /***/ },
-/* 172 */
+/* 175 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21461,17 +22019,17 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _ReactDOM = __webpack_require__(170);
+	var _ReactDOM = __webpack_require__(173);
 
 	var _ReactDOM2 = _interopRequireDefault(_ReactDOM);
 
-	var _reactLibReactTransitionEvents = __webpack_require__(173);
+	var _reactLibReactTransitionEvents = __webpack_require__(176);
 
 	var _reactLibReactTransitionEvents2 = _interopRequireDefault(_reactLibReactTransitionEvents);
 
-	var _trackHelper = __webpack_require__(169);
+	var _trackHelper = __webpack_require__(172);
 
-	var _objectAssign = __webpack_require__(171);
+	var _objectAssign = __webpack_require__(174);
 
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 
@@ -21736,7 +22294,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 173 */
+/* 176 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -21850,7 +22408,7 @@
 	module.exports = ReactTransitionEvents;
 
 /***/ },
-/* 174 */
+/* 177 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -21900,7 +22458,7 @@
 	module.exports = initialState;
 
 /***/ },
-/* 175 */
+/* 178 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21952,7 +22510,7 @@
 	module.exports = defaultProps;
 
 /***/ },
-/* 176 */
+/* 179 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21969,7 +22527,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _objectAssign = __webpack_require__(171);
+	var _objectAssign = __webpack_require__(174);
 
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 
@@ -22099,7 +22657,7 @@
 	exports.Track = Track;
 
 /***/ },
-/* 177 */
+/* 180 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22168,7 +22726,7 @@
 	exports.Dots = Dots;
 
 /***/ },
-/* 178 */
+/* 181 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22287,12 +22845,12 @@
 	exports.NextArrow = NextArrow;
 
 /***/ },
-/* 179 */
+/* 182 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var camel2hyphen = __webpack_require__(180);
+	var camel2hyphen = __webpack_require__(183);
 
 	var isDimension = function isDimension(feature) {
 	  var re = /[height|width]$/;
@@ -22345,7 +22903,7 @@
 	module.exports = json2mq;
 
 /***/ },
-/* 180 */
+/* 183 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22359,14 +22917,14 @@
 	module.exports = camel2hyphen;
 
 /***/ },
-/* 181 */
+/* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var canUseDOM = __webpack_require__(182);
-	var enquire = canUseDOM && __webpack_require__(183);
-	var json2mq = __webpack_require__(179);
+	var canUseDOM = __webpack_require__(185);
+	var enquire = canUseDOM && __webpack_require__(186);
+	var json2mq = __webpack_require__(182);
 
 	var ResponsiveMixin = {
 	  media: function media(query, handler) {
@@ -22396,7 +22954,7 @@
 	module.exports = ResponsiveMixin;
 
 /***/ },
-/* 182 */
+/* 185 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22406,7 +22964,7 @@
 	module.exports = canUseDOM;
 
 /***/ },
-/* 183 */
+/* 186 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
@@ -22701,534 +23259,6 @@
 
 	    return new MediaQueryDispatch();
 	});
-
-/***/ },
-/* 184 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _searchableimage = __webpack_require__(185);
-
-	var _searchableimage2 = _interopRequireDefault(_searchableimage);
-
-	var _editableDiv = __webpack_require__(164);
-
-	var _editableDiv2 = _interopRequireDefault(_editableDiv);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var AppEditor = (function (_React$Component) {
-	    _inherits(AppEditor, _React$Component);
-
-	    function AppEditor(props) {
-	        _classCallCheck(this, AppEditor);
-
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AppEditor).call(this, props));
-
-	        _this.state = { image: '' };
-	        return _this;
-	    }
-
-	    _createClass(AppEditor, [{
-	        key: 'changeImage',
-	        value: function changeImage(image) {
-
-	            this.setState({ image: image });
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'row' },
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'col-sm-3' },
-	                    _react2.default.createElement(_searchableimage2.default, { data: this.props.data, onChange: this.changeImage.bind(this) })
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'col-sm-9' },
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'edit-div' },
-	                        _react2.default.createElement(_editableDiv2.default, { image: this.state.image })
-	                    )
-	                )
-	            );
-	        }
-	    }]);
-
-	    return AppEditor;
-	})(_react2.default.Component);
-
-	exports.default = AppEditor;
-
-/***/ },
-/* 185 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactDropzone = __webpack_require__(160);
-
-	var _reactDropzone2 = _interopRequireDefault(_reactDropzone);
-
-	var _classnames = __webpack_require__(162);
-
-	var _classnames2 = _interopRequireDefault(_classnames);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var SearchableImage = (function (_React$Component) {
-	    _inherits(SearchableImage, _React$Component);
-
-	    function SearchableImage() {
-	        _classCallCheck(this, SearchableImage);
-
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SearchableImage).call(this));
-
-	        _this.state = { filterText: '' };
-	        return _this;
-	    }
-
-	    _createClass(SearchableImage, [{
-	        key: 'handleUserInput',
-	        value: function handleUserInput(filterText) {
-	            this.setState({ filterText: filterText });
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'upload-div' },
-	                _react2.default.createElement(SearchBar, { filterText: this.state.filterText,
-	                    onUserInput: this.handleUserInput.bind(this)
-	                }),
-	                _react2.default.createElement(UploadDiv, { data: this.props.data,
-	                    filterText: this.state.filterText, onChange: this.props.onChange.bind(this)
-	                })
-	            );
-	        }
-	    }]);
-
-	    return SearchableImage;
-	})(_react2.default.Component);
-
-	exports.default = SearchableImage;
-
-	var SearchBar = (function (_React$Component2) {
-	    _inherits(SearchBar, _React$Component2);
-
-	    function SearchBar() {
-	        _classCallCheck(this, SearchBar);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(SearchBar).apply(this, arguments));
-	    }
-
-	    _createClass(SearchBar, [{
-	        key: 'handleChange',
-	        value: function handleChange() {
-	            this.props.onUserInput(this.refs.filter.value);
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                'form',
-	                { className: 'form' },
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'form-group' },
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'input-group' },
-	                        _react2.default.createElement('input', { type: 'text', className: 'form-control', placeholder: 'Search',
-	                            placeholder: 'Search your pictures...',
-	                            ref: 'filter',
-	                            value: this.props.filterText,
-	                            onChange: this.handleChange.bind(this)
-	                        }),
-	                        _react2.default.createElement(
-	                            'div',
-	                            { className: 'input-group-addon' },
-	                            _react2.default.createElement('i', { className: 'mdi mdi-magnify' })
-	                        )
-	                    )
-	                )
-	            );
-	        }
-	    }]);
-
-	    return SearchBar;
-	})(_react2.default.Component);
-
-	var UploadDiv = (function (_React$Component3) {
-	    _inherits(UploadDiv, _React$Component3);
-
-	    function UploadDiv() {
-	        _classCallCheck(this, UploadDiv);
-
-	        var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(UploadDiv).call(this));
-
-	        _this3.state = { activeKey: 'default' };
-	        return _this3;
-	    }
-
-	    _createClass(UploadDiv, [{
-	        key: 'changeActiveKey',
-	        value: function changeActiveKey(key, image) {
-	            this.setState({ activeKey: key });
-	            this.props.onChange(image);
-	        }
-	    }, {
-	        key: 'onDrop',
-	        value: function onDrop(files) {
-	            console.log("files", files);
-	        }
-	    }, {
-	        key: 'onOpenClick',
-	        value: function onOpenClick() {
-	            this.refs.dropzone.open();
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var sections = [];
-	            var data = this.props.data;
-	            if (data.length < 1) {
-	                return _react2.default.createElement(
-	                    'div',
-	                    { className: 'upload-img' },
-	                    ' ',
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'uploaded' },
-	                        ' ',
-	                        _react2.default.createElement(
-	                            'h5',
-	                            null,
-	                            ' You dont have any images yet '
-	                        )
-	                    ),
-	                    _react2.default.createElement(
-	                        'button',
-	                        { className: 'btn btn-primary' },
-	                        _react2.default.createElement('i', { className: 'mdi mdi-upload' }),
-	                        ' Upload '
-	                    )
-	                );
-	            }
-	            data.forEach((function (image, i) {
-	                if (image.title.toLowerCase().indexOf(this.props.filterText.toLowerCase()) == -1) return;
-
-	                sections.push(_react2.default.createElement(SectionDiv, { key: i, getKey: i, image: image, activeKey: this.state.activeKey,
-	                    changeKey: this.changeActiveKey.bind(this) }));
-	            }).bind(this));
-	            if (sections.length < 1) {
-	                return _react2.default.createElement(
-	                    'div',
-	                    { className: 'upload-img' },
-	                    ' ',
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'uploaded' },
-	                        ' ',
-	                        _react2.default.createElement(
-	                            'h5',
-	                            null,
-	                            ' No Images matches your criteria '
-	                        )
-	                    ),
-	                    _react2.default.createElement(
-	                        'button',
-	                        { className: 'btn btn-primary' },
-	                        _react2.default.createElement('i', { className: 'mdi mdi-upload' }),
-	                        _react2.default.createElement(
-	                            'p',
-	                            null,
-	                            ' Upload'
-	                        ),
-	                        ' '
-	                    )
-	                );
-	            } else {
-	                return _react2.default.createElement(
-	                    'div',
-	                    { className: 'upload-img' },
-	                    sections,
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'dropzone text-center' },
-	                        _react2.default.createElement(
-	                            _reactDropzone2.default,
-	                            { ref: 'dropzone', className: 'drop', onDrop: this.onDrop },
-	                            _react2.default.createElement(
-	                                'h5',
-	                                null,
-	                                'Click or drop your images here'
-	                            )
-	                        )
-	                    )
-	                );
-	            }
-	        }
-	    }]);
-
-	    return UploadDiv;
-	})(_react2.default.Component);
-
-	var SectionDiv = (function (_React$Component4) {
-	    _inherits(SectionDiv, _React$Component4);
-
-	    function SectionDiv() {
-	        _classCallCheck(this, SectionDiv);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(SectionDiv).apply(this, arguments));
-	    }
-
-	    _createClass(SectionDiv, [{
-	        key: 'handleChange',
-	        value: function handleChange() {
-	            this.props.changeKey(this.props.getKey, this.props.image);
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var activeUpload = (0, _classnames2.default)({
-	                'uploaded': true,
-	                'active': this.props.getKey == this.props.activeKey
-	            });
-	            return _react2.default.createElement(
-	                'div',
-	                { className: activeUpload, onClick: this.handleChange.bind(this) },
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'media' },
-	                    _react2.default.createElement(
-	                        'a',
-	                        { className: 'media-left', href: '#' },
-	                        _react2.default.createElement('img', { className: 'media-object', src: this.props.image.thumbail, alt: 'Generic placeholder image' })
-	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'media-body' },
-	                        _react2.default.createElement(
-	                            'p',
-	                            { className: 'media-heading' },
-	                            this.props.image.title,
-	                            _react2.default.createElement('br', null),
-	                            _react2.default.createElement(
-	                                'small',
-	                                null,
-	                                ' Uploaded on ',
-	                                this.props.image.registered
-	                            )
-	                        )
-	                    )
-	                )
-	            );
-	        }
-	    }]);
-
-	    return SectionDiv;
-	})(_react2.default.Component);
-
-/***/ },
-/* 186 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var data = exports.data = [{
-	  "id": 0,
-	  "thumbail": "http://placehold.it/149x167",
-	  "picture": "http://placehold.it/737x652",
-	  "title": "LYRICHORD",
-	  "registered": "Friday, December 18, 2015 12:16 AM"
-	}, {
-	  "id": 1,
-	  "thumbail": "http://placehold.it/111x107",
-	  "picture": "http://placehold.it/601x668",
-	  "title": "INCUBUS",
-	  "registered": "Friday, November 21, 2014 2:05 AM"
-	}, {
-	  "id": 2,
-	  "thumbail": "http://placehold.it/133x132",
-	  "picture": "http://placehold.it/709x703",
-	  "title": "NORALI",
-	  "registered": "Wednesday, September 30, 2015 12:20 AM"
-	}, {
-	  "id": 3,
-	  "thumbail": "http://placehold.it/127x163",
-	  "picture": "http://placehold.it/642x694",
-	  "title": "PRINTSPAN",
-	  "registered": "Tuesday, July 1, 2014 10:39 PM"
-	}, {
-	  "id": 4,
-	  "thumbail": "http://placehold.it/107x183",
-	  "picture": "http://placehold.it/758x710",
-	  "title": "MACRONAUT",
-	  "registered": "Sunday, December 13, 2015 3:24 PM"
-	}, {
-	  "id": 5,
-	  "thumbail": "http://placehold.it/193x173",
-	  "picture": "http://placehold.it/650x763",
-	  "title": "ENDIPINE",
-	  "registered": "Saturday, November 7, 2015 12:19 AM"
-	}, {
-	  "id": 6,
-	  "thumbail": "http://placehold.it/139x128",
-	  "picture": "http://placehold.it/726x794",
-	  "title": "EARGO",
-	  "registered": "Thursday, August 21, 2014 1:46 PM"
-	}, {
-	  "id": 7,
-	  "thumbail": "http://placehold.it/108x179",
-	  "picture": "http://placehold.it/747x685",
-	  "title": "LIMAGE",
-	  "registered": "Saturday, February 21, 2015 9:50 PM"
-	}, {
-	  "id": 8,
-	  "thumbail": "http://placehold.it/153x173",
-	  "picture": "http://placehold.it/743x698",
-	  "title": "FOSSIEL",
-	  "registered": "Friday, October 9, 2015 12:16 PM"
-	}, {
-	  "id": 9,
-	  "thumbail": "http://placehold.it/199x158",
-	  "picture": "http://placehold.it/692x717",
-	  "title": "BOINK",
-	  "registered": "Tuesday, May 26, 2015 12:52 PM"
-	}, {
-	  "id": 10,
-	  "thumbail": "http://placehold.it/139x109",
-	  "picture": "http://placehold.it/698x634",
-	  "title": "PYRAMAX",
-	  "registered": "Wednesday, May 27, 2015 9:12 PM"
-	}, {
-	  "id": 11,
-	  "thumbail": "http://placehold.it/188x172",
-	  "picture": "http://placehold.it/711x601",
-	  "title": "UXMOX",
-	  "registered": "Wednesday, December 3, 2014 7:31 PM"
-	}, {
-	  "id": 12,
-	  "thumbail": "http://placehold.it/187x166",
-	  "picture": "http://placehold.it/736x703",
-	  "title": "COMVERGES",
-	  "registered": "Wednesday, July 8, 2015 9:07 PM"
-	}, {
-	  "id": 13,
-	  "thumbail": "http://placehold.it/110x107",
-	  "picture": "http://placehold.it/778x603",
-	  "title": "DIGITALUS",
-	  "registered": "Monday, May 25, 2015 7:38 AM"
-	}, {
-	  "id": 14,
-	  "thumbail": "http://placehold.it/121x162",
-	  "picture": "http://placehold.it/679x762",
-	  "title": "VALREDA",
-	  "registered": "Friday, July 10, 2015 10:40 PM"
-	}, {
-	  "id": 15,
-	  "thumbail": "http://placehold.it/140x177",
-	  "picture": "http://placehold.it/677x625",
-	  "title": "DOGTOWN",
-	  "registered": "Wednesday, April 23, 2014 7:00 AM"
-	}, {
-	  "id": 16,
-	  "thumbail": "http://placehold.it/151x170",
-	  "picture": "http://placehold.it/740x782",
-	  "title": "COMDOM",
-	  "registered": "Wednesday, August 27, 2014 8:02 AM"
-	}, {
-	  "id": 17,
-	  "thumbail": "http://placehold.it/197x191",
-	  "picture": "http://placehold.it/646x746",
-	  "title": "RODEOMAD",
-	  "registered": "Wednesday, October 29, 2014 12:42 PM"
-	}, {
-	  "id": 18,
-	  "thumbail": "http://placehold.it/127x105",
-	  "picture": "http://placehold.it/750x604",
-	  "title": "DECRATEX",
-	  "registered": "Sunday, September 6, 2015 6:18 PM"
-	}, {
-	  "id": 19,
-	  "thumbail": "http://placehold.it/147x107",
-	  "picture": "http://placehold.it/615x644",
-	  "title": "NORSUP",
-	  "registered": "Monday, April 7, 2014 8:54 AM"
-	}, {
-	  "id": 20,
-	  "thumbail": "http://placehold.it/168x109",
-	  "picture": "http://placehold.it/660x617",
-	  "title": "KANGLE",
-	  "registered": "Thursday, October 1, 2015 11:45 AM"
-	}, {
-	  "id": 21,
-	  "thumbail": "http://placehold.it/166x143",
-	  "picture": "http://placehold.it/648x681",
-	  "title": "VIOCULAR",
-	  "registered": "Thursday, August 28, 2014 12:56 AM"
-	}, {
-	  "id": 22,
-	  "thumbail": "http://placehold.it/108x113",
-	  "picture": "http://placehold.it/779x685",
-	  "title": "ORBALIX",
-	  "registered": "Wednesday, July 1, 2015 12:46 AM"
-	}, {
-	  "id": 23,
-	  "thumbail": "http://placehold.it/191x150",
-	  "picture": "http://placehold.it/692x640",
-	  "title": "CYTRAK",
-	  "registered": "Tuesday, April 8, 2014 8:24 AM"
-	}, {
-	  "id": 24,
-	  "thumbail": "http://placehold.it/194x139",
-	  "picture": "http://placehold.it/690x683",
-	  "title": "ROBOID",
-	  "registered": "Thursday, July 3, 2014 7:00 PM"
-	}];
 
 /***/ }
 /******/ ]);
