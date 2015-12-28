@@ -20664,12 +20664,17 @@
 	        return _this2;
 	    }
 
+	    // componentDidUpdate(prevProps, prevState) {
+	    //     if(prevProps.image !== this.props.image){
+	    //             this.state = {editMode: !prevState.editMode};
+	    //         }
+
+	    //     else{
+	    //         this.state = {editMode: false};
+	    //     }
+	    // }
+
 	    _createClass(ImageDiv, [{
-	        key: 'componentDidUpdate',
-	        value: function componentDidUpdate(prevProps, prevState) {
-	            this.state = { editMode: false };
-	        }
-	    }, {
 	        key: 'toggleEdit',
 	        value: function toggleEdit() {
 	            this.setState({ editMode: !this.state.editMode });
@@ -20773,7 +20778,6 @@
 	    _createClass(FilterDiv, [{
 	        key: 'activateFilter',
 	        value: function activateFilter(filter) {
-	            console.log(filter, "filters");
 	            var image = this.props.image;
 	            image['filter'] = filter;
 	            this.setState({ activeFilter: filter });

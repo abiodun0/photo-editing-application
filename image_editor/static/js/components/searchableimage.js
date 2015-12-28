@@ -131,7 +131,6 @@ class SectionDiv extends React.Component{
 
         this.props.changeKey(this.props.getKey, this.props.image);
     }
-
     render(){
         var activeUpload = classNames({
                 'uploaded': true,

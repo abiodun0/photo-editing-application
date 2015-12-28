@@ -33,11 +33,15 @@ class ImageDiv extends React.Component{
         this.state = {editMode: false};
     }
 
-    componentDidUpdate(prevProps, prevState) {
-        this.state = {editMode: false};
+    // componentDidUpdate(prevProps, prevState) {
+    //     if(prevProps.image !== this.props.image){
+    //             this.state = {editMode: !prevState.editMode};
+    //         }
           
-    }
-
+    //     else{
+    //         this.state = {editMode: false};
+    //     }
+    // }
 
     toggleEdit(){
         this.setState({editMode: !this.state.editMode});
@@ -87,7 +91,6 @@ class FilterDiv extends React.Component{
         this.state = {activeFilter: ''};
     }
     activateFilter(filter){
-        console.log(filter, "filters")
         let image = this.props.image
         image['filter'] = filter
         this.setState({activeFilter: filter});
