@@ -1,7 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import SearchableTable from './components/SearchableTable';
+import SearchableImage from './components/SearchableImage';
+import EditableDiv from './components/editableDiv';
+import AppEditor from './components/appEditor'
 import {data} from './components/data';
-// Filterable CheatSheet Component
-ReactDOM.render(<SearchableTable data={data}/>, document.getElementById('searchableTable'));
-//require('./modules.js')
+
+
+ReactDOM.render(<AppEditor data={data} />, document.getElementById('appeditor'))
+
+$(document).ready(function(e){
+    console.log("ready");
+});
+//
+
+

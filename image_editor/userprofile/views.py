@@ -42,18 +42,20 @@ class DashBoardView(LoginRequiredMixin, TemplateView):
 
 
 class LoginView(IndexView):
+    @staticmethod
+    def authenticate(user,request):
+        user.backend = 'django.contrib.auth.backends.ModelBackend'
+        login(request, user)
+        return HttpResponse("success", content_type='text/plain')
 
     def post(self, request, *args, **kwargs):
-
         if self.request.is_ajax():
             try:
                 userprofile = UserProfile.objects.get(
                     social_id=request.POST['id'])
                 user = userprofile.get_user()
-                print user
-                user.backend = 'django.contrib.auth.backends.ModelBackend'
-                login(request, user)
-                return HttpResponse("success", content_type='text/plain')
+                return self.authenticate(user,request)
+                
             except UserProfile.DoesNotExist:
                 user = User(
                     first_name=request.POST['first_name'],
@@ -64,6 +66,6 @@ class LoginView(IndexView):
                 user.save()
                 profile = user.profile
                 profile.social_id = request.POST['id']
+                profile.image = "https://graph.facebook.com/" + request.POST['id'] + "/picture?type=small"
                 profile.save()
-                login(request, user)
-                return HttpResponse("success", content_type='text/plain')
+                return self.authenticate(user,request)
