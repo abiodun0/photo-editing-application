@@ -19,7 +19,7 @@ export default class EditableDiv extends React.Component{
     render(){
         return(
             <div>
-            <ImageDiv image={this.state.image} />
+            <ImageDiv image={this.state.image} editImage={this.props.editImage.bind(this)} deleteImage={this.props.deleteImage}/>
             <FilterDiv image={this.state.image} changeFilter={this.applyFilter.bind(this)}/>
             </div>
             );
@@ -30,22 +30,38 @@ export default class EditableDiv extends React.Component{
 class ImageDiv extends React.Component{
     constructor(){
         super()
-        this.state = {editMode: false};
+
+    }
+    componentWillMount() {
+                this.setState({editMode: false,
+            image:''});  
     }
 
-    // componentDidUpdate(prevProps, prevState) {
-    //     if(prevProps.image !== this.props.image){
-    //             this.state = {editMode: !prevState.editMode};
-    //         }
-          
-    //     else{
-    //         this.state = {editMode: false};
-    //     }
-    // }
+    componentWillReceiveProps(nextProps) {
+        this.setState({image: nextProps.image,
+            editMode:false});
+    }
 
     toggleEdit(){
         this.setState({editMode: !this.state.editMode});
+    }
+    changeTitle(e){
+        e.preventDefault();
+        this.setState({});
+        this.state.image.title = e.target.value;
+    }
 
+    saveTitle(e){
+        e.preventDefault();
+        console.log("enter pressed");
+        this.state.image.title = this.refs.title.value;
+        this.toggleEdit();
+        this.props.editImage(this.state.image);
+    }
+    deleteImage(e){
+        e.preventDefault();
+        if(!confirm("are you sure you want to delete this image")) return; 
+        this.props.deleteImage(this.state.image);
     }
 
 
@@ -58,10 +74,10 @@ class ImageDiv extends React.Component{
             <div>
             <div className="card text-xs-center">
                 <blockquote className="card-blockquote card-text">
-                    <form className={`${!this.state.editMode ? 'hide':''} form-inline`}>
+                    <form className={`${!this.state.editMode ? 'hide':''} form-inline`} action="#" onSubmit={this.saveTitle.bind(this)}>
                       <div className="form-group">
                         <div className="input-group">
-                          <input type="text" className="form-control" value={this.props.image.title}/>
+                          <input type="text" ref="title"  className="form-control" value={this.state.image.title} onChange={this.changeTitle.bind(this)}/>
                           </div>
                         </div>
                       <button type="submit" className="btn btn-default">Save</button>
@@ -74,7 +90,7 @@ class ImageDiv extends React.Component{
             </div>
             <div className="edit-buttons">
             <button className={buttonClass} onClick={this.toggleEdit.bind(this)}><span className="mdi mdi-pencil"></span></button>
-            <button className={buttonClass}><span className="mdi mdi-delete"></span></button>
+            <button className={buttonClass} onClick={this.deleteImage.bind(this)}><span className="mdi mdi-delete"></span></button>
 
             <button className={`${buttonClass} pull-sm-right`}><span className="mdi mdi-share-variant"></span></button>
             <button className={`${buttonClass} pull-sm-right`}><span className="mdi mdi-download"></span></button></div>

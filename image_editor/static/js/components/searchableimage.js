@@ -22,7 +22,7 @@ export default class SearchableImage extends React.Component{
                 />
 
                 <UploadDiv data={this.props.data}
-                filterText={this.state.filterText} onChange={this.props.onChange}
+                filterText={this.state.filterText} changeImage={this.props.changeImage}
                 />
             </div>
 
@@ -30,9 +30,7 @@ export default class SearchableImage extends React.Component{
     }
 }
 class SearchBar extends React.Component{
-    testDiv(){
-        console.log("test")
-    }
+
 
     handleChange(){
             this.props.onUserInput(
@@ -50,7 +48,7 @@ class SearchBar extends React.Component{
                     placeholder="Search your pictures..." 
                     ref="filter"
                     value= {this.props.filterText}
-                    onChange= {this.handleChange.bind(this)} onClick={this.testDiv}
+                    onChange= {this.handleChange.bind(this)}
                     />
                   <div className="input-group-addon"><i className="mdi mdi-magnify"></i></div>
                 </div>
@@ -66,9 +64,15 @@ class UploadDiv extends React.Component{
 
         this.state = {activeKey:'default'};
     }
+    shouldComponentUpdate(nextProps, nextState) {
+        console.log(nextProps,"updates");
+        console.log(nextState, "states");
+        return true;
+          
+    }
     changeActiveKey(key,image){
         this.setState({activeKey: key});
-        this.props.onChange(image);
+        this.props.changeImage(image);
     }
     onDrop(files) {
       console.log("files", files);
@@ -84,9 +88,11 @@ class UploadDiv extends React.Component{
             return(
                 <div className="upload-img"> <div className="uploaded"> 
                 <h5> You dont have any images yet </h5></div>
-                <button className="btn btn-primary">
-                <i className="mdi mdi-upload"></i> Upload 
-                </button>
+                <div className="dropzone text-center">
+                <Dropzone ref="dropzone" className="drop" onDrop={this.onDrop}>
+                    <h5>Click or drop your images here</h5>
+                </Dropzone>
+                </div>
                 </div>
                 );
         }
@@ -94,14 +100,18 @@ class UploadDiv extends React.Component{
             if(image.title.toLowerCase().indexOf(this.props.filterText.toLowerCase()) == -1) return;
 
             sections.push(
-                <SectionDiv key={i} getKey={i} image={image} activeKey={this.state.activeKey} 
+                <SectionDiv key={i} getKey={image.id} image={image} activeKey={this.state.activeKey} 
                 changeKey={this.changeActiveKey.bind(this)} />);
         }.bind(this));
         if(sections.length < 1){
         return(
           
             <div className="upload-img"> <div className="uploaded"> <h5> No Images matches your criteria </h5></div>
-            <button className="btn btn-primary"><i className="mdi mdi-upload"></i><p> Upload</p> </button>
+            <div className="dropzone text-center">
+            <Dropzone ref="dropzone" className="drop" onDrop={this.onDrop}>
+                    <h5>Click or drop your images here</h5>
+            </Dropzone>
+            </div>
             </div>
 
             

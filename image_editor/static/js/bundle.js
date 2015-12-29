@@ -66,11 +66,9 @@
 
 	var _appEditor2 = _interopRequireDefault(_appEditor);
 
-	var _data = __webpack_require__(167);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	_reactDom2.default.render(_react2.default.createElement(_appEditor2.default, { data: _data.data }), document.getElementById('appeditor'));
+	_reactDom2.default.render(_react2.default.createElement(_appEditor2.default, null), document.getElementById('appeditor'));
 
 	$(document).ready(function (e) {
 	    console.log("ready");
@@ -19776,7 +19774,7 @@
 	                    onUserInput: this.handleUserInput.bind(this)
 	                }),
 	                _react2.default.createElement(UploadDiv, { data: this.props.data,
-	                    filterText: this.state.filterText, onChange: this.props.onChange
+	                    filterText: this.state.filterText, changeImage: this.props.changeImage
 	                })
 	            );
 	        }
@@ -19797,11 +19795,6 @@
 	    }
 
 	    _createClass(SearchBar, [{
-	        key: 'testDiv',
-	        value: function testDiv() {
-	            console.log("test");
-	        }
-	    }, {
 	        key: 'handleChange',
 	        value: function handleChange() {
 	            this.props.onUserInput(this.refs.filter.value);
@@ -19822,7 +19815,7 @@
 	                            placeholder: 'Search your pictures...',
 	                            ref: 'filter',
 	                            value: this.props.filterText,
-	                            onChange: this.handleChange.bind(this), onClick: this.testDiv
+	                            onChange: this.handleChange.bind(this)
 	                        }),
 	                        _react2.default.createElement(
 	                            'div',
@@ -19851,10 +19844,17 @@
 	    }
 
 	    _createClass(UploadDiv, [{
+	        key: 'shouldComponentUpdate',
+	        value: function shouldComponentUpdate(nextProps, nextState) {
+	            console.log(nextProps, "updates");
+	            console.log(nextState, "states");
+	            return true;
+	        }
+	    }, {
 	        key: 'changeActiveKey',
 	        value: function changeActiveKey(key, image) {
 	            this.setState({ activeKey: key });
-	            this.props.onChange(image);
+	            this.props.changeImage(image);
 	        }
 	    }, {
 	        key: 'onDrop',
@@ -19886,17 +19886,24 @@
 	                        )
 	                    ),
 	                    _react2.default.createElement(
-	                        'button',
-	                        { className: 'btn btn-primary' },
-	                        _react2.default.createElement('i', { className: 'mdi mdi-upload' }),
-	                        ' Upload'
+	                        'div',
+	                        { className: 'dropzone text-center' },
+	                        _react2.default.createElement(
+	                            _reactDropzone2.default,
+	                            { ref: 'dropzone', className: 'drop', onDrop: this.onDrop },
+	                            _react2.default.createElement(
+	                                'h5',
+	                                null,
+	                                'Click or drop your images here'
+	                            )
+	                        )
 	                    )
 	                );
 	            }
 	            data.forEach((function (image, i) {
 	                if (image.title.toLowerCase().indexOf(this.props.filterText.toLowerCase()) == -1) return;
 
-	                sections.push(_react2.default.createElement(SectionDiv, { key: i, getKey: i, image: image, activeKey: this.state.activeKey,
+	                sections.push(_react2.default.createElement(SectionDiv, { key: i, getKey: image.id, image: image, activeKey: this.state.activeKey,
 	                    changeKey: this.changeActiveKey.bind(this) }));
 	            }).bind(this));
 	            if (sections.length < 1) {
@@ -19915,15 +19922,17 @@
 	                        )
 	                    ),
 	                    _react2.default.createElement(
-	                        'button',
-	                        { className: 'btn btn-primary' },
-	                        _react2.default.createElement('i', { className: 'mdi mdi-upload' }),
+	                        'div',
+	                        { className: 'dropzone text-center' },
 	                        _react2.default.createElement(
-	                            'p',
-	                            null,
-	                            ' Upload'
-	                        ),
-	                        ' '
+	                            _reactDropzone2.default,
+	                            { ref: 'dropzone', className: 'drop', onDrop: this.onDrop },
+	                            _react2.default.createElement(
+	                                'h5',
+	                                null,
+	                                'Click or drop your images here'
+	                            )
+	                        )
 	                    )
 	                );
 	            } else {
@@ -20641,7 +20650,7 @@
 	            return _react2.default.createElement(
 	                'div',
 	                null,
-	                _react2.default.createElement(ImageDiv, { image: this.state.image }),
+	                _react2.default.createElement(ImageDiv, { image: this.state.image, editImage: this.props.editImage.bind(this), deleteImage: this.props.deleteImage }),
 	                _react2.default.createElement(FilterDiv, { image: this.state.image, changeFilter: this.applyFilter.bind(this) })
 	            );
 	        }
@@ -20658,26 +20667,48 @@
 	    function ImageDiv() {
 	        _classCallCheck(this, ImageDiv);
 
-	        var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(ImageDiv).call(this));
-
-	        _this2.state = { editMode: false };
-	        return _this2;
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(ImageDiv).call(this));
 	    }
 
-	    // componentDidUpdate(prevProps, prevState) {
-	    //     if(prevProps.image !== this.props.image){
-	    //             this.state = {editMode: !prevState.editMode};
-	    //         }
-
-	    //     else{
-	    //         this.state = {editMode: false};
-	    //     }
-	    // }
-
 	    _createClass(ImageDiv, [{
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            this.setState({ editMode: false,
+	                image: '' });
+	        }
+	    }, {
+	        key: 'componentWillReceiveProps',
+	        value: function componentWillReceiveProps(nextProps) {
+	            this.setState({ image: nextProps.image,
+	                editMode: false });
+	        }
+	    }, {
 	        key: 'toggleEdit',
 	        value: function toggleEdit() {
 	            this.setState({ editMode: !this.state.editMode });
+	        }
+	    }, {
+	        key: 'changeTitle',
+	        value: function changeTitle(e) {
+	            e.preventDefault();
+	            this.setState({});
+	            this.state.image.title = e.target.value;
+	        }
+	    }, {
+	        key: 'saveTitle',
+	        value: function saveTitle(e) {
+	            e.preventDefault();
+	            console.log("enter pressed");
+	            this.state.image.title = this.refs.title.value;
+	            this.toggleEdit();
+	            this.props.editImage(this.state.image);
+	        }
+	    }, {
+	        key: 'deleteImage',
+	        value: function deleteImage(e) {
+	            e.preventDefault();
+	            if (!confirm("are you sure you want to delete this image")) return;
+	            this.props.deleteImage(this.state.image);
 	        }
 	    }, {
 	        key: 'render',
@@ -20697,14 +20728,14 @@
 	                        { className: 'card-blockquote card-text' },
 	                        _react2.default.createElement(
 	                            'form',
-	                            { className: (!this.state.editMode ? 'hide' : '') + ' form-inline' },
+	                            { className: (!this.state.editMode ? 'hide' : '') + ' form-inline', action: '#', onSubmit: this.saveTitle.bind(this) },
 	                            _react2.default.createElement(
 	                                'div',
 	                                { className: 'form-group' },
 	                                _react2.default.createElement(
 	                                    'div',
 	                                    { className: 'input-group' },
-	                                    _react2.default.createElement('input', { type: 'text', className: 'form-control', value: this.props.image.title })
+	                                    _react2.default.createElement('input', { type: 'text', ref: 'title', className: 'form-control', value: this.state.image.title, onChange: this.changeTitle.bind(this) })
 	                                )
 	                            ),
 	                            _react2.default.createElement(
@@ -20737,7 +20768,7 @@
 	                    ),
 	                    _react2.default.createElement(
 	                        'button',
-	                        { className: buttonClass },
+	                        { className: buttonClass, onClick: this.deleteImage.bind(this) },
 	                        _react2.default.createElement('span', { className: 'mdi mdi-delete' })
 	                    ),
 	                    _react2.default.createElement(
@@ -20851,6 +20882,8 @@
 
 	var _editableDiv2 = _interopRequireDefault(_editableDiv);
 
+	var _data = __webpack_require__(167);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -20872,10 +20905,38 @@
 	    }
 
 	    _createClass(AppEditor, [{
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            this.setState({ data: _data.data });
+	        }
+	    }, {
 	        key: 'changeImage',
 	        value: function changeImage(image) {
 
 	            this.setState({ image: image });
+	        }
+	    }, {
+	        key: 'editImage',
+	        value: function editImage(image) {
+	            // var index = -1;
+	            // for(var i=0; i<this.state.data.length; i++){
+	            //     if(this.state.data[i].id == image.id){
+	            //         index = i;
+	            //         break;
+	            //     }
+	            // }
+	            // this.state.data[index] = image;
+	            console.log(this.state.data);
+	            this.forceUpdate();
+	        }
+	    }, {
+	        key: 'deleteImage',
+	        value: function deleteImage(image) {
+	            var index = this.state.data.indexOf(image);
+	            console.log(index);
+	            this.state.data.splice(index, 1);
+	            this.setState({ image: '' });
+	            this.forceUpdate();
 	        }
 	    }, {
 	        key: 'render',
@@ -20887,7 +20948,7 @@
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'col-sm-3' },
-	                    _react2.default.createElement(_searchableimage2.default, { data: this.props.data, onChange: this.changeImage.bind(this) })
+	                    _react2.default.createElement(_searchableimage2.default, { data: this.state.data, changeImage: this.changeImage.bind(this) })
 	                ),
 	                _react2.default.createElement(
 	                    'div',
@@ -20895,7 +20956,7 @@
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'edit-div' },
-	                        _react2.default.createElement(_editableDiv2.default, { image: this.state.image })
+	                        _react2.default.createElement(_editableDiv2.default, { image: this.state.image, editImage: this.editImage.bind(this), deleteImage: this.deleteImage.bind(this) })
 	                    )
 	                )
 	            );
@@ -20966,7 +21027,7 @@
 	                    onUserInput: this.handleUserInput.bind(this)
 	                }),
 	                _react2.default.createElement(UploadDiv, { data: this.props.data,
-	                    filterText: this.state.filterText, onChange: this.props.onChange
+	                    filterText: this.state.filterText, changeImage: this.props.changeImage
 	                })
 	            );
 	        }
@@ -20987,11 +21048,6 @@
 	    }
 
 	    _createClass(SearchBar, [{
-	        key: 'testDiv',
-	        value: function testDiv() {
-	            console.log("test");
-	        }
-	    }, {
 	        key: 'handleChange',
 	        value: function handleChange() {
 	            this.props.onUserInput(this.refs.filter.value);
@@ -21012,7 +21068,7 @@
 	                            placeholder: 'Search your pictures...',
 	                            ref: 'filter',
 	                            value: this.props.filterText,
-	                            onChange: this.handleChange.bind(this), onClick: this.testDiv
+	                            onChange: this.handleChange.bind(this)
 	                        }),
 	                        _react2.default.createElement(
 	                            'div',
@@ -21041,10 +21097,17 @@
 	    }
 
 	    _createClass(UploadDiv, [{
+	        key: 'shouldComponentUpdate',
+	        value: function shouldComponentUpdate(nextProps, nextState) {
+	            console.log(nextProps, "updates");
+	            console.log(nextState, "states");
+	            return true;
+	        }
+	    }, {
 	        key: 'changeActiveKey',
 	        value: function changeActiveKey(key, image) {
 	            this.setState({ activeKey: key });
-	            this.props.onChange(image);
+	            this.props.changeImage(image);
 	        }
 	    }, {
 	        key: 'onDrop',
@@ -21076,17 +21139,24 @@
 	                        )
 	                    ),
 	                    _react2.default.createElement(
-	                        'button',
-	                        { className: 'btn btn-primary' },
-	                        _react2.default.createElement('i', { className: 'mdi mdi-upload' }),
-	                        ' Upload'
+	                        'div',
+	                        { className: 'dropzone text-center' },
+	                        _react2.default.createElement(
+	                            _reactDropzone2.default,
+	                            { ref: 'dropzone', className: 'drop', onDrop: this.onDrop },
+	                            _react2.default.createElement(
+	                                'h5',
+	                                null,
+	                                'Click or drop your images here'
+	                            )
+	                        )
 	                    )
 	                );
 	            }
 	            data.forEach((function (image, i) {
 	                if (image.title.toLowerCase().indexOf(this.props.filterText.toLowerCase()) == -1) return;
 
-	                sections.push(_react2.default.createElement(SectionDiv, { key: i, getKey: i, image: image, activeKey: this.state.activeKey,
+	                sections.push(_react2.default.createElement(SectionDiv, { key: i, getKey: image.id, image: image, activeKey: this.state.activeKey,
 	                    changeKey: this.changeActiveKey.bind(this) }));
 	            }).bind(this));
 	            if (sections.length < 1) {
@@ -21105,15 +21175,17 @@
 	                        )
 	                    ),
 	                    _react2.default.createElement(
-	                        'button',
-	                        { className: 'btn btn-primary' },
-	                        _react2.default.createElement('i', { className: 'mdi mdi-upload' }),
+	                        'div',
+	                        { className: 'dropzone text-center' },
 	                        _react2.default.createElement(
-	                            'p',
-	                            null,
-	                            ' Upload'
-	                        ),
-	                        ' '
+	                            _reactDropzone2.default,
+	                            { ref: 'dropzone', className: 'drop', onDrop: this.onDrop },
+	                            _react2.default.createElement(
+	                                'h5',
+	                                null,
+	                                'Click or drop your images here'
+	                            )
+	                        )
 	                    )
 	                );
 	            } else {
