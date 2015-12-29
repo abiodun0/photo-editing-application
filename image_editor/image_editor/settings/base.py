@@ -24,7 +24,8 @@ PROJECT_ROOT = os.path.dirname(BASE_DIR)
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'uqh7^f%%li230!rb-q5fwc%$1a9xv5no02(crgifizo4q1^7mo'
+SECRET_KEY = os.getenv('SECRET_KEY')
+FB_ID = os.getenv('FB_ID')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -73,6 +74,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'userprofile.context_processor.fb_id',
             ],
         },
     },

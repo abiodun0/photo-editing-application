@@ -20654,7 +20654,7 @@
 	            return _react2.default.createElement(
 	                'div',
 	                null,
-	                _react2.default.createElement(ImageDiv, { image: this.state.image, editImage: this.props.editImage.bind(this),
+	                _react2.default.createElement(ImageDiv, { image: this.state.image, editImage: this.props.editImage,
 	                    deleteImage: this.props.deleteImage, resetImage: this.resetImage.bind(this) }),
 	                _react2.default.createElement(FilterDiv, { image: this.state.image, changeFilter: this.applyFilter.bind(this) })
 	            );
@@ -20698,6 +20698,7 @@
 	            e.preventDefault();
 	            this.setState({});
 	            this.state.image.title = e.target.value;
+	            console.log(this.props.image);
 	        }
 	    }, {
 	        key: 'saveTitle',
@@ -20705,6 +20706,7 @@
 	            e.preventDefault();
 	            this.state.image.title = this.refs.title.value;
 	            this.toggleEdit();
+	            console.log(this.state.image);
 	            this.props.editImage(this.state.image);
 	        }
 	    }, {
@@ -20724,7 +20726,7 @@
 	        value: function render() {
 	            var buttonClass = (0, _classnames2.default)({
 	                'btn': true,
-	                'disabled': !this.props.image.title
+	                'disabled': !_lodash2.default.isObject(this.props.image)
 	            });
 	            return _react2.default.createElement(
 	                'div',
@@ -20756,13 +20758,13 @@
 	                        _react2.default.createElement(
 	                            'h6',
 	                            { className: (this.state.editMode ? 'hide' : '') + ' text-uppercase' },
-	                            this.props.image.title || 'No image selected',
+	                            _lodash2.default.isObject(this.props.image) ? this.props.image.title || 'No Name' : 'No Image Selected',
 	                            ' '
 	                        ),
 	                        _react2.default.createElement(
 	                            'h6',
 	                            { className: 'text-uppercase' },
-	                            this.props.image.title ? this.props.image.filter || 'No Filter Applied' : '',
+	                            _lodash2.default.isObject(this.props.image) ? this.props.image.filter || 'No Filter Applied' : '',
 	                            ' '
 	                        )
 	                    )
@@ -20772,17 +20774,17 @@
 	                    { className: 'edit-buttons' },
 	                    _react2.default.createElement(
 	                        'button',
-	                        { className: buttonClass, onClick: this.props.image.title ? this.toggleEdit.bind(this) : '' },
+	                        { className: buttonClass, onClick: _lodash2.default.isObject(this.props.image) ? this.toggleEdit.bind(this) : '' },
 	                        _react2.default.createElement('span', { className: 'mdi mdi-pencil' })
 	                    ),
 	                    _react2.default.createElement(
 	                        'button',
-	                        { className: buttonClass, onClick: this.props.image.title ? this.deleteImage.bind(this) : '' },
+	                        { className: buttonClass, onClick: _lodash2.default.isObject(this.props.image) ? this.deleteImage.bind(this) : '' },
 	                        _react2.default.createElement('span', { className: 'mdi mdi-delete' })
 	                    ),
 	                    _react2.default.createElement(
 	                        'button',
-	                        { className: buttonClass, onClick: this.props.image.title ? this.resetImage.bind(this) : '' },
+	                        { className: buttonClass, onClick: _lodash2.default.isObject(this.props.image) ? this.resetImage.bind(this) : '' },
 	                        _react2.default.createElement('span', { className: 'mdi mdi-backup-restore' })
 	                    ),
 	                    _react2.default.createElement(

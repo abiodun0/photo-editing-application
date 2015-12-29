@@ -22,7 +22,7 @@ export default class EditableDiv extends React.Component{
     render(){
         return(
             <div>
-            <ImageDiv image={this.state.image} editImage={this.props.editImage.bind(this)} 
+            <ImageDiv image={this.state.image} editImage={this.props.editImage} 
             deleteImage={this.props.deleteImage} resetImage={this.resetImage.bind(this)}/>
             <FilterDiv image={this.state.image} changeFilter={this.applyFilter.bind(this)}/>
             </div>
@@ -48,11 +48,13 @@ class ImageDiv extends React.Component{
         e.preventDefault();
         this.setState({});
         this.state.image.title = e.target.value;
+        console.log(this.props.image);
     }
     saveTitle(e){
         e.preventDefault();
         this.state.image.title = this.refs.title.value;
         this.toggleEdit();
+        console.log(this.state.image);
         this.props.editImage(this.state.image);
     }
     deleteImage(e){
@@ -66,7 +68,7 @@ class ImageDiv extends React.Component{
     render(){
         var buttonClass = classNames({
                 'btn':true,
-                'disabled': !this.props.image.title
+                'disabled': !_.isObject(this.props.image)
             });
         return(
             <div>
@@ -80,15 +82,15 @@ class ImageDiv extends React.Component{
                         </div>
                       <button type="submit" className="btn btn-default">Save</button>
                     </form>
-                  <h6 className={`${this.state.editMode ? 'hide':''} text-uppercase`}>{this.props.image.title || 'No image selected'} </h6>
-                  <h6 className="text-uppercase">{this.props.image.title?  (this.props.image.filter || 'No Filter Applied'): ''} </h6>
+                  <h6 className={`${this.state.editMode ? 'hide':''} text-uppercase`}>{_.isObject(this.props.image)?  (this.props.image.title || 'No Name'): 'No Image Selected'} </h6>
+                  <h6 className="text-uppercase">{_.isObject(this.props.image)?  (this.props.image.filter || 'No Filter Applied'): ''} </h6>
                 </blockquote>
 
             </div>
             <div className="edit-buttons">
-            <button className={buttonClass} onClick={this.props.image.title? this.toggleEdit.bind(this):''}><span className="mdi mdi-pencil"></span></button>
-            <button className={buttonClass} onClick={this.props.image.title? this.deleteImage.bind(this): ''}><span className="mdi mdi-delete"></span></button>
-            <button className={buttonClass} onClick={this.props.image.title? this.resetImage.bind(this): ''}><span className="mdi mdi-backup-restore"></span></button>
+            <button className={buttonClass} onClick={_.isObject(this.props.image)? this.toggleEdit.bind(this):''}><span className="mdi mdi-pencil"></span></button>
+            <button className={buttonClass} onClick={_.isObject(this.props.image)? this.deleteImage.bind(this): ''}><span className="mdi mdi-delete"></span></button>
+            <button className={buttonClass} onClick={_.isObject(this.props.image)? this.resetImage.bind(this): ''}><span className="mdi mdi-backup-restore"></span></button>
 
             <button className={`${buttonClass} pull-sm-right`}><span className="mdi mdi-share-variant"></span></button>
             <button className={`${buttonClass} pull-sm-right`}><span className="mdi mdi-download"></span></button></div>

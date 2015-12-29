@@ -28,7 +28,7 @@ function socialLogin(user) {
 
 var facebookLogin = {
     config: {
-        fb_id: "1472709103038197"
+        login: "#facebook-login",
     },
     init: function(config) {
         $(facebookLogin.config.login).attr("disabled", true);
@@ -64,7 +64,7 @@ var facebookLogin = {
 $(document).ready(function() {
 
     facebookLogin.init({
-        fb_id: "530011690497751",
+        fb_id: $("meta[name='fb-id']").attr("content"),
         login: "#facebook-login",
     });
 });
