@@ -28,3 +28,6 @@ deploy:
   on:
     repo: andela-ashuaib/photo-editing-application
     branch: master
+  after_deploy:
+    - "heroku run npm install --app imageditor"
+    - "heroku run bower install --app imageditor"
