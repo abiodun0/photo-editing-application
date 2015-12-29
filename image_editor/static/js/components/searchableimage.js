@@ -64,12 +64,6 @@ class UploadDiv extends React.Component{
 
         this.state = {activeKey:'default'};
     }
-    shouldComponentUpdate(nextProps, nextState) {
-        console.log(nextProps,"updates");
-        console.log(nextState, "states");
-        return true;
-          
-    }
     changeActiveKey(key,image){
         this.setState({activeKey: key});
         this.props.changeImage(image);

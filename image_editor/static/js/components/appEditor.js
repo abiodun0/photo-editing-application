@@ -2,6 +2,7 @@ import React from 'react';
 import SearchableImage from './searchableimage';
 import EditableDiv from './editableDiv';
 import {data} from './data';
+import _ from 'lodash';
 
 export default class AppEditor extends React.Component{
     constructor(props){
@@ -16,11 +17,12 @@ export default class AppEditor extends React.Component{
     changeImage(image){
 
         this.setState({image: image});
+        console.log(this.state,"states here");
       
     }
     editImage(image){
-        // var index = -1;
-        // for(var i=0; i<this.state.data.length; i++){
+        // let index = -1;
+        // for(let i=0; i<this.state.data.length; i++){
         //     if(this.state.data[i].id == image.id){
         //         index = i;
         //         break;
@@ -31,9 +33,9 @@ export default class AppEditor extends React.Component{
         this.forceUpdate();
     }
     deleteImage(image){
-        let index = this.state.data.indexOf(image);
-        console.log(index);
-        this.state.data.splice(index,1);
+        _.remove(this.state.data,(m)=>{
+            return image.id == m.id;
+        });
         this.setState({image: ''});
         this.forceUpdate();
     }
