@@ -15,6 +15,7 @@ script:
 - coverage run --source="image_editor" image_editor/manage.py test image_editor
 after_success:
 - coveralls
+before_deploy: git fetch --unshallow
 deploy:
   provider: heroku
   buildpack:
@@ -28,10 +29,4 @@ deploy:
   on:
     repo: andela-ashuaib/photo-editing-application
     branch: master
-  run:
-    - "bower install"
-    - "python image_editor/manage.py collectstatic --noinput"
-    - "python image_editor/manage.py makemigrations"
-    - "python image_editor/manage.py migrate"
-    - "python image_editor/manage.py syncdb --noinput"
 
