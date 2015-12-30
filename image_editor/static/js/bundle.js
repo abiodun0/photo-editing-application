@@ -19735,6 +19735,10 @@
 
 	var _reactDropzone2 = _interopRequireDefault(_reactDropzone);
 
+	var _lodash = __webpack_require__(187);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
+
 	var _classnames = __webpack_require__(162);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
@@ -19811,7 +19815,7 @@
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'input-group' },
-	                        _react2.default.createElement('input', { type: 'text', className: 'form-control', placeholder: 'Search',
+	                        _react2.default.createElement('input', { type: 'text', className: 'form-control',
 	                            placeholder: 'Search your pictures...',
 	                            ref: 'filter',
 	                            value: this.props.filterText,
@@ -20638,15 +20642,10 @@
 	            this.setState({ image: nextProps.image });
 	        }
 	    }, {
-	        key: 'applyFilter',
-	        value: function applyFilter(image) {
-	            this.setState({ image: image });
-	        }
-	    }, {
 	        key: 'resetImage',
 	        value: function resetImage() {
+	            delete this.props.image['filter'];
 	            this.setState({ image: this.props.image });
-	            this.forceUpdate();
 	        }
 	    }, {
 	        key: 'render',
@@ -20654,9 +20653,9 @@
 	            return _react2.default.createElement(
 	                'div',
 	                null,
-	                _react2.default.createElement(ImageDiv, { image: this.state.image, editImage: this.props.editImage.bind(this),
+	                _react2.default.createElement(ImageDiv, { image: this.state.image, editImage: this.props.editImage,
 	                    deleteImage: this.props.deleteImage, resetImage: this.resetImage.bind(this) }),
-	                _react2.default.createElement(FilterDiv, { image: this.state.image, changeFilter: this.applyFilter.bind(this) })
+	                _react2.default.createElement(FilterDiv, { image: this.state.image, changeFilter: this.props.editImage })
 	            );
 	        }
 	    }]);
@@ -20678,41 +20677,28 @@
 	    _createClass(ImageDiv, [{
 	        key: 'componentWillMount',
 	        value: function componentWillMount() {
-	            this.setState({ editMode: false,
-	                image: '' });
-	        }
-	    }, {
-	        key: 'componentWillReceiveProps',
-	        value: function componentWillReceiveProps(nextProps) {
-	            this.setState({ image: nextProps.image,
-	                editMode: false });
+	            this.setState({ editMode: false });
 	        }
 	    }, {
 	        key: 'toggleEdit',
-	        value: function toggleEdit() {
+	        value: function toggleEdit(e) {
+	            e.preventDefault();
 	            this.setState({ editMode: !this.state.editMode });
 	        }
 	    }, {
 	        key: 'changeTitle',
 	        value: function changeTitle(e) {
 	            e.preventDefault();
-	            this.setState({});
-	            this.state.image.title = e.target.value;
-	        }
-	    }, {
-	        key: 'saveTitle',
-	        value: function saveTitle(e) {
-	            e.preventDefault();
-	            this.state.image.title = this.refs.title.value;
-	            this.toggleEdit();
-	            this.props.editImage(this.state.image);
+	            var image_copy = _lodash2.default.clone(this.props.image);
+	            image_copy.title = e.target.value;
+	            this.props.editImage(image_copy);
 	        }
 	    }, {
 	        key: 'deleteImage',
 	        value: function deleteImage(e) {
 	            e.preventDefault();
 	            if (!confirm("are you sure you want to delete this image")) return;
-	            this.props.deleteImage(this.state.image);
+	            this.props.deleteImage(this.props.image);
 	        }
 	    }, {
 	        key: 'resetImage',
@@ -20724,7 +20710,7 @@
 	        value: function render() {
 	            var buttonClass = (0, _classnames2.default)({
 	                'btn': true,
-	                'disabled': !this.props.image.title
+	                'disabled': !_lodash2.default.isObject(this.props.image)
 	            });
 	            return _react2.default.createElement(
 	                'div',
@@ -20737,14 +20723,14 @@
 	                        { className: 'card-blockquote card-text' },
 	                        _react2.default.createElement(
 	                            'form',
-	                            { className: (!this.state.editMode ? 'hide' : '') + ' form-inline', action: '#', onSubmit: this.saveTitle.bind(this) },
+	                            { className: (!this.state.editMode ? 'hide' : '') + ' form-inline', action: '#', onSubmit: this.toggleEdit.bind(this) },
 	                            _react2.default.createElement(
 	                                'div',
 	                                { className: 'form-group' },
 	                                _react2.default.createElement(
 	                                    'div',
 	                                    { className: 'input-group' },
-	                                    _react2.default.createElement('input', { type: 'text', ref: 'title', className: 'form-control', value: this.state.image.title, onChange: this.changeTitle.bind(this) })
+	                                    _react2.default.createElement('input', { type: 'text', ref: 'title', className: 'form-control', value: this.props.image.title, onChange: this.changeTitle.bind(this) })
 	                                )
 	                            ),
 	                            _react2.default.createElement(
@@ -20756,13 +20742,13 @@
 	                        _react2.default.createElement(
 	                            'h6',
 	                            { className: (this.state.editMode ? 'hide' : '') + ' text-uppercase' },
-	                            this.props.image.title || 'No image selected',
+	                            _lodash2.default.isObject(this.props.image) ? this.props.image.title || 'No Name' : 'No Image Selected',
 	                            ' '
 	                        ),
 	                        _react2.default.createElement(
 	                            'h6',
 	                            { className: 'text-uppercase' },
-	                            this.props.image.title ? this.props.image.filter || 'No Filter Applied' : '',
+	                            _lodash2.default.isObject(this.props.image) ? this.props.image.filter || 'No Filter Applied' : '',
 	                            ' '
 	                        )
 	                    )
@@ -20772,17 +20758,17 @@
 	                    { className: 'edit-buttons' },
 	                    _react2.default.createElement(
 	                        'button',
-	                        { className: buttonClass, onClick: this.props.image.title ? this.toggleEdit.bind(this) : '' },
+	                        { className: buttonClass, onClick: _lodash2.default.isObject(this.props.image) ? this.toggleEdit.bind(this) : '' },
 	                        _react2.default.createElement('span', { className: 'mdi mdi-pencil' })
 	                    ),
 	                    _react2.default.createElement(
 	                        'button',
-	                        { className: buttonClass, onClick: this.props.image.title ? this.deleteImage.bind(this) : '' },
+	                        { className: buttonClass, onClick: _lodash2.default.isObject(this.props.image) ? this.deleteImage.bind(this) : '' },
 	                        _react2.default.createElement('span', { className: 'mdi mdi-delete' })
 	                    ),
 	                    _react2.default.createElement(
 	                        'button',
-	                        { className: buttonClass, onClick: this.props.image.title ? this.resetImage.bind(this) : '' },
+	                        { className: buttonClass, onClick: _lodash2.default.isObject(this.props.image) ? this.resetImage.bind(this) : '' },
 	                        _react2.default.createElement('span', { className: 'mdi mdi-backup-restore' })
 	                    ),
 	                    _react2.default.createElement(
@@ -20814,7 +20800,7 @@
 	    function FilterDiv() {
 	        _classCallCheck(this, FilterDiv);
 
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(FilterDiv).call(this));
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(FilterDiv).apply(this, arguments));
 	    }
 
 	    _createClass(FilterDiv, [{
@@ -20834,7 +20820,7 @@
 	        key: 'createFilterDiv',
 	        value: function createFilterDiv(filter, i) {
 	            var activeFilter = (0, _classnames2.default)({
-	                'active': this.state.activeFilter == filter
+	                'active': this.props.image.filter == filter
 	            });
 	            return _react2.default.createElement(
 	                'div',
@@ -22793,6 +22779,10 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _lodash = __webpack_require__(187);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
+
 	var _searchableimage = __webpack_require__(185);
 
 	var _searchableimage2 = _interopRequireDefault(_searchableimage);
@@ -22802,10 +22792,6 @@
 	var _editableDiv2 = _interopRequireDefault(_editableDiv);
 
 	var _data = __webpack_require__(186);
-
-	var _lodash = __webpack_require__(187);
-
-	var _lodash2 = _interopRequireDefault(_lodash);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -22835,23 +22821,16 @@
 	    }, {
 	        key: 'changeImage',
 	        value: function changeImage(image) {
-
 	            this.setState({ image: image });
-	            console.log(this.state, "states here");
+	            this.editImage(image);
 	        }
 	    }, {
 	        key: 'editImage',
 	        value: function editImage(image) {
-	            // let index = -1;
-	            // for(let i=0; i<this.state.data.length; i++){
-	            //     if(this.state.data[i].id == image.id){
-	            //         index = i;
-	            //         break;
-	            //     }
-	            // }
-	            // this.state.data[index] = image;
-	            console.log(this.state.data);
-	            this.forceUpdate();
+	            var index = _lodash2.default.findIndex(this.state.data, function (img) {
+	                return img.id == image.id;
+	            });
+	            this.state.data[index] = image;
 	        }
 	    }, {
 	        key: 'deleteImage',
@@ -22860,7 +22839,6 @@
 	                return image.id == m.id;
 	            });
 	            this.setState({ image: '' });
-	            this.forceUpdate();
 	        }
 	    }, {
 	        key: 'render',
@@ -22880,7 +22858,7 @@
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'edit-div' },
-	                        _react2.default.createElement(_editableDiv2.default, { image: this.state.image, editImage: this.editImage.bind(this), deleteImage: this.deleteImage.bind(this) })
+	                        _react2.default.createElement(_editableDiv2.default, { image: this.state.image, editImage: this.changeImage.bind(this), deleteImage: this.deleteImage.bind(this) })
 	                    )
 	                )
 	            );
@@ -22911,6 +22889,10 @@
 	var _reactDropzone = __webpack_require__(160);
 
 	var _reactDropzone2 = _interopRequireDefault(_reactDropzone);
+
+	var _lodash = __webpack_require__(187);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
 
 	var _classnames = __webpack_require__(162);
 
@@ -22988,7 +22970,7 @@
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'input-group' },
-	                        _react2.default.createElement('input', { type: 'text', className: 'form-control', placeholder: 'Search',
+	                        _react2.default.createElement('input', { type: 'text', className: 'form-control',
 	                            placeholder: 'Search your pictures...',
 	                            ref: 'filter',
 	                            value: this.props.filterText,

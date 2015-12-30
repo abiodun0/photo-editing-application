@@ -1,5 +1,6 @@
 import React from 'react';
 import Dropzone from 'react-dropzone';
+import _ from 'lodash';
 import classNames from 'classnames';
 
 
@@ -44,7 +45,7 @@ class SearchBar extends React.Component{
               <div className="form-group">
                 <div className="input-group">
                 
-                  <input type="text" className="form-control" placeholder="Search"
+                  <input type="text" className="form-control" 
                     placeholder="Search your pictures..." 
                     ref="filter"
                     value= {this.props.filterText}
