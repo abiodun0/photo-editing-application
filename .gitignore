@@ -14,7 +14,6 @@ lib/
 dist/
 downloads/
 node_modules/
-package.json
 eggs/
 .eggs/
 lib64/
