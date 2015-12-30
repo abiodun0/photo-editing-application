@@ -28,3 +28,10 @@ deploy:
   on:
     repo: andela-ashuaib/photo-editing-application
     branch: master
+  run:
+    - "bower install"
+    - "python image_editor/manage.py collectstatic --noinput"
+    - "python image_editor/manage.py makemigrations"
+    - "python image_editor/manage.py migrate"
+    - "python image_editor/manage.py syncdb --noinput"
+
