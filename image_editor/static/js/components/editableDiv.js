@@ -11,12 +11,9 @@ export default class EditableDiv extends React.Component{
     componentWillReceiveProps(nextProps) {
         this.setState({image: nextProps.image})
     }
-    applyFilter(image){
-        this.setState({image: image});
-    }
     resetImage(){
+        delete this.props.image['filter'];
         this.setState({image: this.props.image});
-        this.forceUpdate();
     }
 
     render(){
@@ -24,7 +21,7 @@ export default class EditableDiv extends React.Component{
             <div>
             <ImageDiv image={this.state.image} editImage={this.props.editImage} 
             deleteImage={this.props.deleteImage} resetImage={this.resetImage.bind(this)}/>
-            <FilterDiv image={this.state.image} changeFilter={this.applyFilter.bind(this)}/>
+            <FilterDiv image={this.state.image} changeFilter={this.props.editImage}/>
             </div>
             );
     }
@@ -32,35 +29,26 @@ export default class EditableDiv extends React.Component{
 
 
 class ImageDiv extends React.Component{
+    
     componentWillMount() {
-                this.setState({editMode: false,
-            image:''});  
+        this.setState({editMode: false});  
+          
     }
-    componentWillReceiveProps(nextProps) {
-        this.setState({image: nextProps.image,
-            editMode:false});
-    }
-
-    toggleEdit(){
+    toggleEdit(e){
+        e.preventDefault();
         this.setState({editMode: !this.state.editMode});
     }
+
     changeTitle(e){
         e.preventDefault();
-        this.setState({});
-        this.state.image.title = e.target.value;
-        console.log(this.props.image);
-    }
-    saveTitle(e){
-        e.preventDefault();
-        this.state.image.title = this.refs.title.value;
-        this.toggleEdit();
-        console.log(this.state.image);
-        this.props.editImage(this.state.image);
+        let image_copy = _.clone(this.props.image);
+        image_copy.title = e.target.value;
+        this.props.editImage(image_copy);
     }
     deleteImage(e){
         e.preventDefault();
         if(!confirm("are you sure you want to delete this image")) return; 
-        this.props.deleteImage(this.state.image);
+        this.props.deleteImage(this.props.image);
     }
     resetImage(){
         this.props.resetImage()
@@ -74,10 +62,10 @@ class ImageDiv extends React.Component{
             <div>
             <div className="card text-xs-center">
                 <blockquote className="card-blockquote card-text">
-                    <form className={`${!this.state.editMode ? 'hide':''} form-inline`} action="#" onSubmit={this.saveTitle.bind(this)}>
+                    <form className={`${!this.state.editMode ? 'hide':''} form-inline`} action="#" onSubmit={this.toggleEdit.bind(this)}>
                       <div className="form-group">
                         <div className="input-group">
-                          <input type="text" ref="title"  className="form-control" value={this.state.image.title} onChange={this.changeTitle.bind(this)}/>
+                          <input type="text" ref="title"  className="form-control" value={this.props.image.title} onChange={this.changeTitle.bind(this)}/>
                           </div>
                         </div>
                       <button type="submit" className="btn btn-default">Save</button>
@@ -102,10 +90,7 @@ class ImageDiv extends React.Component{
     }
 }
 class FilterDiv extends React.Component{
-    constructor(){
-        super();
-        
-    }
+
     componentWillReceiveProps(nextProps) {
         this.state = {activeFilter: ''};
           
@@ -119,7 +104,7 @@ class FilterDiv extends React.Component{
     
     createFilterDiv(filter,i){
         var activeFilter = classNames({
-                'active': this.state.activeFilter == filter
+                'active': this.props.image.filter == filter
             });
             return (
                 <div className={activeFilter} key={i} onClick={this.activateFilter.bind(this,filter)}>
