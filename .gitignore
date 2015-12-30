@@ -15,12 +15,13 @@ dist/
 downloads/
 node_modules/
 eggs/
+media/
 .eggs/
 lib64/
 parts/
 sdist/
 var/
-codango/codango/settings/development.py
+development.py
 *.egg-info/
 .installed.cfg
 *.egg

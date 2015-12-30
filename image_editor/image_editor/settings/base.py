@@ -126,4 +126,11 @@ STATIC_URL = '/static/'
 
 APPEND_SLASH = False
 
+# Media root for uploaded image files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = 'media'
+
+# Max file size 10MB
+MAX_UPLOAD_SIZE = 10485760
+
 STATIC_ROOT = 'staticfiles'

@@ -1,7 +1,9 @@
 import React from 'react';
 import Dropzone from 'react-dropzone';
 import _ from 'lodash';
+import request from 'superagent';
 import classNames from 'classnames';
+import 'superagent-django-csrf';
 
 
 export default class SearchableImage extends React.Component{
@@ -70,6 +72,18 @@ class UploadDiv extends React.Component{
         this.props.changeImage(image);
     }
     onDrop(files) {
+        let url = document.querySelector("meta[name='image_url']").getAttribute('content');
+        
+        files.forEach((file)=> {
+            request.post(url)
+            .attach("image", file, file.name)
+            .end((err, res) => {
+                console.log(err);
+                console.log(res);
+            })
+        });
+        
+        
       console.log("files", files);
     }
 

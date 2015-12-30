@@ -4,9 +4,10 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.template import RequestContext, loader
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView,View
 from django.contrib.auth.models import User
 from userprofile.models import UserProfile
+from userprofile.forms import ImageForm
 
 # Create your views here.
 
@@ -69,3 +70,13 @@ class LoginView(IndexView):
                 profile.image = "https://graph.facebook.com/" + request.POST['id'] + "/picture?type=small"
                 profile.save()
                 return self.authenticate(user,request)
+
+class ImagesView(View):
+    form_class = ImageForm
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST, request.FILES)
+        image = form.save(commit=False)
+        image.owner = request.user
+        image.title = form.files['image'].name
+        image.save()
+        return HttpResponse("success", content_type='text/plain')
