@@ -1,0 +1,40 @@
+{
+  "name": "photo-editing-application",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webpack.config.js",
+  "dependencies": {
+    "babel": "^6.3.13",
+    "babel-core": "^6.3.21",
+    "babel-loader": "^6.2.0",
+    "bower": "^1.7.1",
+    "classnames": "^2.2.1",
+    "jsx-loader": "^0.13.2",
+    "lodash": "^3.10.1",
+    "moment": "^2.10.6",
+    "react": "^0.14.3",
+    "react-dom": "^0.14.3",
+    "react-dropzone": "^3.3.0",
+    "react-responsive-carousel": "^2.0.2",
+    "react-slick": "^0.9.3"
+  },
+  "devDependencies": {
+    "babel-core": "^6.3.21",
+    "babel-loader": "^6.2.0",
+    "react-hot-loader": "^1.3.0",
+    "webpack": "^1.12.9"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andela-ashuaib/photo-editing-application.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andela-ashuaib/photo-editing-application/issues"
+  },
+  "homepage": "https://github.com/andela-ashuaib/photo-editing-application#readme"
+}
