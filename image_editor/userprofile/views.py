@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login
 from django.template import RequestContext, loader
 from django.views.generic import TemplateView,View
 from django.contrib.auth.models import User
-from userprofile.models import UserProfile
+from userprofile.models import UserProfile, Images
 from userprofile.forms import ImageForm
 
 # Create your views here.
@@ -88,3 +88,10 @@ class ImagesView(View):
         image.save()
         response_json = json.dumps(image.to_json())
         return HttpResponse(response_json, content_type="application/json")
+
+    def delete(self, request, *args, **kwargs):
+        image_json =  json.loads(request.body)
+        image = Images.objects.filter(id=image_json['id']).first()
+        image.delete()
+        return HttpResponse("success", content_type='text/plain')
+

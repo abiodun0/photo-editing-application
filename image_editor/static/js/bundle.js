@@ -19873,8 +19873,6 @@
 	                    _this4.props.addImage(res.body);
 	                });
 	            });
-
-	            console.log("files", files);
 	        }
 	    }, {
 	        key: 'onOpenClick',
@@ -31110,6 +31108,8 @@
 
 	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AppEditor).call(this, props));
 
+	        _this.url = document.querySelector("meta[name='image_url']").getAttribute('content');
+
 	        _this.state = { image: '' };
 	        return _this;
 	    }
@@ -31120,8 +31120,7 @@
 	            var _this2 = this;
 
 	            this.setState({ data: '' });
-	            var url = document.querySelector("meta[name='image_url']").getAttribute('content');
-	            _superagent2.default.get(url).set('Accept', 'application/json').end(function (err, res) {
+	            _superagent2.default.get(this.url).set('Accept', 'application/json').end(function (err, res) {
 	                console.log(err);
 	                console.log(res.body);
 	                _this2.setState({ data: res.body });
@@ -31144,10 +31143,16 @@
 	    }, {
 	        key: 'deleteImage',
 	        value: function deleteImage(image) {
-	            _lodash2.default.remove(this.state.data, function (m) {
-	                return image.id == m.id;
+	            var _this3 = this;
+
+	            _superagent2.default.del(this.url).send(image).end(function (err, res) {
+	                if (!err) {
+	                    _lodash2.default.remove(_this3.state.data, function (m) {
+	                        return image.id == m.id;
+	                    });
+	                    _this3.setState({ image: '' });
+	                }
 	            });
-	            this.setState({ image: '' });
 	        }
 	    }, {
 	        key: 'addImage',
@@ -31342,8 +31347,6 @@
 	                    _this4.props.addImage(res.body);
 	                });
 	            });
-
-	            console.log("files", files);
 	        }
 	    }, {
 	        key: 'onOpenClick',

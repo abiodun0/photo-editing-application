@@ -85,8 +85,6 @@ class UploadDiv extends React.Component{
             })
         });
         
-        
-      console.log("files", files);
     }
 
     onOpenClick() {

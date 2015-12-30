@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 
 
 # Create your models here.
@@ -35,3 +37,8 @@ class Images(models.Model):
         return json_items
     class Meta:
         ordering = ['-date_created']
+
+@receiver(pre_delete, sender=Images)
+def mymodel_delete(sender, instance, **kwargs):
+    # Pass false so FileField doesn't save the model.
+    instance.image.delete(False)

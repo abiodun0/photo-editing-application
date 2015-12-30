@@ -9,13 +9,13 @@ import request from 'superagent';
 export default class AppEditor extends React.Component{
     constructor(props){
         super(props);
+        this.url = document.querySelector("meta[name='image_url']").getAttribute('content');
 
         this.state = {image:''};
     }
     componentWillMount() {
             this.setState({data:''});
-            let url = document.querySelector("meta[name='image_url']").getAttribute('content');
-            request.get(url)
+            request.get(this.url)
             .set('Accept', 'application/json')
             .end((err, res) => {
                 console.log(err);
@@ -38,10 +38,18 @@ export default class AppEditor extends React.Component{
     }
 
     deleteImage(image){
-        _.remove(this.state.data,(m)=>{
+        request.del(this.url)
+        .send(image)
+        .end((err, res) => {
+            if(!err){
+            _.remove(this.state.data,(m)=>{
             return image.id == m.id;
         });
-        this.setState({image: ''});
+            this.setState({image: ''});
+
+            }
+        });
+
     }
     addImage(image){
         this.state.data.unshift(image);
