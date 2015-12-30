@@ -24,7 +24,7 @@ export default class SearchableImage extends React.Component{
                 onUserInput={this.handleUserInput.bind(this)} 
                 />
 
-                <UploadDiv data={this.props.data}
+                <UploadDiv data={this.props.data} addImage={this.props.addImage}
                 filterText={this.state.filterText} changeImage={this.props.changeImage}
                 />
             </div>
@@ -77,9 +77,11 @@ class UploadDiv extends React.Component{
         files.forEach((file)=> {
             request.post(url)
             .attach("image", file, file.name)
+            .set('Accept', 'application/json')
             .end((err, res) => {
                 console.log(err);
                 console.log(res);
+                this.props.addImage(res.body);
             })
         });
         
@@ -98,7 +100,7 @@ class UploadDiv extends React.Component{
                 <div className="upload-img"> <div className="uploaded"> 
                 <h5> You dont have any images yet </h5></div>
                 <div className="dropzone text-center">
-                <Dropzone ref="dropzone" className="drop" onDrop={this.onDrop}>
+                <Dropzone ref="dropzone" className="drop" onDrop={this.onDrop.bind(this)}>
                     <h5>Click or drop your images here</h5>
                 </Dropzone>
                 </div>
@@ -117,7 +119,7 @@ class UploadDiv extends React.Component{
           
             <div className="upload-img"> <div className="uploaded"> <h5> No Images matches your criteria </h5></div>
             <div className="dropzone text-center">
-            <Dropzone ref="dropzone" className="drop" onDrop={this.onDrop}>
+            <Dropzone ref="dropzone" className="drop" onDrop={this.onDrop.bind(this)}>
                     <h5>Click or drop your images here</h5>
             </Dropzone>
             </div>
@@ -130,7 +132,7 @@ class UploadDiv extends React.Component{
             return (
             <div className="upload-img">{sections}
             <div className="dropzone text-center">
-            <Dropzone ref="dropzone" className="drop" onDrop={this.onDrop}>
+            <Dropzone ref="dropzone" className="drop" onDrop={this.onDrop.bind(this)} accept="image/*">
                     <h5>Click or drop your images here</h5>
             </Dropzone>
             </div>
@@ -159,7 +161,7 @@ class SectionDiv extends React.Component{
                 <div className={activeUpload} onClick={this.handleChange.bind(this)}>
                 <div className="media">
                     <a className="media-left" href="#" >
-                    <img className="media-object" src={this.props.image.thumbail} alt="Generic placeholder image" width="150" height="150"/>
+                    <img className="media-object" src={`/media/${this.props.image.picture}`} alt="Generic placeholder image" width="150" height="150"/>
                     </a>
                     <div className="media-body">
                         <p className="media-heading">{this.props.image.title}

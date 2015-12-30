@@ -20,5 +20,18 @@ class Images(models.Model):
     owner = models.ForeignKey(User,related_name="images")
     image = models.ImageField(upload_to='uploads/')
     title = models.CharField(max_length=100, null=True)
+    filtered = models.BooleanField(default=False)
     date_created = models.DateTimeField(
         auto_now_add=True)
+
+    def to_json(self):
+        json_items = {
+        'id': self.id,
+        'title': self.title,
+        'picture': str(self.image),
+        'date_created': str(self.date_created),
+        'filtered': self.filtered
+        }
+        return json_items
+    class Meta:
+        ordering = ['-date_created']

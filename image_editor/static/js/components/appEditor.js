@@ -3,6 +3,7 @@ import _ from 'lodash';
 import SearchableImage from './searchableimage';
 import EditableDiv from './editableDiv';
 import {data} from './data';
+import request from 'superagent';
 
 
 export default class AppEditor extends React.Component{
@@ -12,8 +13,17 @@ export default class AppEditor extends React.Component{
         this.state = {image:''};
     }
     componentWillMount() {
-        this.setState({data:data});
-    }
+            this.setState({data:''});
+            let url = document.querySelector("meta[name='image_url']").getAttribute('content');
+            request.get(url)
+            .set('Accept', 'application/json')
+            .end((err, res) => {
+                console.log(err);
+                console.log(res.body);
+                this.setState({data:res.body});
+                
+            });
+        }
 
     changeImage(image){
         this.setState({image: image});
@@ -33,12 +43,15 @@ export default class AppEditor extends React.Component{
         });
         this.setState({image: ''});
     }
+    addImage(image){
+        this.state.data.unshift(image);
+        this.forceUpdate();
+    }
     render(){
-
         return(
              <div className="row">
              <div className="col-sm-3">
-             <SearchableImage data={this.state.data} changeImage={this.changeImage.bind(this)}/>
+             <SearchableImage data={this.state.data} addImage={this.addImage.bind(this)} changeImage={this.changeImage.bind(this)}/>
              </div>
             <div className="col-sm-9">
                 <div className="edit-div">

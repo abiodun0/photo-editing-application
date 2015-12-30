@@ -83,7 +83,7 @@ class ImageDiv extends React.Component{
             <button className={`${buttonClass} pull-sm-right`}><span className="mdi mdi-share-variant"></span></button>
             <button className={`${buttonClass} pull-sm-right`}><span className="mdi mdi-download"></span></button></div>
             <div className="edit text-center">
-            <img src={this.props.image.picture || ''} />
+            <img src={this.props.image.picture? `/media/${this.props.image.picture}`:''} />
             </div>
             </div>
             );
@@ -108,7 +108,7 @@ class FilterDiv extends React.Component{
             });
             return (
                 <div className={activeFilter} key={i} onClick={this.activateFilter.bind(this,filter)}>
-                <img src={this.props.image.thumbail} width="100" height="100"/>
+                <img src={`/media/${this.props.image.picture}`} width="100" height="100"/>
                 <p className="lead">{filter}</p>
                 </div>
                 );
