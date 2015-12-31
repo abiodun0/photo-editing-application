@@ -89,9 +89,18 @@ class ImagesView(View):
         response_json = json.dumps(image.to_json())
         return HttpResponse(response_json, content_type="application/json")
 
+    def put(self, request, *args, **kwargs):
+        image_json = json.loads(request.body)
+        image = Images.objects.get(pk=image_json['id'])
+        if image.title != image_json['title']:
+            image.title = image_json['title']
+            image.save()
+        response_json = json.dumps(image.to_json())
+        return HttpResponse(response_json, content_type="application/json")
+
     def delete(self, request, *args, **kwargs):
         image_json =  json.loads(request.body)
-        image = Images.objects.filter(id=image_json['id']).first()
+        image = Images.objects.get(pk=image_json['id'])
         image.delete()
         return HttpResponse("success", content_type='text/plain')
 

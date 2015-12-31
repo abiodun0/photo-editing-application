@@ -18,16 +18,23 @@ export default class AppEditor extends React.Component{
             request.get(this.url)
             .set('Accept', 'application/json')
             .end((err, res) => {
-                console.log(err);
-                console.log(res.body);
-                this.setState({data:res.body});
+                if(!err) this.setState({data:res.body});
                 
             });
         }
-
+    updateImage(image){
+        request.put(this.url)
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .send(image)
+            .end((err, res) => {
+                console.log(res.body)
+                if(!err) this.editImage(res.body);
+                
+            });
+        }
     changeImage(image){
         this.setState({image: image});
-        this.editImage(image);
       
     }
     editImage(image){
@@ -35,6 +42,7 @@ export default class AppEditor extends React.Component{
             return img.id == image.id;
         });
         this.state.data[index] = image;
+        this.changeImage(image);
     }
 
     deleteImage(image){
@@ -63,7 +71,9 @@ export default class AppEditor extends React.Component{
              </div>
             <div className="col-sm-9">
                 <div className="edit-div">
-                    <EditableDiv image={this.state.image} editImage={this.changeImage.bind(this)} deleteImage={this.deleteImage.bind(this)}/>
+                    <EditableDiv image={this.state.image} editImage={this.editImage.bind(this)} deleteImage={this.deleteImage.bind(this)}
+                    updateImage={this.updateImage.bind(this)}
+                    />
                 </div>
             </div>
             </div>

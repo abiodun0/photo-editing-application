@@ -23,6 +23,8 @@ class Images(models.Model):
     image = models.ImageField(upload_to='uploads/')
     title = models.CharField(max_length=100, null=True)
     filtered = models.BooleanField(default=False)
+    current_filter = models.CharField(max_length=100, null=True,blank=True,default='')
+    filter_path = models.CharField(max_length=200,null=True,default='')
     date_created = models.DateTimeField(
         auto_now_add=True)
 
@@ -32,6 +34,8 @@ class Images(models.Model):
         'title': self.title,
         'picture': str(self.image),
         'date_created': str(self.date_created),
+        'current_filter':self.current_filter,
+        'filter_path':self.filter_path,
         'filtered': self.filtered
         }
         return json_items
@@ -39,6 +43,6 @@ class Images(models.Model):
         ordering = ['-date_created']
 
 @receiver(pre_delete, sender=Images)
-def mymodel_delete(sender, instance, **kwargs):
-    # Pass false so FileField doesn't save the model.
+def delete_image(sender, instance, **kwargs):
+    # Pass false so modelfield so it doesnt save the model
     instance.image.delete(False)

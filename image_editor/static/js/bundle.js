@@ -28949,7 +28949,9 @@
 	                'div',
 	                null,
 	                _react2.default.createElement(ImageDiv, { image: this.state.image, editImage: this.props.editImage,
-	                    deleteImage: this.props.deleteImage, resetImage: this.resetImage.bind(this) }),
+	                    deleteImage: this.props.deleteImage, resetImage: this.resetImage.bind(this),
+	                    updateImage: this.props.updateImage
+	                }),
 	                _react2.default.createElement(FilterDiv, { image: this.state.image, changeFilter: this.props.editImage })
 	            );
 	        }
@@ -28975,9 +28977,19 @@
 	            this.setState({ editMode: false });
 	        }
 	    }, {
+	        key: 'componentWillUpdate',
+	        value: function componentWillUpdate(nextProps, nextState) {
+	            if (this.props.image.picture !== nextProps.image.picture) {
+	                if (this.state.editMode) this.props.updateImage(this.props.image);
+	                this.setState({ editMode: false });
+	            }
+	        }
+	    }, {
 	        key: 'toggleEdit',
 	        value: function toggleEdit(e) {
 	            e.preventDefault();
+	            e.stopPropagation();
+	            if (this.state.editMode) this.props.updateImage(this.props.image);
 	            this.setState({ editMode: !this.state.editMode });
 	        }
 	    }, {
@@ -29025,7 +29037,8 @@
 	                                _react2.default.createElement(
 	                                    'div',
 	                                    { className: 'input-group' },
-	                                    _react2.default.createElement('input', { type: 'text', ref: 'title', className: 'form-control', value: this.props.image.title, onChange: this.changeTitle.bind(this) })
+	                                    _react2.default.createElement('input', { type: 'text', ref: 'title', className: 'form-control', value: this.props.image.title, onChange: this.changeTitle.bind(this)
+	                                    })
 	                                )
 	                            ),
 	                            _react2.default.createElement(
@@ -31121,16 +31134,23 @@
 
 	            this.setState({ data: '' });
 	            _superagent2.default.get(this.url).set('Accept', 'application/json').end(function (err, res) {
-	                console.log(err);
+	                if (!err) _this2.setState({ data: res.body });
+	            });
+	        }
+	    }, {
+	        key: 'updateImage',
+	        value: function updateImage(image) {
+	            var _this3 = this;
+
+	            _superagent2.default.put(this.url).set('Accept', 'application/json').set('Content-Type', 'application/json').send(image).end(function (err, res) {
 	                console.log(res.body);
-	                _this2.setState({ data: res.body });
+	                if (!err) _this3.editImage(res.body);
 	            });
 	        }
 	    }, {
 	        key: 'changeImage',
 	        value: function changeImage(image) {
 	            this.setState({ image: image });
-	            this.editImage(image);
 	        }
 	    }, {
 	        key: 'editImage',
@@ -31139,18 +31159,19 @@
 	                return img.id == image.id;
 	            });
 	            this.state.data[index] = image;
+	            this.changeImage(image);
 	        }
 	    }, {
 	        key: 'deleteImage',
 	        value: function deleteImage(image) {
-	            var _this3 = this;
+	            var _this4 = this;
 
 	            _superagent2.default.del(this.url).send(image).end(function (err, res) {
 	                if (!err) {
-	                    _lodash2.default.remove(_this3.state.data, function (m) {
+	                    _lodash2.default.remove(_this4.state.data, function (m) {
 	                        return image.id == m.id;
 	                    });
-	                    _this3.setState({ image: '' });
+	                    _this4.setState({ image: '' });
 	                }
 	            });
 	        }
@@ -31177,7 +31198,9 @@
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'edit-div' },
-	                        _react2.default.createElement(_editableDiv2.default, { image: this.state.image, editImage: this.changeImage.bind(this), deleteImage: this.deleteImage.bind(this) })
+	                        _react2.default.createElement(_editableDiv2.default, { image: this.state.image, editImage: this.editImage.bind(this), deleteImage: this.deleteImage.bind(this),
+	                            updateImage: this.updateImage.bind(this)
+	                        })
 	                    )
 	                )
 	            );
