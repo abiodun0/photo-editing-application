@@ -1,8 +1,9 @@
+import json
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404,HttpResponseNotAllowed
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-import json
+from useful.helpers import json_response
 from django.contrib.auth import authenticate, login
 from django.template import RequestContext, loader
 from django.views.generic import TemplateView,View
@@ -82,6 +83,9 @@ class ImagesView(View):
         return HttpResponse(response_json, content_type="application/json")
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST, request.FILES)
+        #set the maximum upload file size to 10MB
+        if form.files['image'].size > 10485760:
+            return json_response(data="file too large", status=500)
         image = form.save(commit=False)
         image.owner = request.user
         image.title = form.files['image'].name

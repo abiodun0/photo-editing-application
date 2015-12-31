@@ -58,11 +58,11 @@
 
 	var _SearchableImage2 = _interopRequireDefault(_SearchableImage);
 
-	var _editableDiv = __webpack_require__(170);
+	var _editableDiv = __webpack_require__(173);
 
 	var _editableDiv2 = _interopRequireDefault(_editableDiv);
 
-	var _appEditor = __webpack_require__(190);
+	var _appEditor = __webpack_require__(193);
 
 	var _appEditor2 = _interopRequireDefault(_appEditor);
 
@@ -19747,11 +19747,11 @@
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
-	var _toastr = __webpack_require__(193);
+	var _toastr = __webpack_require__(169);
 
 	var _toastr2 = _interopRequireDefault(_toastr);
 
-	__webpack_require__(169);
+	__webpack_require__(172);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -19854,11 +19854,21 @@
 
 	        var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(UploadDiv).call(this));
 
-	        _this3.state = { activeKey: 'default' };
+	        _this3.progress = '';
+
 	        return _this3;
 	    }
 
 	    _createClass(UploadDiv, [{
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            this.setState({ activeKey: 'default',
+	                isUploading: false,
+	                percentage: 1,
+	                preview: '',
+	                filename: '' });
+	        }
+	    }, {
 	        key: 'changeActiveKey',
 	        value: function changeActiveKey(key, image) {
 	            this.setState({ activeKey: key });
@@ -19872,13 +19882,24 @@
 	            var url = document.querySelector("meta[name='image_url']").getAttribute('content');
 
 	            files.forEach(function (file) {
+	                _this4.setState({ filename: file.name });
+	                var reader = new FileReader();
+	                reader.readAsDataURL(file);
+	                reader.onload = function (e) {
+	                    _this4.setState({ preview: e.target.result });
+	                };
 	                _superagent2.default.post(url).attach("image", file, file.name).set('Accept', 'application/json').on('progress', function (e) {
-	                    _this4.progress = _react2.default.createElement(ProgressBar, { percentage: e.percent || '100', filename: file.name });
+	                    console.log(e.percent, file.name, e);
+	                    _this4.setState({ percentage: e.percent, isUploading: true });
 	                }).end(function (err, res) {
-	                    if (!err) {
-	                        _toastr2.default.success("successfully uploaded " + file.name, '', { closeButton: true });
-	                        _this4.props.addImage(res.body);
+	                    _this4.setState({ isUploading: false });
+	                    if (err) {
+	                        console.log(res);
+	                        return _toastr2.default.error(res.body, 'unable to upload ' + file.name, { closeButton: true });
 	                    }
+
+	                    _toastr2.default.success("successfully uploaded " + file.name, '', { closeButton: true });
+	                    _this4.props.addImage(res.body);
 	                });
 	            });
 	        }
@@ -19906,8 +19927,7 @@
 	                            null,
 	                            'Click or drop your images here'
 	                        ),
-	                        this.progress,
-	                        _react2.default.createElement(ProgressBar, { percentage: '20', filename: 'image.js' })
+	                        _react2.default.createElement(ProgressBar, { percentage: this.state.percentage || '100', filename: this.state.filename, preview: this.state.preview, isUploading: this.state.isUploading })
 	                    )
 	                )
 	            );
@@ -20035,21 +20055,37 @@
 	    _createClass(ProgressBar, [{
 	        key: 'render',
 	        value: function render() {
-	            return _react2.default.createElement(
-	                'div',
-	                { 'class': 'progresszone' },
-	                _react2.default.createElement(
-	                    'h5',
-	                    null,
-	                    this.props.filename
-	                ),
-	                _react2.default.createElement(
-	                    'progress',
-	                    { className: 'progress progress-striped progress-info', value: this.props.percentage, max: '100' },
-	                    this.props.perecentage,
-	                    '%'
-	                )
-	            );
+	            if (this.props.isUploading) {
+	                return _react2.default.createElement(
+	                    'div',
+	                    { className: 'progresszone' },
+	                    _react2.default.createElement(
+	                        'p',
+	                        null,
+	                        this.props.filename
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'row' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'col-sm-4' },
+	                            _react2.default.createElement('img', { src: this.props.preview })
+	                        ),
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'col-sm-8' },
+	                            _react2.default.createElement(
+	                                'progress',
+	                                { className: 'progress progress-striped progress-info', value: this.props.percentage, max: '100' },
+	                                this.props.perecentage,
+	                                '%'
+	                            )
+	                        )
+	                    )
+	                );
+	            }
+	            return _react2.default.createElement('div', null);
 	        }
 	    }]);
 
@@ -28891,2866 +28927,6 @@
 /* 169 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
-
-	var request = __webpack_require__(165);
-
-	// patch superagent to attach CSRF-token to all requests
-	try {
-	  var csrf = document.cookie.match(/csrftoken=(.*?)(?:$|;)/)[1];
-	  var end = request.Request.prototype.end;
-	  request.Request.prototype.end = function (fn) {
-	    this.set('X-CSRFToken', csrf);
-	    return end.call(this, fn);
-	  };
-	} catch (err) {}
-
-/***/ },
-/* 170 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactSlick = __webpack_require__(171);
-
-	var _reactSlick2 = _interopRequireDefault(_reactSlick);
-
-	var _classnames = __webpack_require__(168);
-
-	var _classnames2 = _interopRequireDefault(_classnames);
-
-	var _lodash = __webpack_require__(162);
-
-	var _lodash2 = _interopRequireDefault(_lodash);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var EditableDiv = (function (_React$Component) {
-	    _inherits(EditableDiv, _React$Component);
-
-	    function EditableDiv() {
-	        _classCallCheck(this, EditableDiv);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(EditableDiv).apply(this, arguments));
-	    }
-
-	    _createClass(EditableDiv, [{
-	        key: 'componentWillMount',
-	        value: function componentWillMount() {
-	            this.setState({ image: '' });
-	        }
-	    }, {
-	        key: 'componentWillReceiveProps',
-	        value: function componentWillReceiveProps(nextProps) {
-	            this.setState({ image: nextProps.image });
-	        }
-	    }, {
-	        key: 'resetImage',
-	        value: function resetImage() {
-	            delete this.props.image['filter'];
-	            this.setState({ image: this.props.image });
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                'div',
-	                null,
-	                _react2.default.createElement(ImageDiv, { image: this.state.image, editImage: this.props.editImage,
-	                    deleteImage: this.props.deleteImage, resetImage: this.resetImage.bind(this),
-	                    updateImage: this.props.updateImage
-	                }),
-	                _react2.default.createElement(FilterDiv, { image: this.state.image, changeFilter: this.props.editImage })
-	            );
-	        }
-	    }]);
-
-	    return EditableDiv;
-	})(_react2.default.Component);
-
-	exports.default = EditableDiv;
-
-	var ImageDiv = (function (_React$Component2) {
-	    _inherits(ImageDiv, _React$Component2);
-
-	    function ImageDiv() {
-	        _classCallCheck(this, ImageDiv);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(ImageDiv).apply(this, arguments));
-	    }
-
-	    _createClass(ImageDiv, [{
-	        key: 'componentWillMount',
-	        value: function componentWillMount() {
-	            this.setState({ editMode: false });
-	        }
-	    }, {
-	        key: 'componentWillUpdate',
-	        value: function componentWillUpdate(nextProps, nextState) {
-	            if (this.props.image.picture !== nextProps.image.picture) {
-	                if (this.state.editMode) this.props.updateImage(this.props.image);
-	                this.setState({ editMode: false });
-	            }
-	        }
-	    }, {
-	        key: 'toggleEdit',
-	        value: function toggleEdit(e) {
-	            e.preventDefault();
-	            e.stopPropagation();
-	            if (this.state.editMode) this.props.updateImage(this.props.image);
-	            this.setState({ editMode: !this.state.editMode });
-	        }
-	    }, {
-	        key: 'changeTitle',
-	        value: function changeTitle(e) {
-	            e.preventDefault();
-	            var image_copy = _lodash2.default.clone(this.props.image);
-	            image_copy.title = e.target.value;
-	            this.props.editImage(image_copy);
-	        }
-	    }, {
-	        key: 'deleteImage',
-	        value: function deleteImage(e) {
-	            e.preventDefault();
-	            if (!confirm("are you sure you want to delete this image")) return;
-	            this.props.deleteImage(this.props.image);
-	        }
-	    }, {
-	        key: 'resetImage',
-	        value: function resetImage() {
-	            this.props.resetImage();
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var buttonClass = (0, _classnames2.default)({
-	                'btn': true,
-	                'disabled': !_lodash2.default.isObject(this.props.image)
-	            });
-	            return _react2.default.createElement(
-	                'div',
-	                null,
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'card text-xs-center' },
-	                    _react2.default.createElement(
-	                        'blockquote',
-	                        { className: 'card-blockquote card-text' },
-	                        _react2.default.createElement(
-	                            'form',
-	                            { className: (!this.state.editMode ? 'hide' : '') + ' form-inline', action: '#', onSubmit: this.toggleEdit.bind(this) },
-	                            _react2.default.createElement(
-	                                'div',
-	                                { className: 'form-group' },
-	                                _react2.default.createElement(
-	                                    'div',
-	                                    { className: 'input-group' },
-	                                    _react2.default.createElement('input', { type: 'text', ref: 'title', className: 'form-control', value: this.props.image.title, onChange: this.changeTitle.bind(this)
-	                                    })
-	                                )
-	                            ),
-	                            _react2.default.createElement(
-	                                'button',
-	                                { type: 'submit', className: 'btn btn-default' },
-	                                'Save'
-	                            )
-	                        ),
-	                        _react2.default.createElement(
-	                            'h6',
-	                            { className: (this.state.editMode ? 'hide' : '') + ' text-uppercase' },
-	                            _lodash2.default.isObject(this.props.image) ? this.props.image.title || 'No Name' : 'No Image Selected',
-	                            ' '
-	                        ),
-	                        _react2.default.createElement(
-	                            'h6',
-	                            { className: 'text-uppercase' },
-	                            _lodash2.default.isObject(this.props.image) ? this.props.image.filter || 'No Filter Applied' : '',
-	                            ' '
-	                        )
-	                    )
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'edit-buttons' },
-	                    _react2.default.createElement(
-	                        'button',
-	                        { className: buttonClass, onClick: _lodash2.default.isObject(this.props.image) ? this.toggleEdit.bind(this) : '' },
-	                        _react2.default.createElement('span', { className: 'mdi mdi-pencil' })
-	                    ),
-	                    _react2.default.createElement(
-	                        'button',
-	                        { className: buttonClass, onClick: _lodash2.default.isObject(this.props.image) ? this.deleteImage.bind(this) : '' },
-	                        _react2.default.createElement('span', { className: 'mdi mdi-delete' })
-	                    ),
-	                    _react2.default.createElement(
-	                        'button',
-	                        { className: buttonClass, onClick: _lodash2.default.isObject(this.props.image) ? this.resetImage.bind(this) : '' },
-	                        _react2.default.createElement('span', { className: 'mdi mdi-backup-restore' })
-	                    ),
-	                    _react2.default.createElement(
-	                        'button',
-	                        { className: buttonClass + ' pull-sm-right' },
-	                        _react2.default.createElement('span', { className: 'mdi mdi-share-variant' })
-	                    ),
-	                    _react2.default.createElement(
-	                        'button',
-	                        { className: buttonClass + ' pull-sm-right' },
-	                        _react2.default.createElement('span', { className: 'mdi mdi-download' })
-	                    )
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'edit text-center' },
-	                    _react2.default.createElement('img', { src: this.props.image.picture ? '/media/' + this.props.image.picture : '' })
-	                )
-	            );
-	        }
-	    }]);
-
-	    return ImageDiv;
-	})(_react2.default.Component);
-
-	var FilterDiv = (function (_React$Component3) {
-	    _inherits(FilterDiv, _React$Component3);
-
-	    function FilterDiv() {
-	        _classCallCheck(this, FilterDiv);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(FilterDiv).apply(this, arguments));
-	    }
-
-	    _createClass(FilterDiv, [{
-	        key: 'componentWillReceiveProps',
-	        value: function componentWillReceiveProps(nextProps) {
-	            this.state = { activeFilter: '' };
-	        }
-	    }, {
-	        key: 'activateFilter',
-	        value: function activateFilter(filter) {
-	            var image = _lodash2.default.clone(this.props.image);
-	            image['filter'] = filter;
-	            this.setState({ activeFilter: filter });
-	            this.props.changeFilter(image);
-	        }
-	    }, {
-	        key: 'createFilterDiv',
-	        value: function createFilterDiv(filter, i) {
-	            var activeFilter = (0, _classnames2.default)({
-	                'active': this.props.image.filter == filter
-	            });
-	            return _react2.default.createElement(
-	                'div',
-	                { className: activeFilter, key: i, onClick: this.activateFilter.bind(this, filter) },
-	                _react2.default.createElement('img', { src: '/media/' + this.props.image.picture, width: '100', height: '100' }),
-	                _react2.default.createElement(
-	                    'p',
-	                    { className: 'lead' },
-	                    filter
-	                )
-	            );
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var filters = ['gray', 'Hd', 'serpia', 'black', 'orange', 'sunny'];
-	            var settings = {
-	                className: 'slider',
-	                infinite: true,
-	                speed: 500,
-	                slidesToShow: 5,
-	                slidesToScroll: 5,
-	                arrows: true
-	            };
-	            if (this.props.image) {
-	                return _react2.default.createElement(
-	                    _reactSlick2.default,
-	                    settings,
-	                    filters.map(this.createFilterDiv.bind(this))
-	                );
-	            } else {
-	                return _react2.default.createElement('div', null);
-	            }
-	        }
-	    }]);
-
-	    return FilterDiv;
-	})(_react2.default.Component);
-
-/***/ },
-/* 171 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	module.exports = __webpack_require__(172);
-
-/***/ },
-/* 172 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	function _interopRequireDefault(obj) {
-	  return obj && obj.__esModule ? obj : { 'default': obj };
-	}
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _innerSlider = __webpack_require__(173);
-
-	var _objectAssign = __webpack_require__(177);
-
-	var _objectAssign2 = _interopRequireDefault(_objectAssign);
-
-	var _json2mq = __webpack_require__(185);
-
-	var _json2mq2 = _interopRequireDefault(_json2mq);
-
-	var _reactResponsiveMixin = __webpack_require__(187);
-
-	var _reactResponsiveMixin2 = _interopRequireDefault(_reactResponsiveMixin);
-
-	var _defaultProps = __webpack_require__(181);
-
-	var _defaultProps2 = _interopRequireDefault(_defaultProps);
-
-	var Slider = _react2['default'].createClass({
-	  displayName: 'Slider',
-
-	  mixins: [_reactResponsiveMixin2['default']],
-	  getInitialState: function getInitialState() {
-	    return {
-	      breakpoint: null
-	    };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    var _this = this;
-
-	    if (this.props.responsive) {
-	      var breakpoints = this.props.responsive.map(function (breakpt) {
-	        return breakpt.breakpoint;
-	      });
-	      breakpoints.sort(function (x, y) {
-	        return x - y;
-	      });
-
-	      breakpoints.forEach(function (breakpoint, index) {
-	        var bQuery;
-	        if (index === 0) {
-	          bQuery = (0, _json2mq2['default'])({ minWidth: 0, maxWidth: breakpoint });
-	        } else {
-	          bQuery = (0, _json2mq2['default'])({ minWidth: breakpoints[index - 1], maxWidth: breakpoint });
-	        }
-	        _this.media(bQuery, function () {
-	          _this.setState({ breakpoint: breakpoint });
-	        });
-	      });
-
-	      // Register media query for full screen. Need to support resize from small to large
-	      var query = (0, _json2mq2['default'])({ minWidth: breakpoints.slice(-1)[0] });
-
-	      this.media(query, function () {
-	        _this.setState({ breakpoint: null });
-	      });
-	    }
-	  },
-	  render: function render() {
-	    var _this2 = this;
-
-	    var settings;
-	    var newProps;
-	    if (this.state.breakpoint) {
-	      newProps = this.props.responsive.filter(function (resp) {
-	        return resp.breakpoint === _this2.state.breakpoint;
-	      });
-	      settings = newProps[0].settings === 'unslick' ? 'unslick' : (0, _objectAssign2['default'])({}, this.props, newProps[0].settings);
-	    } else {
-	      settings = (0, _objectAssign2['default'])({}, _defaultProps2['default'], this.props);
-	    }
-	    if (settings === 'unslick') {
-	      // if 'unslick' responsive breakpoint setting used, just return the <Slider> tag nested HTML
-	      return _react2['default'].createElement('div', null, this.props.children);
-	    } else {
-	      return _react2['default'].createElement(_innerSlider.InnerSlider, settings, this.props.children);
-	    }
-	  }
-	});
-
-	module.exports = Slider;
-
-/***/ },
-/* 173 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	var _extends = Object.assign || function (target) {
-	  for (var i = 1; i < arguments.length; i++) {
-	    var source = arguments[i];for (var key in source) {
-	      if (Object.prototype.hasOwnProperty.call(source, key)) {
-	        target[key] = source[key];
-	      }
-	    }
-	  }return target;
-	};
-
-	function _interopRequireDefault(obj) {
-	  return obj && obj.__esModule ? obj : { 'default': obj };
-	}
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _mixinsEventHandlers = __webpack_require__(174);
-
-	var _mixinsEventHandlers2 = _interopRequireDefault(_mixinsEventHandlers);
-
-	var _mixinsHelpers = __webpack_require__(178);
-
-	var _mixinsHelpers2 = _interopRequireDefault(_mixinsHelpers);
-
-	var _initialState = __webpack_require__(180);
-
-	var _initialState2 = _interopRequireDefault(_initialState);
-
-	var _defaultProps = __webpack_require__(181);
-
-	var _defaultProps2 = _interopRequireDefault(_defaultProps);
-
-	var _classnames = __webpack_require__(168);
-
-	var _classnames2 = _interopRequireDefault(_classnames);
-
-	var _track = __webpack_require__(182);
-
-	var _dots = __webpack_require__(183);
-
-	var _arrows = __webpack_require__(184);
-
-	var InnerSlider = _react2['default'].createClass({
-	  displayName: 'InnerSlider',
-
-	  mixins: [_mixinsHelpers2['default'], _mixinsEventHandlers2['default']],
-	  getInitialState: function getInitialState() {
-	    return _initialState2['default'];
-	  },
-	  getDefaultProps: function getDefaultProps() {
-	    return _defaultProps2['default'];
-	  },
-	  componentWillMount: function componentWillMount() {
-	    if (this.props.init) {
-	      this.props.init();
-	    }
-	    this.setState({
-	      mounted: true
-	    });
-	    var lazyLoadedList = [];
-	    for (var i = 0; i < this.props.children.length; i++) {
-	      if (i >= this.state.currentSlide && i < this.state.currentSlide + this.props.slidesToShow) {
-	        lazyLoadedList.push(i);
-	      }
-	    }
-
-	    if (this.props.lazyLoad && this.state.lazyLoadedList.length === 0) {
-	      this.setState({
-	        lazyLoadedList: lazyLoadedList
-	      });
-	    }
-	  },
-	  componentDidMount: function componentDidMount() {
-	    // Hack for autoplay -- Inspect Later
-	    this.initialize(this.props);
-	    this.adaptHeight();
-	    if (window.addEventListener) {
-	      window.addEventListener('resize', this.onWindowResized);
-	    } else {
-	      window.attachEvent('onresize', this.onWindowResized);
-	    }
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    if (window.addEventListener) {
-	      window.removeEventListener('resize', this.onWindowResized);
-	    } else {
-	      window.detachEvent('onresize', this.onWindowResized);
-	    }
-	    if (this.state.autoPlayTimer) {
-	      window.clearTimeout(this.state.autoPlayTimer);
-	    }
-	  },
-	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-	    if (this.props.slickGoTo != nextProps.slickGoTo) {
-	      this.setState({ currentSlide: nextProps.slickGoTo });
-	    }
-	    this.update(nextProps);
-	  },
-	  componentDidUpdate: function componentDidUpdate() {
-	    this.adaptHeight();
-	  },
-	  onWindowResized: function onWindowResized() {
-	    this.update(this.props);
-	  },
-	  render: function render() {
-	    var className = (0, _classnames2['default'])('slick-initialized', 'slick-slider', this.props.className);
-
-	    var trackProps = {
-	      fade: this.props.fade,
-	      cssEase: this.props.cssEase,
-	      speed: this.props.speed,
-	      infinite: this.props.infinite,
-	      centerMode: this.props.centerMode,
-	      currentSlide: this.state.currentSlide,
-	      lazyLoad: this.props.lazyLoad,
-	      lazyLoadedList: this.state.lazyLoadedList,
-	      rtl: this.props.rtl,
-	      slideWidth: this.state.slideWidth,
-	      slidesToShow: this.props.slidesToShow,
-	      slideCount: this.state.slideCount,
-	      trackStyle: this.state.trackStyle,
-	      variableWidth: this.props.variableWidth
-	    };
-
-	    var dots;
-
-	    if (this.props.dots === true && this.state.slideCount > this.props.slidesToShow) {
-	      var dotProps = {
-	        dotsClass: this.props.dotsClass,
-	        slideCount: this.state.slideCount,
-	        slidesToShow: this.props.slidesToShow,
-	        currentSlide: this.state.currentSlide,
-	        slidesToScroll: this.props.slidesToScroll,
-	        clickHandler: this.changeSlide
-	      };
-
-	      dots = _react2['default'].createElement(_dots.Dots, dotProps);
-	    }
-
-	    var prevArrow, nextArrow;
-
-	    var arrowProps = {
-	      infinite: this.props.infinite,
-	      centerMode: this.props.centerMode,
-	      currentSlide: this.state.currentSlide,
-	      slideCount: this.state.slideCount,
-	      slidesToShow: this.props.slidesToShow,
-	      prevArrow: this.props.prevArrow,
-	      nextArrow: this.props.nextArrow,
-	      clickHandler: this.changeSlide
-	    };
-
-	    if (this.props.arrows) {
-	      prevArrow = _react2['default'].createElement(_arrows.PrevArrow, arrowProps);
-	      nextArrow = _react2['default'].createElement(_arrows.NextArrow, arrowProps);
-	    }
-
-	    return _react2['default'].createElement('div', { className: className }, _react2['default'].createElement('div', {
-	      ref: 'list',
-	      className: 'slick-list',
-	      onMouseDown: this.swipeStart,
-	      onMouseMove: this.state.dragging ? this.swipeMove : null,
-	      onMouseUp: this.swipeEnd,
-	      onMouseLeave: this.state.dragging ? this.swipeEnd : null,
-	      onTouchStart: this.swipeStart,
-	      onTouchMove: this.state.dragging ? this.swipeMove : null,
-	      onTouchEnd: this.swipeEnd,
-	      onTouchCancel: this.state.dragging ? this.swipeEnd : null }, _react2['default'].createElement(_track.Track, _extends({ ref: 'track' }, trackProps), this.props.children)), prevArrow, nextArrow, dots);
-	  }
-	});
-	exports.InnerSlider = InnerSlider;
-
-/***/ },
-/* 174 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	function _interopRequireDefault(obj) {
-	  return obj && obj.__esModule ? obj : { 'default': obj };
-	}
-
-	var _trackHelper = __webpack_require__(175);
-
-	var _objectAssign = __webpack_require__(177);
-
-	var _objectAssign2 = _interopRequireDefault(_objectAssign);
-
-	var EventHandlers = {
-	  // Event handler for previous and next
-	  changeSlide: function changeSlide(options) {
-	    var indexOffset, slideOffset, unevenOffset, targetSlide;
-	    unevenOffset = this.state.slideCount % this.props.slidesToScroll !== 0;
-	    indexOffset = unevenOffset ? 0 : (this.state.slideCount - this.state.currentSlide) % this.props.slidesToScroll;
-
-	    if (options.message === 'previous') {
-	      slideOffset = indexOffset === 0 ? this.props.slidesToScroll : this.props.slidesToShow - indexOffset;
-	      targetSlide = this.state.currentSlide - slideOffset;
-	    } else if (options.message === 'next') {
-	      slideOffset = indexOffset === 0 ? this.props.slidesToScroll : indexOffset;
-	      targetSlide = this.state.currentSlide + slideOffset;
-	    } else if (options.message === 'dots') {
-	      // Click on dots
-	      targetSlide = options.index * options.slidesToScroll;
-	      if (targetSlide === options.currentSlide) {
-	        return;
-	      }
-	    }
-
-	    this.slideHandler(targetSlide);
-	  },
-	  // Accessiblity handler for previous and next
-	  keyHandler: function keyHandler(e) {},
-	  // Focus on selecting a slide (click handler on track)
-	  selectHandler: function selectHandler(e) {},
-	  swipeStart: function swipeStart(e) {
-	    var touches, posX, posY;
-
-	    if (this.props.swipe === false || 'ontouchend' in document && this.props.swipe === false) {
-	      return;
-	    } else if (this.props.draggable === false && e.type.indexOf('mouse') !== -1) {
-	      return;
-	    }
-	    posX = e.touches !== undefined ? e.touches[0].pageX : e.clientX;
-	    posY = e.touches !== undefined ? e.touches[0].pageY : e.clientY;
-	    this.setState({
-	      dragging: true,
-	      touchObject: {
-	        startX: posX,
-	        startY: posY,
-	        curX: posX,
-	        curY: posY
-	      }
-	    });
-	  },
-	  swipeMove: function swipeMove(e) {
-	    if (!this.state.dragging) {
-	      return;
-	    }
-	    if (this.state.animating) {
-	      return;
-	    }
-	    var swipeLeft;
-	    var curLeft, positionOffset;
-	    var touchObject = this.state.touchObject;
-
-	    curLeft = (0, _trackHelper.getTrackLeft)((0, _objectAssign2['default'])({
-	      slideIndex: this.state.currentSlide,
-	      trackRef: this.refs.track
-	    }, this.props, this.state));
-	    touchObject.curX = e.touches ? e.touches[0].pageX : e.clientX;
-	    touchObject.curY = e.touches ? e.touches[0].pageY : e.clientY;
-	    touchObject.swipeLength = Math.round(Math.sqrt(Math.pow(touchObject.curX - touchObject.startX, 2)));
-
-	    positionOffset = (this.props.rtl === false ? 1 : -1) * (touchObject.curX > touchObject.startX ? 1 : -1);
-
-	    var currentSlide = this.state.currentSlide;
-	    var dotCount = Math.ceil(this.state.slideCount / this.props.slidesToScroll);
-	    var swipeDirection = this.swipeDirection(this.state.touchObject);
-	    var touchSwipeLength = touchObject.swipeLength;
-
-	    if (this.props.infinite === false) {
-	      if (currentSlide === 0 && swipeDirection === 'right' || currentSlide + 1 >= dotCount && swipeDirection === 'left') {
-	        touchSwipeLength = touchObject.swipeLength * this.props.edgeFriction;
-
-	        if (this.state.edgeDragged === false && this.props.edgeEvent) {
-	          this.props.edgeEvent(swipeDirection);
-	          this.setState({ edgeDragged: true });
-	        }
-	      }
-	    }
-
-	    if (this.state.swiped === false && this.props.swipeEvent) {
-	      this.props.swipeEvent(swipeDirection);
-	      this.setState({ swiped: true });
-	    }
-
-	    swipeLeft = curLeft + touchSwipeLength * positionOffset;
-	    this.setState({
-	      touchObject: touchObject,
-	      swipeLeft: swipeLeft,
-	      trackStyle: (0, _trackHelper.getTrackCSS)((0, _objectAssign2['default'])({ left: swipeLeft }, this.props, this.state))
-	    });
-
-	    if (Math.abs(touchObject.curX - touchObject.startX) < Math.abs(touchObject.curY - touchObject.startY) * 0.8) {
-	      return;
-	    }
-	    if (touchObject.swipeLength > 4) {
-	      e.preventDefault();
-	    }
-	  },
-	  swipeEnd: function swipeEnd(e) {
-	    if (!this.state.dragging) {
-	      return;
-	    }
-	    var touchObject = this.state.touchObject;
-	    var minSwipe = this.state.listWidth / this.props.touchThreshold;
-	    var swipeDirection = this.swipeDirection(touchObject);
-
-	    // reset the state of touch related state variables.
-	    this.setState({
-	      dragging: false,
-	      edgeDragged: false,
-	      swiped: false,
-	      swipeLeft: null,
-	      touchObject: {}
-	    });
-	    // Fix for #13
-	    if (!touchObject.swipeLength) {
-	      return;
-	    }
-	    if (touchObject.swipeLength > minSwipe) {
-	      e.preventDefault();
-	      if (swipeDirection === 'left') {
-	        this.slideHandler(this.state.currentSlide + this.props.slidesToScroll);
-	      } else if (swipeDirection === 'right') {
-	        this.slideHandler(this.state.currentSlide - this.props.slidesToScroll);
-	      } else {
-	        this.slideHandler(this.state.currentSlide);
-	      }
-	    } else {
-	      // Adjust the track back to it's original position.
-	      var currentLeft = (0, _trackHelper.getTrackLeft)((0, _objectAssign2['default'])({
-	        slideIndex: this.state.currentSlide,
-	        trackRef: this.refs.track
-	      }, this.props, this.state));
-
-	      this.setState({
-	        trackStyle: (0, _trackHelper.getTrackAnimateCSS)((0, _objectAssign2['default'])({ left: currentLeft }, this.props, this.state))
-	      });
-	    }
-	  }
-	};
-
-	exports['default'] = EventHandlers;
-	module.exports = exports['default'];
-
-/***/ },
-/* 175 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	function _interopRequireDefault(obj) {
-	  return obj && obj.__esModule ? obj : { 'default': obj };
-	}
-
-	var _ReactDOM = __webpack_require__(176);
-
-	var _ReactDOM2 = _interopRequireDefault(_ReactDOM);
-
-	var checkSpecKeys = function checkSpecKeys(spec, keysArray) {
-	  return keysArray.reduce(function (value, key) {
-	    return value && spec.hasOwnProperty(key);
-	  }, true) ? null : console.error('Keys Missing', spec);
-	};
-
-	var getTrackCSS = function getTrackCSS(spec) {
-	  checkSpecKeys(spec, ['left', 'variableWidth', 'slideCount', 'slidesToShow', 'slideWidth']);
-
-	  var trackWidth;
-
-	  if (spec.variableWidth) {
-	    trackWidth = (spec.slideCount + 2 * spec.slidesToShow) * spec.slideWidth;
-	  } else if (spec.centerMode) {
-	    trackWidth = (spec.slideCount + 2 * (spec.slidesToShow + 1)) * spec.slideWidth;
-	  } else {
-	    trackWidth = (spec.slideCount + 2 * spec.slidesToShow) * spec.slideWidth;
-	  }
-
-	  var style = {
-	    opacity: 1,
-	    width: trackWidth,
-	    WebkitTransform: 'translate3d(' + spec.left + 'px, 0px, 0px)',
-	    transform: 'translate3d(' + spec.left + 'px, 0px, 0px)',
-	    transition: '',
-	    WebkitTransition: '',
-	    msTransform: 'translateX(' + spec.left + 'px)'
-	  };
-
-	  // Fallback for IE8
-	  if (!window.addEventListener && window.attachEvent) {
-	    style.marginLeft = spec.left + 'px';
-	  }
-
-	  return style;
-	};
-
-	exports.getTrackCSS = getTrackCSS;
-	var getTrackAnimateCSS = function getTrackAnimateCSS(spec) {
-	  checkSpecKeys(spec, ['left', 'variableWidth', 'slideCount', 'slidesToShow', 'slideWidth', 'speed', 'cssEase']);
-
-	  var style = getTrackCSS(spec);
-	  // useCSS is true by default so it can be undefined
-	  style.WebkitTransition = '-webkit-transform ' + spec.speed + 'ms ' + spec.cssEase;
-	  style.transition = 'transform ' + spec.speed + 'ms ' + spec.cssEase;
-	  return style;
-	};
-
-	exports.getTrackAnimateCSS = getTrackAnimateCSS;
-	var getTrackLeft = function getTrackLeft(spec) {
-
-	  checkSpecKeys(spec, ['slideIndex', 'trackRef', 'infinite', 'centerMode', 'slideCount', 'slidesToShow', 'slidesToScroll', 'slideWidth', 'listWidth', 'variableWidth']);
-
-	  var slideOffset = 0;
-	  var targetLeft;
-	  var targetSlide;
-
-	  if (spec.fade) {
-	    return 0;
-	  }
-
-	  if (spec.infinite) {
-	    if (spec.slideCount > spec.slidesToShow) {
-	      slideOffset = spec.slideWidth * spec.slidesToShow * -1;
-	    }
-	    if (spec.slideCount % spec.slidesToScroll !== 0) {
-	      if (spec.slideIndex + spec.slidesToScroll > spec.slideCount && spec.slideCount > spec.slidesToShow) {
-	        if (spec.slideIndex > spec.slideCount) {
-	          slideOffset = (spec.slidesToShow - (spec.slideIndex - spec.slideCount)) * spec.slideWidth * -1;
-	        } else {
-	          slideOffset = spec.slideCount % spec.slidesToScroll * spec.slideWidth * -1;
-	        }
-	      }
-	    }
-	  }
-
-	  if (spec.centerMode) {
-	    if (spec.infinite) {
-	      slideOffset += spec.slideWidth * Math.floor(spec.slidesToShow / 2);
-	    } else {
-	      slideOffset = spec.slideWidth * Math.floor(spec.slidesToShow / 2);
-	    }
-	  }
-
-	  targetLeft = spec.slideIndex * spec.slideWidth * -1 + slideOffset;
-
-	  if (spec.variableWidth === true) {
-	    var targetSlideIndex;
-	    if (spec.slideCount <= spec.slidesToShow || spec.infinite === false) {
-	      targetSlide = _ReactDOM2['default'].findDOMNode(spec.trackRef).childNodes[spec.slideIndex];
-	    } else {
-	      targetSlideIndex = spec.slideIndex + spec.slidesToShow;
-	      targetSlide = _ReactDOM2['default'].findDOMNode(spec.trackRef).childNodes[targetSlideIndex];
-	    }
-	    targetLeft = targetSlide ? targetSlide.offsetLeft * -1 : 0;
-	    if (spec.centerMode === true) {
-	      if (spec.infinite === false) {
-	        targetSlide = _ReactDOM2['default'].findDOMNode(spec.trackRef).children[spec.slideIndex];
-	      } else {
-	        targetSlide = _ReactDOM2['default'].findDOMNode(spec.trackRef).children[spec.slideIndex + spec.slidesToShow + 1];
-	      }
-
-	      targetLeft = targetSlide ? targetSlide.offsetLeft * -1 : 0;
-	      targetLeft += (spec.listWidth - targetSlide.offsetWidth) / 2;
-	    }
-	  }
-
-	  return targetLeft;
-	};
-	exports.getTrackLeft = getTrackLeft;
-
-/***/ },
-/* 176 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	function _interopRequireDefault(obj) {
-	  return obj && obj.__esModule ? obj : { 'default': obj };
-	}
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactDom = __webpack_require__(158);
-
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-
-	var ReactDOM = _react2['default'].version >= '0.14.0' ? _reactDom2['default'] : _react2['default'];
-
-	exports['default'] = ReactDOM;
-	module.exports = exports['default'];
-
-/***/ },
-/* 177 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	function ToObject(val) {
-		if (val == null) {
-			throw new TypeError('Object.assign cannot be called with null or undefined');
-		}
-
-		return Object(val);
-	}
-
-	module.exports = Object.assign || function (target, source) {
-		var from;
-		var keys;
-		var to = ToObject(target);
-
-		for (var s = 1; s < arguments.length; s++) {
-			from = arguments[s];
-			keys = Object.keys(Object(from));
-
-			for (var i = 0; i < keys.length; i++) {
-				to[keys[i]] = from[keys[i]];
-			}
-		}
-
-		return to;
-	};
-
-/***/ },
-/* 178 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	function _interopRequireDefault(obj) {
-	  return obj && obj.__esModule ? obj : { 'default': obj };
-	}
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _ReactDOM = __webpack_require__(176);
-
-	var _ReactDOM2 = _interopRequireDefault(_ReactDOM);
-
-	var _reactLibReactTransitionEvents = __webpack_require__(179);
-
-	var _reactLibReactTransitionEvents2 = _interopRequireDefault(_reactLibReactTransitionEvents);
-
-	var _trackHelper = __webpack_require__(175);
-
-	var _objectAssign = __webpack_require__(177);
-
-	var _objectAssign2 = _interopRequireDefault(_objectAssign);
-
-	var helpers = {
-	  initialize: function initialize(props) {
-	    var slideCount = _react2['default'].Children.count(props.children);
-	    var listWidth = this.getWidth(_ReactDOM2['default'].findDOMNode(this.refs.list));
-	    var trackWidth = this.getWidth(_ReactDOM2['default'].findDOMNode(this.refs.track));
-	    var slideWidth = this.getWidth(_ReactDOM2['default'].findDOMNode(this)) / props.slidesToShow;
-
-	    var currentSlide = props.rtl ? slideCount - 1 - props.initialSlide : props.initialSlide;
-
-	    this.setState({
-	      slideCount: slideCount,
-	      slideWidth: slideWidth,
-	      listWidth: listWidth,
-	      trackWidth: trackWidth,
-	      currentSlide: currentSlide
-	    }, function () {
-
-	      var targetLeft = (0, _trackHelper.getTrackLeft)((0, _objectAssign2['default'])({
-	        slideIndex: this.state.currentSlide,
-	        trackRef: this.refs.track
-	      }, props, this.state));
-	      // getCSS function needs previously set state
-	      var trackStyle = (0, _trackHelper.getTrackCSS)((0, _objectAssign2['default'])({ left: targetLeft }, props, this.state));
-
-	      this.setState({ trackStyle: trackStyle });
-
-	      this.autoPlay(); // once we're set up, trigger the initial autoplay.
-	    });
-	  },
-	  update: function update(props) {
-	    // This method has mostly same code as initialize method.
-	    // Refactor it
-	    var slideCount = _react2['default'].Children.count(props.children);
-	    var listWidth = this.getWidth(_ReactDOM2['default'].findDOMNode(this.refs.list));
-	    var trackWidth = this.getWidth(_ReactDOM2['default'].findDOMNode(this.refs.track));
-	    var slideWidth = this.getWidth(_ReactDOM2['default'].findDOMNode(this)) / props.slidesToShow;
-
-	    this.setState({
-	      slideCount: slideCount,
-	      slideWidth: slideWidth,
-	      listWidth: listWidth,
-	      trackWidth: trackWidth
-	    }, function () {
-
-	      var targetLeft = (0, _trackHelper.getTrackLeft)((0, _objectAssign2['default'])({
-	        slideIndex: this.state.currentSlide,
-	        trackRef: this.refs.track
-	      }, props, this.state));
-	      // getCSS function needs previously set state
-	      var trackStyle = (0, _trackHelper.getTrackCSS)((0, _objectAssign2['default'])({ left: targetLeft }, props, this.state));
-
-	      this.setState({ trackStyle: trackStyle });
-	    });
-	  },
-	  getWidth: function getWidth(elem) {
-	    return elem.getBoundingClientRect().width || elem.offsetWidth;
-	  },
-	  adaptHeight: function adaptHeight() {
-	    if (this.props.adaptiveHeight) {
-	      var selector = '[data-index="' + this.state.currentSlide + '"]';
-	      if (this.refs.list) {
-	        var slickList = _ReactDOM2['default'].findDOMNode(this.refs.list);
-	        slickList.style.height = slickList.querySelector(selector).offsetHeight + 'px';
-	      }
-	    }
-	  },
-	  slideHandler: function slideHandler(index) {
-	    var _this = this;
-
-	    // Functionality of animateSlide and postSlide is merged into this function
-	    // console.log('slideHandler', index);
-	    var targetSlide, currentSlide;
-	    var targetLeft, currentLeft;
-	    var callback;
-
-	    if (this.state.currentSlide === index) {
-	      return;
-	    }
-
-	    if (this.props.fade) {
-	      currentSlide = this.state.currentSlide;
-
-	      //  Shifting targetSlide back into the range
-	      if (index < 0) {
-	        targetSlide = index + this.state.slideCount;
-	      } else if (index >= this.state.slideCount) {
-	        targetSlide = index - this.state.slideCount;
-	      } else {
-	        targetSlide = index;
-	      }
-
-	      if (this.props.lazyLoad && this.state.lazyLoadedList.indexOf(targetSlide) < 0) {
-	        this.setState({
-	          lazyLoadedList: this.state.lazyLoadedList.concat(targetSlide)
-	        });
-	      }
-
-	      callback = function () {
-	        _this.setState({
-	          animating: false
-	        });
-	        if (_this.props.afterChange) {
-	          _this.props.afterChange(currentSlide);
-	        }
-	        _reactLibReactTransitionEvents2['default'].removeEndEventListener(_ReactDOM2['default'].findDOMNode(_this.refs.track).children[currentSlide], callback);
-	      };
-
-	      this.setState({
-	        animating: true,
-	        currentSlide: targetSlide
-	      }, function () {
-	        _reactLibReactTransitionEvents2['default'].addEndEventListener(_ReactDOM2['default'].findDOMNode(this.refs.track).children[currentSlide], callback);
-	      });
-
-	      if (this.props.beforeChange) {
-	        this.props.beforeChange(this.state.currentSlide, currentSlide);
-	      }
-
-	      this.autoPlay();
-	      return;
-	    }
-
-	    targetSlide = index;
-	    if (targetSlide < 0) {
-	      if (this.props.infinite === false) {
-	        currentSlide = 0;
-	      } else if (this.state.slideCount % this.props.slidesToScroll !== 0) {
-	        currentSlide = this.state.slideCount - this.state.slideCount % this.props.slidesToScroll;
-	      } else {
-	        currentSlide = this.state.slideCount + targetSlide;
-	      }
-	    } else if (targetSlide >= this.state.slideCount) {
-	      if (this.props.infinite === false) {
-	        currentSlide = this.state.slideCount - this.props.slidesToShow;
-	      } else if (this.state.slideCount % this.props.slidesToScroll !== 0) {
-	        currentSlide = 0;
-	      } else {
-	        currentSlide = targetSlide - this.state.slideCount;
-	      }
-	    } else {
-	      currentSlide = targetSlide;
-	    }
-
-	    targetLeft = (0, _trackHelper.getTrackLeft)((0, _objectAssign2['default'])({
-	      slideIndex: targetSlide,
-	      trackRef: this.refs.track
-	    }, this.props, this.state));
-
-	    currentLeft = (0, _trackHelper.getTrackLeft)((0, _objectAssign2['default'])({
-	      slideIndex: currentSlide,
-	      trackRef: this.refs.track
-	    }, this.props, this.state));
-
-	    if (this.props.infinite === false) {
-	      targetLeft = currentLeft;
-	    }
-
-	    if (this.props.beforeChange) {
-	      this.props.beforeChange(this.state.currentSlide, currentSlide);
-	    }
-
-	    if (this.props.lazyLoad) {
-	      var loaded = true;
-	      var slidesToLoad = [];
-	      for (var i = targetSlide; i < targetSlide + this.props.slidesToShow; i++) {
-	        loaded = loaded && this.state.lazyLoadedList.indexOf(i) >= 0;
-	        if (!loaded) {
-	          slidesToLoad.push(i);
-	        }
-	      }
-	      if (!loaded) {
-	        this.setState({
-	          lazyLoadedList: this.state.lazyLoadedList.concat(slidesToLoad)
-	        });
-	      }
-	    }
-
-	    // Slide Transition happens here.
-	    // animated transition happens to target Slide and
-	    // non - animated transition happens to current Slide
-	    // If CSS transitions are false, directly go the current slide.
-
-	    if (this.props.useCSS === false) {
-
-	      this.setState({
-	        currentSlide: currentSlide,
-	        trackStyle: (0, _trackHelper.getTrackCSS)((0, _objectAssign2['default'])({ left: currentLeft }, this.props, this.state))
-	      }, function () {
-	        if (this.props.afterChange) {
-	          this.props.afterChange(currentSlide);
-	        }
-	      });
-	    } else {
-
-	      var nextStateChanges = {
-	        animating: false,
-	        currentSlide: currentSlide,
-	        trackStyle: (0, _trackHelper.getTrackCSS)((0, _objectAssign2['default'])({ left: currentLeft }, this.props, this.state)),
-	        swipeLeft: null
-	      };
-
-	      callback = function () {
-	        _this.setState(nextStateChanges);
-	        if (_this.props.afterChange) {
-	          _this.props.afterChange(currentSlide);
-	        }
-	        _reactLibReactTransitionEvents2['default'].removeEndEventListener(_ReactDOM2['default'].findDOMNode(_this.refs.track), callback);
-	      };
-
-	      this.setState({
-	        animating: true,
-	        currentSlide: targetSlide,
-	        trackStyle: (0, _trackHelper.getTrackAnimateCSS)((0, _objectAssign2['default'])({ left: targetLeft }, this.props, this.state))
-	      }, function () {
-	        _reactLibReactTransitionEvents2['default'].addEndEventListener(_ReactDOM2['default'].findDOMNode(this.refs.track), callback);
-	      });
-	    }
-
-	    this.autoPlay();
-	  },
-	  swipeDirection: function swipeDirection(touchObject) {
-	    var xDist, yDist, r, swipeAngle;
-
-	    xDist = touchObject.startX - touchObject.curX;
-	    yDist = touchObject.startY - touchObject.curY;
-	    r = Math.atan2(yDist, xDist);
-
-	    swipeAngle = Math.round(r * 180 / Math.PI);
-	    if (swipeAngle < 0) {
-	      swipeAngle = 360 - Math.abs(swipeAngle);
-	    }
-	    if (swipeAngle <= 45 && swipeAngle >= 0 || swipeAngle <= 360 && swipeAngle >= 315) {
-	      return this.props.rtl === false ? 'left' : 'right';
-	    }
-	    if (swipeAngle >= 135 && swipeAngle <= 225) {
-	      return this.props.rtl === false ? 'right' : 'left';
-	    }
-
-	    return 'vertical';
-	  },
-	  autoPlay: function autoPlay() {
-	    var _this2 = this;
-
-	    var play = function play() {
-	      if (_this2.state.mounted) {
-	        _this2.slideHandler(_this2.state.currentSlide + _this2.props.slidesToScroll);
-	      }
-	    };
-	    if (this.props.autoplay) {
-	      window.clearTimeout(this.state.autoPlayTimer);
-	      this.setState({
-	        autoPlayTimer: window.setTimeout(play, this.props.autoplaySpeed)
-	      });
-	    }
-	  }
-	};
-
-	exports['default'] = helpers;
-	module.exports = exports['default'];
-
-/***/ },
-/* 179 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactTransitionEvents
-	 */
-
-	'use strict';
-
-	var ExecutionEnvironment = __webpack_require__(9);
-
-	/**
-	 * EVENT_NAME_MAP is used to determine which event fired when a
-	 * transition/animation ends, based on the style property used to
-	 * define that event.
-	 */
-	var EVENT_NAME_MAP = {
-	  transitionend: {
-	    'transition': 'transitionend',
-	    'WebkitTransition': 'webkitTransitionEnd',
-	    'MozTransition': 'mozTransitionEnd',
-	    'OTransition': 'oTransitionEnd',
-	    'msTransition': 'MSTransitionEnd'
-	  },
-
-	  animationend: {
-	    'animation': 'animationend',
-	    'WebkitAnimation': 'webkitAnimationEnd',
-	    'MozAnimation': 'mozAnimationEnd',
-	    'OAnimation': 'oAnimationEnd',
-	    'msAnimation': 'MSAnimationEnd'
-	  }
-	};
-
-	var endEvents = [];
-
-	function detectEvents() {
-	  var testEl = document.createElement('div');
-	  var style = testEl.style;
-
-	  // On some platforms, in particular some releases of Android 4.x,
-	  // the un-prefixed "animation" and "transition" properties are defined on the
-	  // style object but the events that fire will still be prefixed, so we need
-	  // to check if the un-prefixed events are useable, and if not remove them
-	  // from the map
-	  if (!('AnimationEvent' in window)) {
-	    delete EVENT_NAME_MAP.animationend.animation;
-	  }
-
-	  if (!('TransitionEvent' in window)) {
-	    delete EVENT_NAME_MAP.transitionend.transition;
-	  }
-
-	  for (var baseEventName in EVENT_NAME_MAP) {
-	    var baseEvents = EVENT_NAME_MAP[baseEventName];
-	    for (var styleName in baseEvents) {
-	      if (styleName in style) {
-	        endEvents.push(baseEvents[styleName]);
-	        break;
-	      }
-	    }
-	  }
-	}
-
-	if (ExecutionEnvironment.canUseDOM) {
-	  detectEvents();
-	}
-
-	// We use the raw {add|remove}EventListener() call because EventListener
-	// does not know how to remove event listeners and we really should
-	// clean up. Also, these events are not triggered in older browsers
-	// so we should be A-OK here.
-
-	function addEventListener(node, eventName, eventListener) {
-	  node.addEventListener(eventName, eventListener, false);
-	}
-
-	function removeEventListener(node, eventName, eventListener) {
-	  node.removeEventListener(eventName, eventListener, false);
-	}
-
-	var ReactTransitionEvents = {
-	  addEndEventListener: function addEndEventListener(node, eventListener) {
-	    if (endEvents.length === 0) {
-	      // If CSS transitions are not supported, trigger an "end animation"
-	      // event immediately.
-	      window.setTimeout(eventListener, 0);
-	      return;
-	    }
-	    endEvents.forEach(function (endEvent) {
-	      addEventListener(node, endEvent, eventListener);
-	    });
-	  },
-
-	  removeEndEventListener: function removeEndEventListener(node, eventListener) {
-	    if (endEvents.length === 0) {
-	      return;
-	    }
-	    endEvents.forEach(function (endEvent) {
-	      removeEventListener(node, endEvent, eventListener);
-	    });
-	  }
-	};
-
-	module.exports = ReactTransitionEvents;
-
-/***/ },
-/* 180 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	var initialState = {
-	    animating: false,
-	    dragging: false,
-	    autoPlayTimer: null,
-	    currentDirection: 0,
-	    currentLeft: null,
-	    currentSlide: 0,
-	    direction: 1,
-	    // listWidth: null,
-	    // listHeight: null,
-	    // loadIndex: 0,
-	    slideCount: null,
-	    slideWidth: null,
-	    // sliding: false,
-	    // slideOffset: 0,
-	    swipeLeft: null,
-	    touchObject: {
-	        startX: 0,
-	        startY: 0,
-	        curX: 0,
-	        curY: 0
-	    },
-
-	    lazyLoadedList: [],
-
-	    // added for react
-	    initialized: false,
-	    edgeDragged: false,
-	    swiped: false, // used by swipeEvent. differentites between touch and swipe.
-	    trackStyle: {},
-	    trackWidth: 0
-
-	    // Removed
-	    // transformsEnabled: false,
-	    // $nextArrow: null,
-	    // $prevArrow: null,
-	    // $dots: null,
-	    // $list: null,
-	    // $slideTrack: null,
-	    // $slides: null,
-	};
-
-	module.exports = initialState;
-
-/***/ },
-/* 181 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	var defaultProps = {
-	    className: '',
-	    // accessibility: true,
-	    adaptiveHeight: false,
-	    arrows: true,
-	    autoplay: false,
-	    autoplaySpeed: 3000,
-	    centerMode: false,
-	    centerPadding: '50px',
-	    cssEase: 'ease',
-	    dots: false,
-	    dotsClass: 'slick-dots',
-	    draggable: true,
-	    easing: 'linear',
-	    edgeFriction: 0.35,
-	    fade: false,
-	    focusOnSelect: false,
-	    infinite: true,
-	    initialSlide: 0,
-	    lazyLoad: false,
-	    responsive: null,
-	    rtl: false,
-	    slide: 'div',
-	    slidesToShow: 1,
-	    slidesToScroll: 1,
-	    speed: 500,
-	    swipe: true,
-	    swipeToSlide: false,
-	    touchMove: true,
-	    touchThreshold: 5,
-	    useCSS: true,
-	    variableWidth: false,
-	    vertical: false,
-	    // waitForAnimate: true,
-	    afterChange: null,
-	    beforeChange: null,
-	    edgeEvent: null,
-	    init: null,
-	    swipeEvent: null,
-	    // nextArrow, prevArrow are react componets
-	    nextArrow: null,
-	    prevArrow: null
-	};
-
-	module.exports = defaultProps;
-
-/***/ },
-/* 182 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	function _interopRequireDefault(obj) {
-	  return obj && obj.__esModule ? obj : { 'default': obj };
-	}
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _objectAssign = __webpack_require__(177);
-
-	var _objectAssign2 = _interopRequireDefault(_objectAssign);
-
-	var _classnames = __webpack_require__(168);
-
-	var _classnames2 = _interopRequireDefault(_classnames);
-
-	var getSlideClasses = function getSlideClasses(spec) {
-	  var slickActive, slickCenter, slickCloned;
-	  var centerOffset, index;
-
-	  if (spec.rtl) {
-	    index = spec.slideCount - 1 - spec.index;
-	    console.log();
-	  } else {
-	    index = spec.index;
-	  }
-
-	  slickCloned = index < 0 || index >= spec.slideCount;
-	  if (spec.centerMode) {
-	    centerOffset = Math.floor(spec.slidesToShow / 2);
-	    slickCenter = spec.currentSlide === index;
-	    if (index > spec.currentSlide - centerOffset - 1 && index <= spec.currentSlide + centerOffset) {
-	      slickActive = true;
-	    }
-	  } else {
-	    slickActive = spec.currentSlide <= index && index < spec.currentSlide + spec.slidesToShow;
-	  }
-	  return (0, _classnames2['default'])({
-	    'slick-slide': true,
-	    'slick-active': slickActive,
-	    'slick-center': slickCenter,
-	    'slick-cloned': slickCloned
-	  });
-	};
-
-	var getSlideStyle = function getSlideStyle(spec) {
-	  var style = {};
-
-	  if (spec.variableWidth === undefined || spec.variableWidth === false) {
-	    style.width = spec.slideWidth;
-	  }
-
-	  if (spec.fade) {
-	    style.position = 'relative';
-	    style.left = -spec.index * spec.slideWidth;
-	    style.opacity = spec.currentSlide === spec.index ? 1 : 0;
-	    style.transition = 'opacity ' + spec.speed + 'ms ' + spec.cssEase;
-	    style.WebkitTransition = 'opacity ' + spec.speed + 'ms ' + spec.cssEase;
-	  }
-
-	  return style;
-	};
-
-	var renderSlides = function renderSlides(spec) {
-	  var key;
-	  var slides = [];
-	  var preCloneSlides = [];
-	  var postCloneSlides = [];
-	  var count = _react2['default'].Children.count(spec.children);
-	  var child;
-
-	  _react2['default'].Children.forEach(spec.children, function (elem, index) {
-	    if (!spec.lazyLoad | (spec.lazyLoad && spec.lazyLoadedList.indexOf(index) >= 0)) {
-	      child = elem;
-	    } else {
-	      child = _react2['default'].createElement('div', null);
-	    }
-	    var childStyle = getSlideStyle((0, _objectAssign2['default'])({}, spec, { index: index }));
-	    var slickClasses = getSlideClasses((0, _objectAssign2['default'])({ index: index }, spec));
-	    var cssClasses;
-
-	    if (child.props.className) {
-	      cssClasses = (0, _classnames2['default'])(slickClasses, child.props.className);
-	    } else {
-	      cssClasses = slickClasses;
-	    }
-
-	    slides.push(_react2['default'].cloneElement(child, {
-	      key: index,
-	      'data-index': index,
-	      className: cssClasses,
-	      style: (0, _objectAssign2['default'])({}, child.props.style || {}, childStyle)
-	    }));
-
-	    // variableWidth doesn't wrap properly.
-	    if (spec.infinite && spec.fade === false) {
-	      var infiniteCount = spec.variableWidth ? spec.slidesToShow + 1 : spec.slidesToShow;
-
-	      if (index >= count - infiniteCount) {
-	        key = -(count - index);
-	        preCloneSlides.push(_react2['default'].cloneElement(child, {
-	          key: key,
-	          'data-index': key,
-	          className: getSlideClasses((0, _objectAssign2['default'])({ index: key }, spec)),
-	          style: (0, _objectAssign2['default'])({}, child.props.style || {}, childStyle)
-	        }));
-	      }
-
-	      if (index < infiniteCount) {
-	        key = count + index;
-	        postCloneSlides.push(_react2['default'].cloneElement(child, {
-	          key: key,
-	          'data-index': key,
-	          className: getSlideClasses((0, _objectAssign2['default'])({ index: key }, spec)),
-	          style: (0, _objectAssign2['default'])({}, child.props.style || {}, childStyle)
-	        }));
-	      }
-	    }
-	  });
-
-	  if (spec.rtl) {
-	    return preCloneSlides.concat(slides, postCloneSlides).reverse();
-	  } else {
-	    return preCloneSlides.concat(slides, postCloneSlides);
-	  }
-	};
-
-	var Track = _react2['default'].createClass({
-	  displayName: 'Track',
-
-	  render: function render() {
-	    var slides = renderSlides(this.props);
-	    return _react2['default'].createElement('div', { className: 'slick-track', style: this.props.trackStyle }, slides);
-	  }
-	});
-	exports.Track = Track;
-
-/***/ },
-/* 183 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	function _interopRequireDefault(obj) {
-	  return obj && obj.__esModule ? obj : { 'default': obj };
-	}
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _classnames = __webpack_require__(168);
-
-	var _classnames2 = _interopRequireDefault(_classnames);
-
-	var getDotCount = function getDotCount(spec) {
-	  var dots;
-	  dots = Math.ceil(spec.slideCount / spec.slidesToScroll);
-	  return dots;
-	};
-
-	var Dots = _react2['default'].createClass({
-	  displayName: 'Dots',
-
-	  clickHandler: function clickHandler(options, e) {
-	    // In Autoplay the focus stays on clicked button even after transition
-	    // to next slide. That only goes away by click somewhere outside
-	    e.preventDefault();
-	    this.props.clickHandler(options);
-	  },
-	  render: function render() {
-	    var _this = this;
-
-	    var dotCount = getDotCount({
-	      slideCount: this.props.slideCount,
-	      slidesToScroll: this.props.slidesToScroll
-	    });
-
-	    // Apply join & split to Array to pre-fill it for IE8
-	    //
-	    // Credit: http://stackoverflow.com/a/13735425/1849458
-	    var dots = Array.apply(null, Array(dotCount + 1).join('0').split('')).map(function (x, i) {
-
-	      var className = (0, _classnames2['default'])({
-	        'slick-active': _this.props.currentSlide === i * _this.props.slidesToScroll
-	      });
-
-	      var dotOptions = {
-	        message: 'dots',
-	        index: i,
-	        slidesToScroll: _this.props.slidesToScroll,
-	        currentSlide: _this.props.currentSlide
-	      };
-
-	      return _react2['default'].createElement('li', { key: i, className: className }, _react2['default'].createElement('button', { onClick: _this.clickHandler.bind(_this, dotOptions) }, i));
-	    });
-
-	    return _react2['default'].createElement('ul', { className: this.props.dotsClass, style: { display: 'block' } }, dots);
-	  }
-	});
-	exports.Dots = Dots;
-
-/***/ },
-/* 184 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	var _extends = Object.assign || function (target) {
-	  for (var i = 1; i < arguments.length; i++) {
-	    var source = arguments[i];for (var key in source) {
-	      if (Object.prototype.hasOwnProperty.call(source, key)) {
-	        target[key] = source[key];
-	      }
-	    }
-	  }return target;
-	};
-
-	function _interopRequireDefault(obj) {
-	  return obj && obj.__esModule ? obj : { 'default': obj };
-	}
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _classnames = __webpack_require__(168);
-
-	var _classnames2 = _interopRequireDefault(_classnames);
-
-	var PrevArrow = _react2['default'].createClass({
-	  displayName: 'PrevArrow',
-
-	  clickHandler: function clickHandler(options, e) {
-	    e.preventDefault();
-	    this.props.clickHandler(options, e);
-	  },
-	  render: function render() {
-	    var prevClasses = { 'slick-prev': true };
-	    var prevHandler = this.clickHandler.bind(this, { message: 'previous' });
-
-	    if (!this.props.infinite && (this.props.currentSlide === 0 || this.props.slideCount <= this.props.slidesToShow)) {
-	      prevClasses['slick-disabled'] = true;
-	      prevHandler = null;
-	    }
-
-	    var prevArrowProps = {
-	      key: '0',
-	      ref: 'previous',
-	      'data-role': 'none',
-	      className: (0, _classnames2['default'])(prevClasses),
-	      style: { display: 'block' },
-	      onClick: prevHandler
-	    };
-	    var prevArrow;
-
-	    if (this.props.prevArrow) {
-	      prevArrow = _react2['default'].createElement(this.props.prevArrow, prevArrowProps);
-	    } else {
-	      prevArrow = _react2['default'].createElement('button', _extends({ key: '0', type: 'button' }, prevArrowProps), ' Previous');
-	    }
-
-	    return prevArrow;
-	  }
-	});
-
-	exports.PrevArrow = PrevArrow;
-	var NextArrow = _react2['default'].createClass({
-	  displayName: 'NextArrow',
-
-	  clickHandler: function clickHandler(options, e) {
-	    e.preventDefault();
-	    this.props.clickHandler(options, e);
-	  },
-	  render: function render() {
-	    var nextClasses = { 'slick-next': true };
-	    var nextHandler = this.clickHandler.bind(this, { message: 'next' });
-
-	    if (!this.props.infinite) {
-	      if (this.props.centerMode && this.props.currentSlide >= this.props.slideCount - 1) {
-	        nextClasses['slick-disabled'] = true;
-	        nextHandler = null;
-	      } else {
-	        if (this.props.currentSlide >= this.props.slideCount - this.props.slidesToShow) {
-	          nextClasses['slick-disabled'] = true;
-	          nextHandler = null;
-	        }
-	      }
-
-	      if (this.props.slideCount <= this.props.slidesToShow) {
-	        nextClasses['slick-disabled'] = true;
-	        nextHandler = null;
-	      }
-	    }
-
-	    var nextArrowProps = {
-	      key: '1',
-	      ref: 'next',
-	      'data-role': 'none',
-	      className: (0, _classnames2['default'])(nextClasses),
-	      style: { display: 'block' },
-	      onClick: nextHandler
-	    };
-
-	    var nextArrow;
-
-	    if (this.props.nextArrow) {
-	      nextArrow = _react2['default'].createElement(this.props.nextArrow, nextArrowProps);
-	    } else {
-	      nextArrow = _react2['default'].createElement('button', _extends({ key: '1', type: 'button' }, nextArrowProps), ' Next');
-	    }
-
-	    return nextArrow;
-	  }
-	});
-	exports.NextArrow = NextArrow;
-
-/***/ },
-/* 185 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var camel2hyphen = __webpack_require__(186);
-
-	var isDimension = function isDimension(feature) {
-	  var re = /[height|width]$/;
-	  return re.test(feature);
-	};
-
-	var obj2mq = function obj2mq(obj) {
-	  var mq = '';
-	  var features = Object.keys(obj);
-	  features.forEach(function (feature, index) {
-	    var value = obj[feature];
-	    feature = camel2hyphen(feature);
-	    // Add px to dimension features
-	    if (isDimension(feature) && typeof value === 'number') {
-	      value = value + 'px';
-	    }
-	    if (value === true) {
-	      mq += feature;
-	    } else if (value === false) {
-	      mq += 'not ' + feature;
-	    } else {
-	      mq += '(' + feature + ': ' + value + ')';
-	    }
-	    if (index < features.length - 1) {
-	      mq += ' and ';
-	    }
-	  });
-	  return mq;
-	};
-
-	var json2mq = function json2mq(query) {
-	  var mq = '';
-	  if (typeof query === 'string') {
-	    return query;
-	  }
-	  // Handling array of media queries
-	  if (query instanceof Array) {
-	    query.forEach(function (q, index) {
-	      mq += obj2mq(q);
-	      if (index < query.length - 1) {
-	        mq += ', ';
-	      }
-	    });
-	    return mq;
-	  }
-	  // Handling single media query
-	  return obj2mq(query);
-	};
-
-	module.exports = json2mq;
-
-/***/ },
-/* 186 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	var camel2hyphen = function camel2hyphen(str) {
-	  return str.replace(/[A-Z]/g, function (match) {
-	    return '-' + match.toLowerCase();
-	  }).toLowerCase();
-	};
-
-	module.exports = camel2hyphen;
-
-/***/ },
-/* 187 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var canUseDOM = __webpack_require__(188);
-	var enquire = canUseDOM && __webpack_require__(189);
-	var json2mq = __webpack_require__(185);
-
-	var ResponsiveMixin = {
-	  media: function media(query, handler) {
-	    query = json2mq(query);
-	    if (typeof handler === 'function') {
-	      handler = {
-	        match: handler
-	      };
-	    }
-	    enquire.register(query, handler);
-
-	    // Queue the handlers to unregister them at unmount 
-	    if (!this._responsiveMediaHandlers) {
-	      this._responsiveMediaHandlers = [];
-	    }
-	    this._responsiveMediaHandlers.push({ query: query, handler: handler });
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    if (this._responsiveMediaHandlers) {
-	      this._responsiveMediaHandlers.forEach(function (obj) {
-	        enquire.unregister(obj.query, obj.handler);
-	      });
-	    }
-	  }
-	};
-
-	module.exports = ResponsiveMixin;
-
-/***/ },
-/* 188 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	var canUseDOM = !!(typeof window !== 'undefined' && window.document && window.document.createElement);
-
-	module.exports = canUseDOM;
-
-/***/ },
-/* 189 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
-
-	/*!
-	 * enquire.js v2.1.1 - Awesome Media Queries in JavaScript
-	 * Copyright (c) 2014 Nick Williams - http://wicky.nillia.ms/enquire.js
-	 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-	 */
-
-	;(function (name, context, factory) {
-	    var matchMedia = window.matchMedia;
-
-	    if (typeof module !== 'undefined' && module.exports) {
-	        module.exports = factory(matchMedia);
-	    } else if (true) {
-	        !(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
-	            return context[name] = factory(matchMedia);
-	        }.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	    } else {
-	        context[name] = factory(matchMedia);
-	    }
-	})('enquire', undefined, function (matchMedia) {
-
-	    'use strict';
-
-	    /*jshint unused:false */
-	    /**
-	     * Helper function for iterating over a collection
-	     *
-	     * @param collection
-	     * @param fn
-	     */
-
-	    function each(collection, fn) {
-	        var i = 0,
-	            length = collection.length,
-	            cont;
-
-	        for (i; i < length; i++) {
-	            cont = fn(collection[i], i);
-	            if (cont === false) {
-	                break; //allow early exit
-	            }
-	        }
-	    }
-
-	    /**
-	     * Helper function for determining whether target object is an array
-	     *
-	     * @param target the object under test
-	     * @return {Boolean} true if array, false otherwise
-	     */
-	    function isArray(target) {
-	        return Object.prototype.toString.apply(target) === '[object Array]';
-	    }
-
-	    /**
-	     * Helper function for determining whether target object is a function
-	     *
-	     * @param target the object under test
-	     * @return {Boolean} true if function, false otherwise
-	     */
-	    function isFunction(target) {
-	        return typeof target === 'function';
-	    }
-
-	    /**
-	     * Delegate to handle a media query being matched and unmatched.
-	     *
-	     * @param {object} options
-	     * @param {function} options.match callback for when the media query is matched
-	     * @param {function} [options.unmatch] callback for when the media query is unmatched
-	     * @param {function} [options.setup] one-time callback triggered the first time a query is matched
-	     * @param {boolean} [options.deferSetup=false] should the setup callback be run immediately, rather than first time query is matched?
-	     * @constructor
-	     */
-	    function QueryHandler(options) {
-	        this.options = options;
-	        !options.deferSetup && this.setup();
-	    }
-	    QueryHandler.prototype = {
-
-	        /**
-	         * coordinates setup of the handler
-	         *
-	         * @function
-	         */
-	        setup: function setup() {
-	            if (this.options.setup) {
-	                this.options.setup();
-	            }
-	            this.initialised = true;
-	        },
-
-	        /**
-	         * coordinates setup and triggering of the handler
-	         *
-	         * @function
-	         */
-	        on: function on() {
-	            !this.initialised && this.setup();
-	            this.options.match && this.options.match();
-	        },
-
-	        /**
-	         * coordinates the unmatch event for the handler
-	         *
-	         * @function
-	         */
-	        off: function off() {
-	            this.options.unmatch && this.options.unmatch();
-	        },
-
-	        /**
-	         * called when a handler is to be destroyed.
-	         * delegates to the destroy or unmatch callbacks, depending on availability.
-	         *
-	         * @function
-	         */
-	        destroy: function destroy() {
-	            this.options.destroy ? this.options.destroy() : this.off();
-	        },
-
-	        /**
-	         * determines equality by reference.
-	         * if object is supplied compare options, if function, compare match callback
-	         *
-	         * @function
-	         * @param {object || function} [target] the target for comparison
-	         */
-	        equals: function equals(target) {
-	            return this.options === target || this.options.match === target;
-	        }
-
-	    };
-	    /**
-	     * Represents a single media query, manages it's state and registered handlers for this query
-	     *
-	     * @constructor
-	     * @param {string} query the media query string
-	     * @param {boolean} [isUnconditional=false] whether the media query should run regardless of whether the conditions are met. Primarily for helping older browsers deal with mobile-first design
-	     */
-	    function MediaQuery(query, isUnconditional) {
-	        this.query = query;
-	        this.isUnconditional = isUnconditional;
-	        this.handlers = [];
-	        this.mql = matchMedia(query);
-
-	        var self = this;
-	        this.listener = function (mql) {
-	            self.mql = mql;
-	            self.assess();
-	        };
-	        this.mql.addListener(this.listener);
-	    }
-	    MediaQuery.prototype = {
-
-	        /**
-	         * add a handler for this query, triggering if already active
-	         *
-	         * @param {object} handler
-	         * @param {function} handler.match callback for when query is activated
-	         * @param {function} [handler.unmatch] callback for when query is deactivated
-	         * @param {function} [handler.setup] callback for immediate execution when a query handler is registered
-	         * @param {boolean} [handler.deferSetup=false] should the setup callback be deferred until the first time the handler is matched?
-	         */
-	        addHandler: function addHandler(handler) {
-	            var qh = new QueryHandler(handler);
-	            this.handlers.push(qh);
-
-	            this.matches() && qh.on();
-	        },
-
-	        /**
-	         * removes the given handler from the collection, and calls it's destroy methods
-	         * 
-	         * @param {object || function} handler the handler to remove
-	         */
-	        removeHandler: function removeHandler(handler) {
-	            var handlers = this.handlers;
-	            each(handlers, function (h, i) {
-	                if (h.equals(handler)) {
-	                    h.destroy();
-	                    return !handlers.splice(i, 1); //remove from array and exit each early
-	                }
-	            });
-	        },
-
-	        /**
-	         * Determine whether the media query should be considered a match
-	         * 
-	         * @return {Boolean} true if media query can be considered a match, false otherwise
-	         */
-	        matches: function matches() {
-	            return this.mql.matches || this.isUnconditional;
-	        },
-
-	        /**
-	         * Clears all handlers and unbinds events
-	         */
-	        clear: function clear() {
-	            each(this.handlers, function (handler) {
-	                handler.destroy();
-	            });
-	            this.mql.removeListener(this.listener);
-	            this.handlers.length = 0; //clear array
-	        },
-
-	        /*
-	         * Assesses the query, turning on all handlers if it matches, turning them off if it doesn't match
-	         */
-	        assess: function assess() {
-	            var action = this.matches() ? 'on' : 'off';
-
-	            each(this.handlers, function (handler) {
-	                handler[action]();
-	            });
-	        }
-	    };
-	    /**
-	     * Allows for registration of query handlers.
-	     * Manages the query handler's state and is responsible for wiring up browser events
-	     *
-	     * @constructor
-	     */
-	    function MediaQueryDispatch() {
-	        if (!matchMedia) {
-	            throw new Error('matchMedia not present, legacy browsers require a polyfill');
-	        }
-
-	        this.queries = {};
-	        this.browserIsIncapable = !matchMedia('only all').matches;
-	    }
-
-	    MediaQueryDispatch.prototype = {
-
-	        /**
-	         * Registers a handler for the given media query
-	         *
-	         * @param {string} q the media query
-	         * @param {object || Array || Function} options either a single query handler object, a function, or an array of query handlers
-	         * @param {function} options.match fired when query matched
-	         * @param {function} [options.unmatch] fired when a query is no longer matched
-	         * @param {function} [options.setup] fired when handler first triggered
-	         * @param {boolean} [options.deferSetup=false] whether setup should be run immediately or deferred until query is first matched
-	         * @param {boolean} [shouldDegrade=false] whether this particular media query should always run on incapable browsers
-	         */
-	        register: function register(q, options, shouldDegrade) {
-	            var queries = this.queries,
-	                isUnconditional = shouldDegrade && this.browserIsIncapable;
-
-	            if (!queries[q]) {
-	                queries[q] = new MediaQuery(q, isUnconditional);
-	            }
-
-	            //normalise to object in an array
-	            if (isFunction(options)) {
-	                options = { match: options };
-	            }
-	            if (!isArray(options)) {
-	                options = [options];
-	            }
-	            each(options, function (handler) {
-	                queries[q].addHandler(handler);
-	            });
-
-	            return this;
-	        },
-
-	        /**
-	         * unregisters a query and all it's handlers, or a specific handler for a query
-	         *
-	         * @param {string} q the media query to target
-	         * @param {object || function} [handler] specific handler to unregister
-	         */
-	        unregister: function unregister(q, handler) {
-	            var query = this.queries[q];
-
-	            if (query) {
-	                if (handler) {
-	                    query.removeHandler(handler);
-	                } else {
-	                    query.clear();
-	                    delete this.queries[q];
-	                }
-	            }
-
-	            return this;
-	        }
-	    };
-
-	    return new MediaQueryDispatch();
-	});
-
-/***/ },
-/* 190 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _lodash = __webpack_require__(162);
-
-	var _lodash2 = _interopRequireDefault(_lodash);
-
-	var _searchableimage = __webpack_require__(191);
-
-	var _searchableimage2 = _interopRequireDefault(_searchableimage);
-
-	var _editableDiv = __webpack_require__(170);
-
-	var _editableDiv2 = _interopRequireDefault(_editableDiv);
-
-	var _data = __webpack_require__(192);
-
-	var _superagent = __webpack_require__(165);
-
-	var _superagent2 = _interopRequireDefault(_superagent);
-
-	var _toastr = __webpack_require__(193);
-
-	var _toastr2 = _interopRequireDefault(_toastr);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var AppEditor = (function (_React$Component) {
-	    _inherits(AppEditor, _React$Component);
-
-	    function AppEditor(props) {
-	        _classCallCheck(this, AppEditor);
-
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AppEditor).call(this, props));
-
-	        _this.url = document.querySelector("meta[name='image_url']").getAttribute('content');
-
-	        _this.state = { image: '' };
-	        return _this;
-	    }
-
-	    _createClass(AppEditor, [{
-	        key: 'componentWillMount',
-	        value: function componentWillMount() {
-	            var _this2 = this;
-
-	            this.setState({ data: '' });
-	            _superagent2.default.get(this.url).set('Accept', 'application/json').end(function (err, res) {
-	                if (!err) _this2.setState({ data: res.body });
-	            });
-	        }
-	    }, {
-	        key: 'updateImage',
-	        value: function updateImage(image) {
-	            var _this3 = this;
-
-	            _superagent2.default.put(this.url).set('Accept', 'application/json').set('Content-Type', 'application/json').send(image).end(function (err, res) {
-	                console.log(res.body);
-	                if (!err) {
-
-	                    _toastr2.default.info("Successfully updated " + image.title, '', { closeButton: true });
-	                    _this3.editImage(res.body);
-	                }
-	            });
-	        }
-	    }, {
-	        key: 'changeImage',
-	        value: function changeImage(image) {
-	            this.setState({ image: image });
-	        }
-	    }, {
-	        key: 'editImage',
-	        value: function editImage(image) {
-	            var index = _lodash2.default.findIndex(this.state.data, function (img) {
-	                return img.id == image.id;
-	            });
-	            this.state.data[index] = image;
-	            this.changeImage(image);
-	        }
-	    }, {
-	        key: 'deleteImage',
-	        value: function deleteImage(image) {
-	            var _this4 = this;
-
-	            _superagent2.default.del(this.url).send(image).end(function (err, res) {
-	                if (!err) {
-	                    _lodash2.default.remove(_this4.state.data, function (m) {
-	                        return image.id == m.id;
-	                    });
-	                    _toastr2.default.info("successfully removed " + image.title, '', { closeButton: true });
-	                    _this4.setState({ image: '' });
-	                }
-	            });
-	        }
-	    }, {
-	        key: 'addImage',
-	        value: function addImage(image) {
-	            this.state.data.unshift(image);
-	            this.forceUpdate();
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'row' },
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'col-sm-3' },
-	                    _react2.default.createElement(_searchableimage2.default, { data: this.state.data, addImage: this.addImage.bind(this), changeImage: this.changeImage.bind(this) })
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'col-sm-9' },
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'edit-div' },
-	                        _react2.default.createElement(_editableDiv2.default, { image: this.state.image, editImage: this.editImage.bind(this), deleteImage: this.deleteImage.bind(this),
-	                            updateImage: this.updateImage.bind(this)
-	                        })
-	                    )
-	                )
-	            );
-	        }
-	    }]);
-
-	    return AppEditor;
-	})(_react2.default.Component);
-
-	exports.default = AppEditor;
-
-/***/ },
-/* 191 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactDropzone = __webpack_require__(160);
-
-	var _reactDropzone2 = _interopRequireDefault(_reactDropzone);
-
-	var _lodash = __webpack_require__(162);
-
-	var _lodash2 = _interopRequireDefault(_lodash);
-
-	var _superagent = __webpack_require__(165);
-
-	var _superagent2 = _interopRequireDefault(_superagent);
-
-	var _classnames = __webpack_require__(168);
-
-	var _classnames2 = _interopRequireDefault(_classnames);
-
-	var _toastr = __webpack_require__(193);
-
-	var _toastr2 = _interopRequireDefault(_toastr);
-
-	__webpack_require__(169);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	//import '/node_modules/toastr/build/toastr.css'
-
-	var SearchableImage = (function (_React$Component) {
-	    _inherits(SearchableImage, _React$Component);
-
-	    function SearchableImage() {
-	        _classCallCheck(this, SearchableImage);
-
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SearchableImage).call(this));
-
-	        _this.state = { filterText: '' };
-	        return _this;
-	    }
-
-	    _createClass(SearchableImage, [{
-	        key: 'handleUserInput',
-	        value: function handleUserInput(filterText) {
-	            this.setState({ filterText: filterText });
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'upload-div' },
-	                _react2.default.createElement(SearchBar, { filterText: this.state.filterText,
-	                    onUserInput: this.handleUserInput.bind(this)
-	                }),
-	                _react2.default.createElement(UploadDiv, { data: this.props.data, addImage: this.props.addImage,
-	                    filterText: this.state.filterText, changeImage: this.props.changeImage
-	                })
-	            );
-	        }
-	    }]);
-
-	    return SearchableImage;
-	})(_react2.default.Component);
-
-	exports.default = SearchableImage;
-
-	var SearchBar = (function (_React$Component2) {
-	    _inherits(SearchBar, _React$Component2);
-
-	    function SearchBar() {
-	        _classCallCheck(this, SearchBar);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(SearchBar).apply(this, arguments));
-	    }
-
-	    _createClass(SearchBar, [{
-	        key: 'handleChange',
-	        value: function handleChange() {
-	            this.props.onUserInput(this.refs.filter.value);
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                'form',
-	                { className: 'form' },
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'form-group' },
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'input-group' },
-	                        _react2.default.createElement('input', { type: 'text', className: 'form-control',
-	                            placeholder: 'Search your pictures...',
-	                            ref: 'filter',
-	                            value: this.props.filterText,
-	                            onChange: this.handleChange.bind(this)
-	                        }),
-	                        _react2.default.createElement(
-	                            'div',
-	                            { className: 'input-group-addon' },
-	                            _react2.default.createElement('i', { className: 'mdi mdi-magnify' })
-	                        )
-	                    )
-	                )
-	            );
-	        }
-	    }]);
-
-	    return SearchBar;
-	})(_react2.default.Component);
-
-	var UploadDiv = (function (_React$Component3) {
-	    _inherits(UploadDiv, _React$Component3);
-
-	    function UploadDiv() {
-	        _classCallCheck(this, UploadDiv);
-
-	        var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(UploadDiv).call(this));
-
-	        _this3.state = { activeKey: 'default' };
-	        return _this3;
-	    }
-
-	    _createClass(UploadDiv, [{
-	        key: 'changeActiveKey',
-	        value: function changeActiveKey(key, image) {
-	            this.setState({ activeKey: key });
-	            this.props.changeImage(image);
-	        }
-	    }, {
-	        key: 'onDrop',
-	        value: function onDrop(files) {
-	            var _this4 = this;
-
-	            var url = document.querySelector("meta[name='image_url']").getAttribute('content');
-
-	            files.forEach(function (file) {
-	                _superagent2.default.post(url).attach("image", file, file.name).set('Accept', 'application/json').on('progress', function (e) {
-	                    _this4.progress = _react2.default.createElement(ProgressBar, { percentage: e.percent || '100', filename: file.name });
-	                }).end(function (err, res) {
-	                    if (!err) {
-	                        _toastr2.default.success("successfully uploaded " + file.name, '', { closeButton: true });
-	                        _this4.props.addImage(res.body);
-	                    }
-	                });
-	            });
-	        }
-	    }, {
-	        key: 'onOpenClick',
-	        value: function onOpenClick() {
-	            this.refs.dropzone.open();
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var sections = [];
-	            var data = this.props.data;
-	            var dropzone = _react2.default.createElement(
-	                'div',
-	                { ref: 'progresszone', className: 'dropzone text-center' },
-	                _react2.default.createElement(
-	                    _reactDropzone2.default,
-	                    { ref: 'dropzone', className: 'drop', onDrop: this.onDrop.bind(this), accept: 'image/*' },
-	                    _react2.default.createElement(
-	                        'div',
-	                        null,
-	                        _react2.default.createElement(
-	                            'h5',
-	                            null,
-	                            'Click or drop your images here'
-	                        ),
-	                        this.progress,
-	                        _react2.default.createElement(ProgressBar, { percentage: '20', filename: 'image.js' })
-	                    )
-	                )
-	            );
-	            if (data.length < 1) {
-	                return _react2.default.createElement(
-	                    'div',
-	                    { className: 'upload-img' },
-	                    ' ',
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'uploaded' },
-	                        _react2.default.createElement(
-	                            'h5',
-	                            null,
-	                            ' You dont have any images yet '
-	                        )
-	                    ),
-	                    dropzone
-	                );
-	            }
-	            data.forEach((function (image, i) {
-	                if (image.title.toLowerCase().indexOf(this.props.filterText.toLowerCase()) == -1) return;
-
-	                sections.push(_react2.default.createElement(SectionDiv, { key: i, getKey: image.id, image: image, activeKey: this.state.activeKey,
-	                    changeKey: this.changeActiveKey.bind(this) }));
-	            }).bind(this));
-	            if (sections.length < 1) {
-	                return _react2.default.createElement(
-	                    'div',
-	                    { className: 'upload-img' },
-	                    ' ',
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'uploaded' },
-	                        ' ',
-	                        _react2.default.createElement(
-	                            'h5',
-	                            null,
-	                            ' No Images matches your criteria '
-	                        )
-	                    ),
-	                    dropzone
-	                );
-	            } else {
-	                return _react2.default.createElement(
-	                    'div',
-	                    { className: 'upload-img' },
-	                    sections,
-	                    dropzone
-	                );
-	            }
-	        }
-	    }]);
-
-	    return UploadDiv;
-	})(_react2.default.Component);
-
-	var SectionDiv = (function (_React$Component4) {
-	    _inherits(SectionDiv, _React$Component4);
-
-	    function SectionDiv() {
-	        _classCallCheck(this, SectionDiv);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(SectionDiv).apply(this, arguments));
-	    }
-
-	    _createClass(SectionDiv, [{
-	        key: 'handleChange',
-	        value: function handleChange(e) {
-	            e.preventDefault();
-
-	            this.props.changeKey(this.props.getKey, this.props.image);
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var activeUpload = (0, _classnames2.default)({
-	                'uploaded': true,
-	                'active': this.props.getKey == this.props.activeKey
-	            });
-	            return _react2.default.createElement(
-	                'div',
-	                { className: activeUpload, onClick: this.handleChange.bind(this) },
-	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'media' },
-	                    _react2.default.createElement(
-	                        'a',
-	                        { className: 'media-left', href: '#' },
-	                        _react2.default.createElement('img', { className: 'media-object', src: '/media/' + this.props.image.picture, alt: 'Generic placeholder image', width: '150', height: '150' })
-	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'media-body' },
-	                        _react2.default.createElement(
-	                            'p',
-	                            { className: 'media-heading' },
-	                            this.props.image.title,
-	                            _react2.default.createElement('br', null),
-	                            _react2.default.createElement(
-	                                'small',
-	                                null,
-	                                ' Uploaded on ',
-	                                this.props.image.registered
-	                            )
-	                        )
-	                    )
-	                )
-	            );
-	        }
-	    }]);
-
-	    return SectionDiv;
-	})(_react2.default.Component);
-
-	var ProgressBar = (function (_React$Component5) {
-	    _inherits(ProgressBar, _React$Component5);
-
-	    function ProgressBar(props) {
-	        _classCallCheck(this, ProgressBar);
-
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(ProgressBar).call(this, props));
-	    }
-
-	    _createClass(ProgressBar, [{
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                'div',
-	                { 'class': 'progresszone' },
-	                _react2.default.createElement(
-	                    'h5',
-	                    null,
-	                    this.props.filename
-	                ),
-	                _react2.default.createElement(
-	                    'progress',
-	                    { className: 'progress progress-striped progress-info', value: this.props.percentage, max: '100' },
-	                    this.props.perecentage,
-	                    '%'
-	                )
-	            );
-	        }
-	    }]);
-
-	    return ProgressBar;
-	})(_react2.default.Component);
-
-/***/ },
-/* 192 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var data = exports.data = [{
-	  "id": 0,
-	  "thumbail": "http://placehold.it/149x167",
-	  "picture": "http://placehold.it/737x652",
-	  "title": "LYRICHORD",
-	  "registered": "Friday, December 18, 2015 12:16 AM"
-	}, {
-	  "id": 1,
-	  "thumbail": "http://placehold.it/111x107",
-	  "picture": "http://placehold.it/601x668",
-	  "title": "INCUBUS",
-	  "registered": "Friday, November 21, 2014 2:05 AM"
-	}, {
-	  "id": 2,
-	  "thumbail": "http://placehold.it/133x132",
-	  "picture": "http://placehold.it/709x703",
-	  "title": "NORALI",
-	  "registered": "Wednesday, September 30, 2015 12:20 AM"
-	}, {
-	  "id": 3,
-	  "thumbail": "http://placehold.it/127x163",
-	  "picture": "http://placehold.it/642x694",
-	  "title": "PRINTSPAN",
-	  "registered": "Tuesday, July 1, 2014 10:39 PM"
-	}, {
-	  "id": 4,
-	  "thumbail": "http://placehold.it/107x183",
-	  "picture": "http://placehold.it/758x710",
-	  "title": "MACRONAUT",
-	  "registered": "Sunday, December 13, 2015 3:24 PM"
-	}, {
-	  "id": 5,
-	  "thumbail": "http://placehold.it/193x173",
-	  "picture": "http://placehold.it/650x763",
-	  "title": "ENDIPINE",
-	  "registered": "Saturday, November 7, 2015 12:19 AM"
-	}, {
-	  "id": 6,
-	  "thumbail": "http://placehold.it/139x128",
-	  "picture": "http://placehold.it/726x794",
-	  "title": "EARGO",
-	  "registered": "Thursday, August 21, 2014 1:46 PM"
-	}, {
-	  "id": 7,
-	  "thumbail": "http://placehold.it/108x179",
-	  "picture": "http://placehold.it/747x685",
-	  "title": "LIMAGE",
-	  "registered": "Saturday, February 21, 2015 9:50 PM"
-	}, {
-	  "id": 8,
-	  "thumbail": "http://placehold.it/153x173",
-	  "picture": "http://placehold.it/743x698",
-	  "title": "FOSSIEL",
-	  "registered": "Friday, October 9, 2015 12:16 PM"
-	}, {
-	  "id": 9,
-	  "thumbail": "http://placehold.it/199x158",
-	  "picture": "http://placehold.it/692x717",
-	  "title": "BOINK",
-	  "registered": "Tuesday, May 26, 2015 12:52 PM"
-	}, {
-	  "id": 10,
-	  "thumbail": "http://placehold.it/139x109",
-	  "picture": "http://placehold.it/698x634",
-	  "title": "PYRAMAX",
-	  "registered": "Wednesday, May 27, 2015 9:12 PM"
-	}, {
-	  "id": 11,
-	  "thumbail": "http://placehold.it/188x172",
-	  "picture": "http://placehold.it/711x601",
-	  "title": "UXMOX",
-	  "registered": "Wednesday, December 3, 2014 7:31 PM"
-	}, {
-	  "id": 12,
-	  "thumbail": "http://placehold.it/187x166",
-	  "picture": "http://placehold.it/736x703",
-	  "title": "COMVERGES",
-	  "registered": "Wednesday, July 8, 2015 9:07 PM"
-	}, {
-	  "id": 13,
-	  "thumbail": "http://placehold.it/110x107",
-	  "picture": "http://placehold.it/778x603",
-	  "title": "DIGITALUS",
-	  "registered": "Monday, May 25, 2015 7:38 AM"
-	}, {
-	  "id": 14,
-	  "thumbail": "http://placehold.it/121x162",
-	  "picture": "http://placehold.it/679x762",
-	  "title": "VALREDA",
-	  "registered": "Friday, July 10, 2015 10:40 PM"
-	}, {
-	  "id": 15,
-	  "thumbail": "http://placehold.it/140x177",
-	  "picture": "http://placehold.it/677x625",
-	  "title": "DOGTOWN",
-	  "registered": "Wednesday, April 23, 2014 7:00 AM"
-	}, {
-	  "id": 16,
-	  "thumbail": "http://placehold.it/151x170",
-	  "picture": "http://placehold.it/740x782",
-	  "title": "COMDOM",
-	  "registered": "Wednesday, August 27, 2014 8:02 AM"
-	}, {
-	  "id": 17,
-	  "thumbail": "http://placehold.it/197x191",
-	  "picture": "http://placehold.it/646x746",
-	  "title": "RODEOMAD",
-	  "registered": "Wednesday, October 29, 2014 12:42 PM"
-	}, {
-	  "id": 18,
-	  "thumbail": "http://placehold.it/127x105",
-	  "picture": "http://placehold.it/750x604",
-	  "title": "DECRATEX",
-	  "registered": "Sunday, September 6, 2015 6:18 PM"
-	}, {
-	  "id": 19,
-	  "thumbail": "http://placehold.it/147x107",
-	  "picture": "http://placehold.it/615x644",
-	  "title": "NORSUP",
-	  "registered": "Monday, April 7, 2014 8:54 AM"
-	}, {
-	  "id": 20,
-	  "thumbail": "http://placehold.it/168x109",
-	  "picture": "http://placehold.it/660x617",
-	  "title": "KANGLE",
-	  "registered": "Thursday, October 1, 2015 11:45 AM"
-	}, {
-	  "id": 21,
-	  "thumbail": "http://placehold.it/166x143",
-	  "picture": "http://placehold.it/648x681",
-	  "title": "VIOCULAR",
-	  "registered": "Thursday, August 28, 2014 12:56 AM"
-	}, {
-	  "id": 22,
-	  "thumbail": "http://placehold.it/108x113",
-	  "picture": "http://placehold.it/779x685",
-	  "title": "ORBALIX",
-	  "registered": "Wednesday, July 1, 2015 12:46 AM"
-	}, {
-	  "id": 23,
-	  "thumbail": "http://placehold.it/191x150",
-	  "picture": "http://placehold.it/692x640",
-	  "title": "CYTRAK",
-	  "registered": "Tuesday, April 8, 2014 8:24 AM"
-	}, {
-	  "id": 24,
-	  "thumbail": "http://placehold.it/194x139",
-	  "picture": "http://placehold.it/690x683",
-	  "title": "ROBOID",
-	  "registered": "Thursday, July 3, 2014 7:00 PM"
-	}];
-
-/***/ },
-/* 193 */
-/***/ function(module, exports, __webpack_require__) {
-
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
 
 	/*
@@ -31767,7 +28943,7 @@
 	 */
 	/* global define */
 	;(function (define) {
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(194)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(170)], __WEBPACK_AMD_DEFINE_RESULT__ = function ($) {
 	        return (function () {
 	            var $container;
 	            var listener;
@@ -32179,10 +29355,10 @@
 	            }
 	        })();
 	    }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	})(__webpack_require__(195));
+	})(__webpack_require__(171));
 
 /***/ },
-/* 194 */
+/* 170 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module) {"use strict";function _typeof(obj){return obj&&typeof Symbol!=="undefined"&&obj.constructor===Symbol?"symbol":typeof obj;} /*!
@@ -33643,11 +30819,2907 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(163)(module)))
 
 /***/ },
-/* 195 */
+/* 171 */
 /***/ function(module, exports) {
 
 	module.exports = function() { throw new Error("define cannot be used indirect"); };
 
+
+/***/ },
+/* 172 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var request = __webpack_require__(165);
+
+	// patch superagent to attach CSRF-token to all requests
+	try {
+	  var csrf = document.cookie.match(/csrftoken=(.*?)(?:$|;)/)[1];
+	  var end = request.Request.prototype.end;
+	  request.Request.prototype.end = function (fn) {
+	    this.set('X-CSRFToken', csrf);
+	    return end.call(this, fn);
+	  };
+	} catch (err) {}
+
+/***/ },
+/* 173 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactSlick = __webpack_require__(174);
+
+	var _reactSlick2 = _interopRequireDefault(_reactSlick);
+
+	var _classnames = __webpack_require__(168);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
+	var _lodash = __webpack_require__(162);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var EditableDiv = (function (_React$Component) {
+	    _inherits(EditableDiv, _React$Component);
+
+	    function EditableDiv() {
+	        _classCallCheck(this, EditableDiv);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(EditableDiv).apply(this, arguments));
+	    }
+
+	    _createClass(EditableDiv, [{
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            this.setState({ image: '' });
+	        }
+	    }, {
+	        key: 'componentWillReceiveProps',
+	        value: function componentWillReceiveProps(nextProps) {
+	            this.setState({ image: nextProps.image });
+	        }
+	    }, {
+	        key: 'resetImage',
+	        value: function resetImage() {
+	            delete this.props.image['filter'];
+	            this.setState({ image: this.props.image });
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                _react2.default.createElement(ImageDiv, { image: this.state.image, editImage: this.props.editImage,
+	                    deleteImage: this.props.deleteImage, resetImage: this.resetImage.bind(this),
+	                    updateImage: this.props.updateImage
+	                }),
+	                _react2.default.createElement(FilterDiv, { image: this.state.image, changeFilter: this.props.editImage })
+	            );
+	        }
+	    }]);
+
+	    return EditableDiv;
+	})(_react2.default.Component);
+
+	exports.default = EditableDiv;
+
+	var ImageDiv = (function (_React$Component2) {
+	    _inherits(ImageDiv, _React$Component2);
+
+	    function ImageDiv() {
+	        _classCallCheck(this, ImageDiv);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(ImageDiv).apply(this, arguments));
+	    }
+
+	    _createClass(ImageDiv, [{
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            this.setState({ editMode: false });
+	        }
+	    }, {
+	        key: 'componentWillUpdate',
+	        value: function componentWillUpdate(nextProps, nextState) {
+	            if (this.props.image.picture !== nextProps.image.picture) {
+	                if (this.state.editMode) this.props.updateImage(this.props.image);
+	                this.setState({ editMode: false });
+	            }
+	        }
+	    }, {
+	        key: 'toggleEdit',
+	        value: function toggleEdit(e) {
+	            e.preventDefault();
+	            e.stopPropagation();
+	            if (this.state.editMode) this.props.updateImage(this.props.image);
+	            this.setState({ editMode: !this.state.editMode });
+	        }
+	    }, {
+	        key: 'changeTitle',
+	        value: function changeTitle(e) {
+	            e.preventDefault();
+	            var image_copy = _lodash2.default.clone(this.props.image);
+	            image_copy.title = e.target.value;
+	            this.props.editImage(image_copy);
+	        }
+	    }, {
+	        key: 'deleteImage',
+	        value: function deleteImage(e) {
+	            e.preventDefault();
+	            if (!confirm("are you sure you want to delete this image")) return;
+	            this.props.deleteImage(this.props.image);
+	        }
+	    }, {
+	        key: 'resetImage',
+	        value: function resetImage() {
+	            this.props.resetImage();
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var buttonClass = (0, _classnames2.default)({
+	                'btn': true,
+	                'disabled': !_lodash2.default.isObject(this.props.image)
+	            });
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'card text-xs-center' },
+	                    _react2.default.createElement(
+	                        'blockquote',
+	                        { className: 'card-blockquote card-text' },
+	                        _react2.default.createElement(
+	                            'form',
+	                            { className: (!this.state.editMode ? 'hide' : '') + ' form-inline', action: '#', onSubmit: this.toggleEdit.bind(this) },
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'form-group' },
+	                                _react2.default.createElement(
+	                                    'div',
+	                                    { className: 'input-group' },
+	                                    _react2.default.createElement('input', { type: 'text', ref: 'title', className: 'form-control', value: this.props.image.title, onChange: this.changeTitle.bind(this)
+	                                    })
+	                                )
+	                            ),
+	                            _react2.default.createElement(
+	                                'button',
+	                                { type: 'submit', className: 'btn btn-default' },
+	                                'Save'
+	                            )
+	                        ),
+	                        _react2.default.createElement(
+	                            'h6',
+	                            { className: (this.state.editMode ? 'hide' : '') + ' text-uppercase' },
+	                            _lodash2.default.isObject(this.props.image) ? this.props.image.title || 'No Name' : 'No Image Selected',
+	                            ' '
+	                        ),
+	                        _react2.default.createElement(
+	                            'h6',
+	                            { className: 'text-uppercase' },
+	                            _lodash2.default.isObject(this.props.image) ? this.props.image.filter || 'No Filter Applied' : '',
+	                            ' '
+	                        )
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'edit-buttons' },
+	                    _react2.default.createElement(
+	                        'button',
+	                        { className: buttonClass, onClick: _lodash2.default.isObject(this.props.image) ? this.toggleEdit.bind(this) : '' },
+	                        _react2.default.createElement('span', { className: 'mdi mdi-pencil' })
+	                    ),
+	                    _react2.default.createElement(
+	                        'button',
+	                        { className: buttonClass, onClick: _lodash2.default.isObject(this.props.image) ? this.deleteImage.bind(this) : '' },
+	                        _react2.default.createElement('span', { className: 'mdi mdi-delete' })
+	                    ),
+	                    _react2.default.createElement(
+	                        'button',
+	                        { className: buttonClass, onClick: _lodash2.default.isObject(this.props.image) ? this.resetImage.bind(this) : '' },
+	                        _react2.default.createElement('span', { className: 'mdi mdi-backup-restore' })
+	                    ),
+	                    _react2.default.createElement(
+	                        'button',
+	                        { className: buttonClass + ' pull-sm-right' },
+	                        _react2.default.createElement('span', { className: 'mdi mdi-share-variant' })
+	                    ),
+	                    _react2.default.createElement(
+	                        'button',
+	                        { className: buttonClass + ' pull-sm-right' },
+	                        _react2.default.createElement('span', { className: 'mdi mdi-download' })
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'edit text-center' },
+	                    _react2.default.createElement('img', { src: this.props.image.picture ? '/media/' + this.props.image.picture : '' })
+	                )
+	            );
+	        }
+	    }]);
+
+	    return ImageDiv;
+	})(_react2.default.Component);
+
+	var FilterDiv = (function (_React$Component3) {
+	    _inherits(FilterDiv, _React$Component3);
+
+	    function FilterDiv() {
+	        _classCallCheck(this, FilterDiv);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(FilterDiv).apply(this, arguments));
+	    }
+
+	    _createClass(FilterDiv, [{
+	        key: 'componentWillReceiveProps',
+	        value: function componentWillReceiveProps(nextProps) {
+	            this.state = { activeFilter: '' };
+	        }
+	    }, {
+	        key: 'activateFilter',
+	        value: function activateFilter(filter) {
+	            var image = _lodash2.default.clone(this.props.image);
+	            image['filter'] = filter;
+	            this.setState({ activeFilter: filter });
+	            this.props.changeFilter(image);
+	        }
+	    }, {
+	        key: 'createFilterDiv',
+	        value: function createFilterDiv(filter, i) {
+	            var activeFilter = (0, _classnames2.default)({
+	                'active': this.props.image.filter == filter
+	            });
+	            return _react2.default.createElement(
+	                'div',
+	                { className: activeFilter, key: i, onClick: this.activateFilter.bind(this, filter) },
+	                _react2.default.createElement('img', { src: '/media/' + this.props.image.picture, width: '100', height: '100' }),
+	                _react2.default.createElement(
+	                    'p',
+	                    { className: 'lead' },
+	                    filter
+	                )
+	            );
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var filters = ['gray', 'Hd', 'serpia', 'black', 'orange', 'sunny'];
+	            var settings = {
+	                className: 'slider',
+	                infinite: true,
+	                speed: 500,
+	                slidesToShow: 5,
+	                slidesToScroll: 5,
+	                arrows: true
+	            };
+	            if (this.props.image) {
+	                return _react2.default.createElement(
+	                    _reactSlick2.default,
+	                    settings,
+	                    filters.map(this.createFilterDiv.bind(this))
+	                );
+	            } else {
+	                return _react2.default.createElement('div', null);
+	            }
+	        }
+	    }]);
+
+	    return FilterDiv;
+	})(_react2.default.Component);
+
+/***/ },
+/* 174 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = __webpack_require__(175);
+
+/***/ },
+/* 175 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { 'default': obj };
+	}
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _innerSlider = __webpack_require__(176);
+
+	var _objectAssign = __webpack_require__(180);
+
+	var _objectAssign2 = _interopRequireDefault(_objectAssign);
+
+	var _json2mq = __webpack_require__(188);
+
+	var _json2mq2 = _interopRequireDefault(_json2mq);
+
+	var _reactResponsiveMixin = __webpack_require__(190);
+
+	var _reactResponsiveMixin2 = _interopRequireDefault(_reactResponsiveMixin);
+
+	var _defaultProps = __webpack_require__(184);
+
+	var _defaultProps2 = _interopRequireDefault(_defaultProps);
+
+	var Slider = _react2['default'].createClass({
+	  displayName: 'Slider',
+
+	  mixins: [_reactResponsiveMixin2['default']],
+	  getInitialState: function getInitialState() {
+	    return {
+	      breakpoint: null
+	    };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    var _this = this;
+
+	    if (this.props.responsive) {
+	      var breakpoints = this.props.responsive.map(function (breakpt) {
+	        return breakpt.breakpoint;
+	      });
+	      breakpoints.sort(function (x, y) {
+	        return x - y;
+	      });
+
+	      breakpoints.forEach(function (breakpoint, index) {
+	        var bQuery;
+	        if (index === 0) {
+	          bQuery = (0, _json2mq2['default'])({ minWidth: 0, maxWidth: breakpoint });
+	        } else {
+	          bQuery = (0, _json2mq2['default'])({ minWidth: breakpoints[index - 1], maxWidth: breakpoint });
+	        }
+	        _this.media(bQuery, function () {
+	          _this.setState({ breakpoint: breakpoint });
+	        });
+	      });
+
+	      // Register media query for full screen. Need to support resize from small to large
+	      var query = (0, _json2mq2['default'])({ minWidth: breakpoints.slice(-1)[0] });
+
+	      this.media(query, function () {
+	        _this.setState({ breakpoint: null });
+	      });
+	    }
+	  },
+	  render: function render() {
+	    var _this2 = this;
+
+	    var settings;
+	    var newProps;
+	    if (this.state.breakpoint) {
+	      newProps = this.props.responsive.filter(function (resp) {
+	        return resp.breakpoint === _this2.state.breakpoint;
+	      });
+	      settings = newProps[0].settings === 'unslick' ? 'unslick' : (0, _objectAssign2['default'])({}, this.props, newProps[0].settings);
+	    } else {
+	      settings = (0, _objectAssign2['default'])({}, _defaultProps2['default'], this.props);
+	    }
+	    if (settings === 'unslick') {
+	      // if 'unslick' responsive breakpoint setting used, just return the <Slider> tag nested HTML
+	      return _react2['default'].createElement('div', null, this.props.children);
+	    } else {
+	      return _react2['default'].createElement(_innerSlider.InnerSlider, settings, this.props.children);
+	    }
+	  }
+	});
+
+	module.exports = Slider;
+
+/***/ },
+/* 176 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) {
+	  for (var i = 1; i < arguments.length; i++) {
+	    var source = arguments[i];for (var key in source) {
+	      if (Object.prototype.hasOwnProperty.call(source, key)) {
+	        target[key] = source[key];
+	      }
+	    }
+	  }return target;
+	};
+
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { 'default': obj };
+	}
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _mixinsEventHandlers = __webpack_require__(177);
+
+	var _mixinsEventHandlers2 = _interopRequireDefault(_mixinsEventHandlers);
+
+	var _mixinsHelpers = __webpack_require__(181);
+
+	var _mixinsHelpers2 = _interopRequireDefault(_mixinsHelpers);
+
+	var _initialState = __webpack_require__(183);
+
+	var _initialState2 = _interopRequireDefault(_initialState);
+
+	var _defaultProps = __webpack_require__(184);
+
+	var _defaultProps2 = _interopRequireDefault(_defaultProps);
+
+	var _classnames = __webpack_require__(168);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
+	var _track = __webpack_require__(185);
+
+	var _dots = __webpack_require__(186);
+
+	var _arrows = __webpack_require__(187);
+
+	var InnerSlider = _react2['default'].createClass({
+	  displayName: 'InnerSlider',
+
+	  mixins: [_mixinsHelpers2['default'], _mixinsEventHandlers2['default']],
+	  getInitialState: function getInitialState() {
+	    return _initialState2['default'];
+	  },
+	  getDefaultProps: function getDefaultProps() {
+	    return _defaultProps2['default'];
+	  },
+	  componentWillMount: function componentWillMount() {
+	    if (this.props.init) {
+	      this.props.init();
+	    }
+	    this.setState({
+	      mounted: true
+	    });
+	    var lazyLoadedList = [];
+	    for (var i = 0; i < this.props.children.length; i++) {
+	      if (i >= this.state.currentSlide && i < this.state.currentSlide + this.props.slidesToShow) {
+	        lazyLoadedList.push(i);
+	      }
+	    }
+
+	    if (this.props.lazyLoad && this.state.lazyLoadedList.length === 0) {
+	      this.setState({
+	        lazyLoadedList: lazyLoadedList
+	      });
+	    }
+	  },
+	  componentDidMount: function componentDidMount() {
+	    // Hack for autoplay -- Inspect Later
+	    this.initialize(this.props);
+	    this.adaptHeight();
+	    if (window.addEventListener) {
+	      window.addEventListener('resize', this.onWindowResized);
+	    } else {
+	      window.attachEvent('onresize', this.onWindowResized);
+	    }
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    if (window.addEventListener) {
+	      window.removeEventListener('resize', this.onWindowResized);
+	    } else {
+	      window.detachEvent('onresize', this.onWindowResized);
+	    }
+	    if (this.state.autoPlayTimer) {
+	      window.clearTimeout(this.state.autoPlayTimer);
+	    }
+	  },
+	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+	    if (this.props.slickGoTo != nextProps.slickGoTo) {
+	      this.setState({ currentSlide: nextProps.slickGoTo });
+	    }
+	    this.update(nextProps);
+	  },
+	  componentDidUpdate: function componentDidUpdate() {
+	    this.adaptHeight();
+	  },
+	  onWindowResized: function onWindowResized() {
+	    this.update(this.props);
+	  },
+	  render: function render() {
+	    var className = (0, _classnames2['default'])('slick-initialized', 'slick-slider', this.props.className);
+
+	    var trackProps = {
+	      fade: this.props.fade,
+	      cssEase: this.props.cssEase,
+	      speed: this.props.speed,
+	      infinite: this.props.infinite,
+	      centerMode: this.props.centerMode,
+	      currentSlide: this.state.currentSlide,
+	      lazyLoad: this.props.lazyLoad,
+	      lazyLoadedList: this.state.lazyLoadedList,
+	      rtl: this.props.rtl,
+	      slideWidth: this.state.slideWidth,
+	      slidesToShow: this.props.slidesToShow,
+	      slideCount: this.state.slideCount,
+	      trackStyle: this.state.trackStyle,
+	      variableWidth: this.props.variableWidth
+	    };
+
+	    var dots;
+
+	    if (this.props.dots === true && this.state.slideCount > this.props.slidesToShow) {
+	      var dotProps = {
+	        dotsClass: this.props.dotsClass,
+	        slideCount: this.state.slideCount,
+	        slidesToShow: this.props.slidesToShow,
+	        currentSlide: this.state.currentSlide,
+	        slidesToScroll: this.props.slidesToScroll,
+	        clickHandler: this.changeSlide
+	      };
+
+	      dots = _react2['default'].createElement(_dots.Dots, dotProps);
+	    }
+
+	    var prevArrow, nextArrow;
+
+	    var arrowProps = {
+	      infinite: this.props.infinite,
+	      centerMode: this.props.centerMode,
+	      currentSlide: this.state.currentSlide,
+	      slideCount: this.state.slideCount,
+	      slidesToShow: this.props.slidesToShow,
+	      prevArrow: this.props.prevArrow,
+	      nextArrow: this.props.nextArrow,
+	      clickHandler: this.changeSlide
+	    };
+
+	    if (this.props.arrows) {
+	      prevArrow = _react2['default'].createElement(_arrows.PrevArrow, arrowProps);
+	      nextArrow = _react2['default'].createElement(_arrows.NextArrow, arrowProps);
+	    }
+
+	    return _react2['default'].createElement('div', { className: className }, _react2['default'].createElement('div', {
+	      ref: 'list',
+	      className: 'slick-list',
+	      onMouseDown: this.swipeStart,
+	      onMouseMove: this.state.dragging ? this.swipeMove : null,
+	      onMouseUp: this.swipeEnd,
+	      onMouseLeave: this.state.dragging ? this.swipeEnd : null,
+	      onTouchStart: this.swipeStart,
+	      onTouchMove: this.state.dragging ? this.swipeMove : null,
+	      onTouchEnd: this.swipeEnd,
+	      onTouchCancel: this.state.dragging ? this.swipeEnd : null }, _react2['default'].createElement(_track.Track, _extends({ ref: 'track' }, trackProps), this.props.children)), prevArrow, nextArrow, dots);
+	  }
+	});
+	exports.InnerSlider = InnerSlider;
+
+/***/ },
+/* 177 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { 'default': obj };
+	}
+
+	var _trackHelper = __webpack_require__(178);
+
+	var _objectAssign = __webpack_require__(180);
+
+	var _objectAssign2 = _interopRequireDefault(_objectAssign);
+
+	var EventHandlers = {
+	  // Event handler for previous and next
+	  changeSlide: function changeSlide(options) {
+	    var indexOffset, slideOffset, unevenOffset, targetSlide;
+	    unevenOffset = this.state.slideCount % this.props.slidesToScroll !== 0;
+	    indexOffset = unevenOffset ? 0 : (this.state.slideCount - this.state.currentSlide) % this.props.slidesToScroll;
+
+	    if (options.message === 'previous') {
+	      slideOffset = indexOffset === 0 ? this.props.slidesToScroll : this.props.slidesToShow - indexOffset;
+	      targetSlide = this.state.currentSlide - slideOffset;
+	    } else if (options.message === 'next') {
+	      slideOffset = indexOffset === 0 ? this.props.slidesToScroll : indexOffset;
+	      targetSlide = this.state.currentSlide + slideOffset;
+	    } else if (options.message === 'dots') {
+	      // Click on dots
+	      targetSlide = options.index * options.slidesToScroll;
+	      if (targetSlide === options.currentSlide) {
+	        return;
+	      }
+	    }
+
+	    this.slideHandler(targetSlide);
+	  },
+	  // Accessiblity handler for previous and next
+	  keyHandler: function keyHandler(e) {},
+	  // Focus on selecting a slide (click handler on track)
+	  selectHandler: function selectHandler(e) {},
+	  swipeStart: function swipeStart(e) {
+	    var touches, posX, posY;
+
+	    if (this.props.swipe === false || 'ontouchend' in document && this.props.swipe === false) {
+	      return;
+	    } else if (this.props.draggable === false && e.type.indexOf('mouse') !== -1) {
+	      return;
+	    }
+	    posX = e.touches !== undefined ? e.touches[0].pageX : e.clientX;
+	    posY = e.touches !== undefined ? e.touches[0].pageY : e.clientY;
+	    this.setState({
+	      dragging: true,
+	      touchObject: {
+	        startX: posX,
+	        startY: posY,
+	        curX: posX,
+	        curY: posY
+	      }
+	    });
+	  },
+	  swipeMove: function swipeMove(e) {
+	    if (!this.state.dragging) {
+	      return;
+	    }
+	    if (this.state.animating) {
+	      return;
+	    }
+	    var swipeLeft;
+	    var curLeft, positionOffset;
+	    var touchObject = this.state.touchObject;
+
+	    curLeft = (0, _trackHelper.getTrackLeft)((0, _objectAssign2['default'])({
+	      slideIndex: this.state.currentSlide,
+	      trackRef: this.refs.track
+	    }, this.props, this.state));
+	    touchObject.curX = e.touches ? e.touches[0].pageX : e.clientX;
+	    touchObject.curY = e.touches ? e.touches[0].pageY : e.clientY;
+	    touchObject.swipeLength = Math.round(Math.sqrt(Math.pow(touchObject.curX - touchObject.startX, 2)));
+
+	    positionOffset = (this.props.rtl === false ? 1 : -1) * (touchObject.curX > touchObject.startX ? 1 : -1);
+
+	    var currentSlide = this.state.currentSlide;
+	    var dotCount = Math.ceil(this.state.slideCount / this.props.slidesToScroll);
+	    var swipeDirection = this.swipeDirection(this.state.touchObject);
+	    var touchSwipeLength = touchObject.swipeLength;
+
+	    if (this.props.infinite === false) {
+	      if (currentSlide === 0 && swipeDirection === 'right' || currentSlide + 1 >= dotCount && swipeDirection === 'left') {
+	        touchSwipeLength = touchObject.swipeLength * this.props.edgeFriction;
+
+	        if (this.state.edgeDragged === false && this.props.edgeEvent) {
+	          this.props.edgeEvent(swipeDirection);
+	          this.setState({ edgeDragged: true });
+	        }
+	      }
+	    }
+
+	    if (this.state.swiped === false && this.props.swipeEvent) {
+	      this.props.swipeEvent(swipeDirection);
+	      this.setState({ swiped: true });
+	    }
+
+	    swipeLeft = curLeft + touchSwipeLength * positionOffset;
+	    this.setState({
+	      touchObject: touchObject,
+	      swipeLeft: swipeLeft,
+	      trackStyle: (0, _trackHelper.getTrackCSS)((0, _objectAssign2['default'])({ left: swipeLeft }, this.props, this.state))
+	    });
+
+	    if (Math.abs(touchObject.curX - touchObject.startX) < Math.abs(touchObject.curY - touchObject.startY) * 0.8) {
+	      return;
+	    }
+	    if (touchObject.swipeLength > 4) {
+	      e.preventDefault();
+	    }
+	  },
+	  swipeEnd: function swipeEnd(e) {
+	    if (!this.state.dragging) {
+	      return;
+	    }
+	    var touchObject = this.state.touchObject;
+	    var minSwipe = this.state.listWidth / this.props.touchThreshold;
+	    var swipeDirection = this.swipeDirection(touchObject);
+
+	    // reset the state of touch related state variables.
+	    this.setState({
+	      dragging: false,
+	      edgeDragged: false,
+	      swiped: false,
+	      swipeLeft: null,
+	      touchObject: {}
+	    });
+	    // Fix for #13
+	    if (!touchObject.swipeLength) {
+	      return;
+	    }
+	    if (touchObject.swipeLength > minSwipe) {
+	      e.preventDefault();
+	      if (swipeDirection === 'left') {
+	        this.slideHandler(this.state.currentSlide + this.props.slidesToScroll);
+	      } else if (swipeDirection === 'right') {
+	        this.slideHandler(this.state.currentSlide - this.props.slidesToScroll);
+	      } else {
+	        this.slideHandler(this.state.currentSlide);
+	      }
+	    } else {
+	      // Adjust the track back to it's original position.
+	      var currentLeft = (0, _trackHelper.getTrackLeft)((0, _objectAssign2['default'])({
+	        slideIndex: this.state.currentSlide,
+	        trackRef: this.refs.track
+	      }, this.props, this.state));
+
+	      this.setState({
+	        trackStyle: (0, _trackHelper.getTrackAnimateCSS)((0, _objectAssign2['default'])({ left: currentLeft }, this.props, this.state))
+	      });
+	    }
+	  }
+	};
+
+	exports['default'] = EventHandlers;
+	module.exports = exports['default'];
+
+/***/ },
+/* 178 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { 'default': obj };
+	}
+
+	var _ReactDOM = __webpack_require__(179);
+
+	var _ReactDOM2 = _interopRequireDefault(_ReactDOM);
+
+	var checkSpecKeys = function checkSpecKeys(spec, keysArray) {
+	  return keysArray.reduce(function (value, key) {
+	    return value && spec.hasOwnProperty(key);
+	  }, true) ? null : console.error('Keys Missing', spec);
+	};
+
+	var getTrackCSS = function getTrackCSS(spec) {
+	  checkSpecKeys(spec, ['left', 'variableWidth', 'slideCount', 'slidesToShow', 'slideWidth']);
+
+	  var trackWidth;
+
+	  if (spec.variableWidth) {
+	    trackWidth = (spec.slideCount + 2 * spec.slidesToShow) * spec.slideWidth;
+	  } else if (spec.centerMode) {
+	    trackWidth = (spec.slideCount + 2 * (spec.slidesToShow + 1)) * spec.slideWidth;
+	  } else {
+	    trackWidth = (spec.slideCount + 2 * spec.slidesToShow) * spec.slideWidth;
+	  }
+
+	  var style = {
+	    opacity: 1,
+	    width: trackWidth,
+	    WebkitTransform: 'translate3d(' + spec.left + 'px, 0px, 0px)',
+	    transform: 'translate3d(' + spec.left + 'px, 0px, 0px)',
+	    transition: '',
+	    WebkitTransition: '',
+	    msTransform: 'translateX(' + spec.left + 'px)'
+	  };
+
+	  // Fallback for IE8
+	  if (!window.addEventListener && window.attachEvent) {
+	    style.marginLeft = spec.left + 'px';
+	  }
+
+	  return style;
+	};
+
+	exports.getTrackCSS = getTrackCSS;
+	var getTrackAnimateCSS = function getTrackAnimateCSS(spec) {
+	  checkSpecKeys(spec, ['left', 'variableWidth', 'slideCount', 'slidesToShow', 'slideWidth', 'speed', 'cssEase']);
+
+	  var style = getTrackCSS(spec);
+	  // useCSS is true by default so it can be undefined
+	  style.WebkitTransition = '-webkit-transform ' + spec.speed + 'ms ' + spec.cssEase;
+	  style.transition = 'transform ' + spec.speed + 'ms ' + spec.cssEase;
+	  return style;
+	};
+
+	exports.getTrackAnimateCSS = getTrackAnimateCSS;
+	var getTrackLeft = function getTrackLeft(spec) {
+
+	  checkSpecKeys(spec, ['slideIndex', 'trackRef', 'infinite', 'centerMode', 'slideCount', 'slidesToShow', 'slidesToScroll', 'slideWidth', 'listWidth', 'variableWidth']);
+
+	  var slideOffset = 0;
+	  var targetLeft;
+	  var targetSlide;
+
+	  if (spec.fade) {
+	    return 0;
+	  }
+
+	  if (spec.infinite) {
+	    if (spec.slideCount > spec.slidesToShow) {
+	      slideOffset = spec.slideWidth * spec.slidesToShow * -1;
+	    }
+	    if (spec.slideCount % spec.slidesToScroll !== 0) {
+	      if (spec.slideIndex + spec.slidesToScroll > spec.slideCount && spec.slideCount > spec.slidesToShow) {
+	        if (spec.slideIndex > spec.slideCount) {
+	          slideOffset = (spec.slidesToShow - (spec.slideIndex - spec.slideCount)) * spec.slideWidth * -1;
+	        } else {
+	          slideOffset = spec.slideCount % spec.slidesToScroll * spec.slideWidth * -1;
+	        }
+	      }
+	    }
+	  }
+
+	  if (spec.centerMode) {
+	    if (spec.infinite) {
+	      slideOffset += spec.slideWidth * Math.floor(spec.slidesToShow / 2);
+	    } else {
+	      slideOffset = spec.slideWidth * Math.floor(spec.slidesToShow / 2);
+	    }
+	  }
+
+	  targetLeft = spec.slideIndex * spec.slideWidth * -1 + slideOffset;
+
+	  if (spec.variableWidth === true) {
+	    var targetSlideIndex;
+	    if (spec.slideCount <= spec.slidesToShow || spec.infinite === false) {
+	      targetSlide = _ReactDOM2['default'].findDOMNode(spec.trackRef).childNodes[spec.slideIndex];
+	    } else {
+	      targetSlideIndex = spec.slideIndex + spec.slidesToShow;
+	      targetSlide = _ReactDOM2['default'].findDOMNode(spec.trackRef).childNodes[targetSlideIndex];
+	    }
+	    targetLeft = targetSlide ? targetSlide.offsetLeft * -1 : 0;
+	    if (spec.centerMode === true) {
+	      if (spec.infinite === false) {
+	        targetSlide = _ReactDOM2['default'].findDOMNode(spec.trackRef).children[spec.slideIndex];
+	      } else {
+	        targetSlide = _ReactDOM2['default'].findDOMNode(spec.trackRef).children[spec.slideIndex + spec.slidesToShow + 1];
+	      }
+
+	      targetLeft = targetSlide ? targetSlide.offsetLeft * -1 : 0;
+	      targetLeft += (spec.listWidth - targetSlide.offsetWidth) / 2;
+	    }
+	  }
+
+	  return targetLeft;
+	};
+	exports.getTrackLeft = getTrackLeft;
+
+/***/ },
+/* 179 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { 'default': obj };
+	}
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(158);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var ReactDOM = _react2['default'].version >= '0.14.0' ? _reactDom2['default'] : _react2['default'];
+
+	exports['default'] = ReactDOM;
+	module.exports = exports['default'];
+
+/***/ },
+/* 180 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	function ToObject(val) {
+		if (val == null) {
+			throw new TypeError('Object.assign cannot be called with null or undefined');
+		}
+
+		return Object(val);
+	}
+
+	module.exports = Object.assign || function (target, source) {
+		var from;
+		var keys;
+		var to = ToObject(target);
+
+		for (var s = 1; s < arguments.length; s++) {
+			from = arguments[s];
+			keys = Object.keys(Object(from));
+
+			for (var i = 0; i < keys.length; i++) {
+				to[keys[i]] = from[keys[i]];
+			}
+		}
+
+		return to;
+	};
+
+/***/ },
+/* 181 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { 'default': obj };
+	}
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _ReactDOM = __webpack_require__(179);
+
+	var _ReactDOM2 = _interopRequireDefault(_ReactDOM);
+
+	var _reactLibReactTransitionEvents = __webpack_require__(182);
+
+	var _reactLibReactTransitionEvents2 = _interopRequireDefault(_reactLibReactTransitionEvents);
+
+	var _trackHelper = __webpack_require__(178);
+
+	var _objectAssign = __webpack_require__(180);
+
+	var _objectAssign2 = _interopRequireDefault(_objectAssign);
+
+	var helpers = {
+	  initialize: function initialize(props) {
+	    var slideCount = _react2['default'].Children.count(props.children);
+	    var listWidth = this.getWidth(_ReactDOM2['default'].findDOMNode(this.refs.list));
+	    var trackWidth = this.getWidth(_ReactDOM2['default'].findDOMNode(this.refs.track));
+	    var slideWidth = this.getWidth(_ReactDOM2['default'].findDOMNode(this)) / props.slidesToShow;
+
+	    var currentSlide = props.rtl ? slideCount - 1 - props.initialSlide : props.initialSlide;
+
+	    this.setState({
+	      slideCount: slideCount,
+	      slideWidth: slideWidth,
+	      listWidth: listWidth,
+	      trackWidth: trackWidth,
+	      currentSlide: currentSlide
+	    }, function () {
+
+	      var targetLeft = (0, _trackHelper.getTrackLeft)((0, _objectAssign2['default'])({
+	        slideIndex: this.state.currentSlide,
+	        trackRef: this.refs.track
+	      }, props, this.state));
+	      // getCSS function needs previously set state
+	      var trackStyle = (0, _trackHelper.getTrackCSS)((0, _objectAssign2['default'])({ left: targetLeft }, props, this.state));
+
+	      this.setState({ trackStyle: trackStyle });
+
+	      this.autoPlay(); // once we're set up, trigger the initial autoplay.
+	    });
+	  },
+	  update: function update(props) {
+	    // This method has mostly same code as initialize method.
+	    // Refactor it
+	    var slideCount = _react2['default'].Children.count(props.children);
+	    var listWidth = this.getWidth(_ReactDOM2['default'].findDOMNode(this.refs.list));
+	    var trackWidth = this.getWidth(_ReactDOM2['default'].findDOMNode(this.refs.track));
+	    var slideWidth = this.getWidth(_ReactDOM2['default'].findDOMNode(this)) / props.slidesToShow;
+
+	    this.setState({
+	      slideCount: slideCount,
+	      slideWidth: slideWidth,
+	      listWidth: listWidth,
+	      trackWidth: trackWidth
+	    }, function () {
+
+	      var targetLeft = (0, _trackHelper.getTrackLeft)((0, _objectAssign2['default'])({
+	        slideIndex: this.state.currentSlide,
+	        trackRef: this.refs.track
+	      }, props, this.state));
+	      // getCSS function needs previously set state
+	      var trackStyle = (0, _trackHelper.getTrackCSS)((0, _objectAssign2['default'])({ left: targetLeft }, props, this.state));
+
+	      this.setState({ trackStyle: trackStyle });
+	    });
+	  },
+	  getWidth: function getWidth(elem) {
+	    return elem.getBoundingClientRect().width || elem.offsetWidth;
+	  },
+	  adaptHeight: function adaptHeight() {
+	    if (this.props.adaptiveHeight) {
+	      var selector = '[data-index="' + this.state.currentSlide + '"]';
+	      if (this.refs.list) {
+	        var slickList = _ReactDOM2['default'].findDOMNode(this.refs.list);
+	        slickList.style.height = slickList.querySelector(selector).offsetHeight + 'px';
+	      }
+	    }
+	  },
+	  slideHandler: function slideHandler(index) {
+	    var _this = this;
+
+	    // Functionality of animateSlide and postSlide is merged into this function
+	    // console.log('slideHandler', index);
+	    var targetSlide, currentSlide;
+	    var targetLeft, currentLeft;
+	    var callback;
+
+	    if (this.state.currentSlide === index) {
+	      return;
+	    }
+
+	    if (this.props.fade) {
+	      currentSlide = this.state.currentSlide;
+
+	      //  Shifting targetSlide back into the range
+	      if (index < 0) {
+	        targetSlide = index + this.state.slideCount;
+	      } else if (index >= this.state.slideCount) {
+	        targetSlide = index - this.state.slideCount;
+	      } else {
+	        targetSlide = index;
+	      }
+
+	      if (this.props.lazyLoad && this.state.lazyLoadedList.indexOf(targetSlide) < 0) {
+	        this.setState({
+	          lazyLoadedList: this.state.lazyLoadedList.concat(targetSlide)
+	        });
+	      }
+
+	      callback = function () {
+	        _this.setState({
+	          animating: false
+	        });
+	        if (_this.props.afterChange) {
+	          _this.props.afterChange(currentSlide);
+	        }
+	        _reactLibReactTransitionEvents2['default'].removeEndEventListener(_ReactDOM2['default'].findDOMNode(_this.refs.track).children[currentSlide], callback);
+	      };
+
+	      this.setState({
+	        animating: true,
+	        currentSlide: targetSlide
+	      }, function () {
+	        _reactLibReactTransitionEvents2['default'].addEndEventListener(_ReactDOM2['default'].findDOMNode(this.refs.track).children[currentSlide], callback);
+	      });
+
+	      if (this.props.beforeChange) {
+	        this.props.beforeChange(this.state.currentSlide, currentSlide);
+	      }
+
+	      this.autoPlay();
+	      return;
+	    }
+
+	    targetSlide = index;
+	    if (targetSlide < 0) {
+	      if (this.props.infinite === false) {
+	        currentSlide = 0;
+	      } else if (this.state.slideCount % this.props.slidesToScroll !== 0) {
+	        currentSlide = this.state.slideCount - this.state.slideCount % this.props.slidesToScroll;
+	      } else {
+	        currentSlide = this.state.slideCount + targetSlide;
+	      }
+	    } else if (targetSlide >= this.state.slideCount) {
+	      if (this.props.infinite === false) {
+	        currentSlide = this.state.slideCount - this.props.slidesToShow;
+	      } else if (this.state.slideCount % this.props.slidesToScroll !== 0) {
+	        currentSlide = 0;
+	      } else {
+	        currentSlide = targetSlide - this.state.slideCount;
+	      }
+	    } else {
+	      currentSlide = targetSlide;
+	    }
+
+	    targetLeft = (0, _trackHelper.getTrackLeft)((0, _objectAssign2['default'])({
+	      slideIndex: targetSlide,
+	      trackRef: this.refs.track
+	    }, this.props, this.state));
+
+	    currentLeft = (0, _trackHelper.getTrackLeft)((0, _objectAssign2['default'])({
+	      slideIndex: currentSlide,
+	      trackRef: this.refs.track
+	    }, this.props, this.state));
+
+	    if (this.props.infinite === false) {
+	      targetLeft = currentLeft;
+	    }
+
+	    if (this.props.beforeChange) {
+	      this.props.beforeChange(this.state.currentSlide, currentSlide);
+	    }
+
+	    if (this.props.lazyLoad) {
+	      var loaded = true;
+	      var slidesToLoad = [];
+	      for (var i = targetSlide; i < targetSlide + this.props.slidesToShow; i++) {
+	        loaded = loaded && this.state.lazyLoadedList.indexOf(i) >= 0;
+	        if (!loaded) {
+	          slidesToLoad.push(i);
+	        }
+	      }
+	      if (!loaded) {
+	        this.setState({
+	          lazyLoadedList: this.state.lazyLoadedList.concat(slidesToLoad)
+	        });
+	      }
+	    }
+
+	    // Slide Transition happens here.
+	    // animated transition happens to target Slide and
+	    // non - animated transition happens to current Slide
+	    // If CSS transitions are false, directly go the current slide.
+
+	    if (this.props.useCSS === false) {
+
+	      this.setState({
+	        currentSlide: currentSlide,
+	        trackStyle: (0, _trackHelper.getTrackCSS)((0, _objectAssign2['default'])({ left: currentLeft }, this.props, this.state))
+	      }, function () {
+	        if (this.props.afterChange) {
+	          this.props.afterChange(currentSlide);
+	        }
+	      });
+	    } else {
+
+	      var nextStateChanges = {
+	        animating: false,
+	        currentSlide: currentSlide,
+	        trackStyle: (0, _trackHelper.getTrackCSS)((0, _objectAssign2['default'])({ left: currentLeft }, this.props, this.state)),
+	        swipeLeft: null
+	      };
+
+	      callback = function () {
+	        _this.setState(nextStateChanges);
+	        if (_this.props.afterChange) {
+	          _this.props.afterChange(currentSlide);
+	        }
+	        _reactLibReactTransitionEvents2['default'].removeEndEventListener(_ReactDOM2['default'].findDOMNode(_this.refs.track), callback);
+	      };
+
+	      this.setState({
+	        animating: true,
+	        currentSlide: targetSlide,
+	        trackStyle: (0, _trackHelper.getTrackAnimateCSS)((0, _objectAssign2['default'])({ left: targetLeft }, this.props, this.state))
+	      }, function () {
+	        _reactLibReactTransitionEvents2['default'].addEndEventListener(_ReactDOM2['default'].findDOMNode(this.refs.track), callback);
+	      });
+	    }
+
+	    this.autoPlay();
+	  },
+	  swipeDirection: function swipeDirection(touchObject) {
+	    var xDist, yDist, r, swipeAngle;
+
+	    xDist = touchObject.startX - touchObject.curX;
+	    yDist = touchObject.startY - touchObject.curY;
+	    r = Math.atan2(yDist, xDist);
+
+	    swipeAngle = Math.round(r * 180 / Math.PI);
+	    if (swipeAngle < 0) {
+	      swipeAngle = 360 - Math.abs(swipeAngle);
+	    }
+	    if (swipeAngle <= 45 && swipeAngle >= 0 || swipeAngle <= 360 && swipeAngle >= 315) {
+	      return this.props.rtl === false ? 'left' : 'right';
+	    }
+	    if (swipeAngle >= 135 && swipeAngle <= 225) {
+	      return this.props.rtl === false ? 'right' : 'left';
+	    }
+
+	    return 'vertical';
+	  },
+	  autoPlay: function autoPlay() {
+	    var _this2 = this;
+
+	    var play = function play() {
+	      if (_this2.state.mounted) {
+	        _this2.slideHandler(_this2.state.currentSlide + _this2.props.slidesToScroll);
+	      }
+	    };
+	    if (this.props.autoplay) {
+	      window.clearTimeout(this.state.autoPlayTimer);
+	      this.setState({
+	        autoPlayTimer: window.setTimeout(play, this.props.autoplaySpeed)
+	      });
+	    }
+	  }
+	};
+
+	exports['default'] = helpers;
+	module.exports = exports['default'];
+
+/***/ },
+/* 182 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactTransitionEvents
+	 */
+
+	'use strict';
+
+	var ExecutionEnvironment = __webpack_require__(9);
+
+	/**
+	 * EVENT_NAME_MAP is used to determine which event fired when a
+	 * transition/animation ends, based on the style property used to
+	 * define that event.
+	 */
+	var EVENT_NAME_MAP = {
+	  transitionend: {
+	    'transition': 'transitionend',
+	    'WebkitTransition': 'webkitTransitionEnd',
+	    'MozTransition': 'mozTransitionEnd',
+	    'OTransition': 'oTransitionEnd',
+	    'msTransition': 'MSTransitionEnd'
+	  },
+
+	  animationend: {
+	    'animation': 'animationend',
+	    'WebkitAnimation': 'webkitAnimationEnd',
+	    'MozAnimation': 'mozAnimationEnd',
+	    'OAnimation': 'oAnimationEnd',
+	    'msAnimation': 'MSAnimationEnd'
+	  }
+	};
+
+	var endEvents = [];
+
+	function detectEvents() {
+	  var testEl = document.createElement('div');
+	  var style = testEl.style;
+
+	  // On some platforms, in particular some releases of Android 4.x,
+	  // the un-prefixed "animation" and "transition" properties are defined on the
+	  // style object but the events that fire will still be prefixed, so we need
+	  // to check if the un-prefixed events are useable, and if not remove them
+	  // from the map
+	  if (!('AnimationEvent' in window)) {
+	    delete EVENT_NAME_MAP.animationend.animation;
+	  }
+
+	  if (!('TransitionEvent' in window)) {
+	    delete EVENT_NAME_MAP.transitionend.transition;
+	  }
+
+	  for (var baseEventName in EVENT_NAME_MAP) {
+	    var baseEvents = EVENT_NAME_MAP[baseEventName];
+	    for (var styleName in baseEvents) {
+	      if (styleName in style) {
+	        endEvents.push(baseEvents[styleName]);
+	        break;
+	      }
+	    }
+	  }
+	}
+
+	if (ExecutionEnvironment.canUseDOM) {
+	  detectEvents();
+	}
+
+	// We use the raw {add|remove}EventListener() call because EventListener
+	// does not know how to remove event listeners and we really should
+	// clean up. Also, these events are not triggered in older browsers
+	// so we should be A-OK here.
+
+	function addEventListener(node, eventName, eventListener) {
+	  node.addEventListener(eventName, eventListener, false);
+	}
+
+	function removeEventListener(node, eventName, eventListener) {
+	  node.removeEventListener(eventName, eventListener, false);
+	}
+
+	var ReactTransitionEvents = {
+	  addEndEventListener: function addEndEventListener(node, eventListener) {
+	    if (endEvents.length === 0) {
+	      // If CSS transitions are not supported, trigger an "end animation"
+	      // event immediately.
+	      window.setTimeout(eventListener, 0);
+	      return;
+	    }
+	    endEvents.forEach(function (endEvent) {
+	      addEventListener(node, endEvent, eventListener);
+	    });
+	  },
+
+	  removeEndEventListener: function removeEndEventListener(node, eventListener) {
+	    if (endEvents.length === 0) {
+	      return;
+	    }
+	    endEvents.forEach(function (endEvent) {
+	      removeEventListener(node, endEvent, eventListener);
+	    });
+	  }
+	};
+
+	module.exports = ReactTransitionEvents;
+
+/***/ },
+/* 183 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	var initialState = {
+	    animating: false,
+	    dragging: false,
+	    autoPlayTimer: null,
+	    currentDirection: 0,
+	    currentLeft: null,
+	    currentSlide: 0,
+	    direction: 1,
+	    // listWidth: null,
+	    // listHeight: null,
+	    // loadIndex: 0,
+	    slideCount: null,
+	    slideWidth: null,
+	    // sliding: false,
+	    // slideOffset: 0,
+	    swipeLeft: null,
+	    touchObject: {
+	        startX: 0,
+	        startY: 0,
+	        curX: 0,
+	        curY: 0
+	    },
+
+	    lazyLoadedList: [],
+
+	    // added for react
+	    initialized: false,
+	    edgeDragged: false,
+	    swiped: false, // used by swipeEvent. differentites between touch and swipe.
+	    trackStyle: {},
+	    trackWidth: 0
+
+	    // Removed
+	    // transformsEnabled: false,
+	    // $nextArrow: null,
+	    // $prevArrow: null,
+	    // $dots: null,
+	    // $list: null,
+	    // $slideTrack: null,
+	    // $slides: null,
+	};
+
+	module.exports = initialState;
+
+/***/ },
+/* 184 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	var defaultProps = {
+	    className: '',
+	    // accessibility: true,
+	    adaptiveHeight: false,
+	    arrows: true,
+	    autoplay: false,
+	    autoplaySpeed: 3000,
+	    centerMode: false,
+	    centerPadding: '50px',
+	    cssEase: 'ease',
+	    dots: false,
+	    dotsClass: 'slick-dots',
+	    draggable: true,
+	    easing: 'linear',
+	    edgeFriction: 0.35,
+	    fade: false,
+	    focusOnSelect: false,
+	    infinite: true,
+	    initialSlide: 0,
+	    lazyLoad: false,
+	    responsive: null,
+	    rtl: false,
+	    slide: 'div',
+	    slidesToShow: 1,
+	    slidesToScroll: 1,
+	    speed: 500,
+	    swipe: true,
+	    swipeToSlide: false,
+	    touchMove: true,
+	    touchThreshold: 5,
+	    useCSS: true,
+	    variableWidth: false,
+	    vertical: false,
+	    // waitForAnimate: true,
+	    afterChange: null,
+	    beforeChange: null,
+	    edgeEvent: null,
+	    init: null,
+	    swipeEvent: null,
+	    // nextArrow, prevArrow are react componets
+	    nextArrow: null,
+	    prevArrow: null
+	};
+
+	module.exports = defaultProps;
+
+/***/ },
+/* 185 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { 'default': obj };
+	}
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _objectAssign = __webpack_require__(180);
+
+	var _objectAssign2 = _interopRequireDefault(_objectAssign);
+
+	var _classnames = __webpack_require__(168);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
+	var getSlideClasses = function getSlideClasses(spec) {
+	  var slickActive, slickCenter, slickCloned;
+	  var centerOffset, index;
+
+	  if (spec.rtl) {
+	    index = spec.slideCount - 1 - spec.index;
+	    console.log();
+	  } else {
+	    index = spec.index;
+	  }
+
+	  slickCloned = index < 0 || index >= spec.slideCount;
+	  if (spec.centerMode) {
+	    centerOffset = Math.floor(spec.slidesToShow / 2);
+	    slickCenter = spec.currentSlide === index;
+	    if (index > spec.currentSlide - centerOffset - 1 && index <= spec.currentSlide + centerOffset) {
+	      slickActive = true;
+	    }
+	  } else {
+	    slickActive = spec.currentSlide <= index && index < spec.currentSlide + spec.slidesToShow;
+	  }
+	  return (0, _classnames2['default'])({
+	    'slick-slide': true,
+	    'slick-active': slickActive,
+	    'slick-center': slickCenter,
+	    'slick-cloned': slickCloned
+	  });
+	};
+
+	var getSlideStyle = function getSlideStyle(spec) {
+	  var style = {};
+
+	  if (spec.variableWidth === undefined || spec.variableWidth === false) {
+	    style.width = spec.slideWidth;
+	  }
+
+	  if (spec.fade) {
+	    style.position = 'relative';
+	    style.left = -spec.index * spec.slideWidth;
+	    style.opacity = spec.currentSlide === spec.index ? 1 : 0;
+	    style.transition = 'opacity ' + spec.speed + 'ms ' + spec.cssEase;
+	    style.WebkitTransition = 'opacity ' + spec.speed + 'ms ' + spec.cssEase;
+	  }
+
+	  return style;
+	};
+
+	var renderSlides = function renderSlides(spec) {
+	  var key;
+	  var slides = [];
+	  var preCloneSlides = [];
+	  var postCloneSlides = [];
+	  var count = _react2['default'].Children.count(spec.children);
+	  var child;
+
+	  _react2['default'].Children.forEach(spec.children, function (elem, index) {
+	    if (!spec.lazyLoad | (spec.lazyLoad && spec.lazyLoadedList.indexOf(index) >= 0)) {
+	      child = elem;
+	    } else {
+	      child = _react2['default'].createElement('div', null);
+	    }
+	    var childStyle = getSlideStyle((0, _objectAssign2['default'])({}, spec, { index: index }));
+	    var slickClasses = getSlideClasses((0, _objectAssign2['default'])({ index: index }, spec));
+	    var cssClasses;
+
+	    if (child.props.className) {
+	      cssClasses = (0, _classnames2['default'])(slickClasses, child.props.className);
+	    } else {
+	      cssClasses = slickClasses;
+	    }
+
+	    slides.push(_react2['default'].cloneElement(child, {
+	      key: index,
+	      'data-index': index,
+	      className: cssClasses,
+	      style: (0, _objectAssign2['default'])({}, child.props.style || {}, childStyle)
+	    }));
+
+	    // variableWidth doesn't wrap properly.
+	    if (spec.infinite && spec.fade === false) {
+	      var infiniteCount = spec.variableWidth ? spec.slidesToShow + 1 : spec.slidesToShow;
+
+	      if (index >= count - infiniteCount) {
+	        key = -(count - index);
+	        preCloneSlides.push(_react2['default'].cloneElement(child, {
+	          key: key,
+	          'data-index': key,
+	          className: getSlideClasses((0, _objectAssign2['default'])({ index: key }, spec)),
+	          style: (0, _objectAssign2['default'])({}, child.props.style || {}, childStyle)
+	        }));
+	      }
+
+	      if (index < infiniteCount) {
+	        key = count + index;
+	        postCloneSlides.push(_react2['default'].cloneElement(child, {
+	          key: key,
+	          'data-index': key,
+	          className: getSlideClasses((0, _objectAssign2['default'])({ index: key }, spec)),
+	          style: (0, _objectAssign2['default'])({}, child.props.style || {}, childStyle)
+	        }));
+	      }
+	    }
+	  });
+
+	  if (spec.rtl) {
+	    return preCloneSlides.concat(slides, postCloneSlides).reverse();
+	  } else {
+	    return preCloneSlides.concat(slides, postCloneSlides);
+	  }
+	};
+
+	var Track = _react2['default'].createClass({
+	  displayName: 'Track',
+
+	  render: function render() {
+	    var slides = renderSlides(this.props);
+	    return _react2['default'].createElement('div', { className: 'slick-track', style: this.props.trackStyle }, slides);
+	  }
+	});
+	exports.Track = Track;
+
+/***/ },
+/* 186 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { 'default': obj };
+	}
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _classnames = __webpack_require__(168);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
+	var getDotCount = function getDotCount(spec) {
+	  var dots;
+	  dots = Math.ceil(spec.slideCount / spec.slidesToScroll);
+	  return dots;
+	};
+
+	var Dots = _react2['default'].createClass({
+	  displayName: 'Dots',
+
+	  clickHandler: function clickHandler(options, e) {
+	    // In Autoplay the focus stays on clicked button even after transition
+	    // to next slide. That only goes away by click somewhere outside
+	    e.preventDefault();
+	    this.props.clickHandler(options);
+	  },
+	  render: function render() {
+	    var _this = this;
+
+	    var dotCount = getDotCount({
+	      slideCount: this.props.slideCount,
+	      slidesToScroll: this.props.slidesToScroll
+	    });
+
+	    // Apply join & split to Array to pre-fill it for IE8
+	    //
+	    // Credit: http://stackoverflow.com/a/13735425/1849458
+	    var dots = Array.apply(null, Array(dotCount + 1).join('0').split('')).map(function (x, i) {
+
+	      var className = (0, _classnames2['default'])({
+	        'slick-active': _this.props.currentSlide === i * _this.props.slidesToScroll
+	      });
+
+	      var dotOptions = {
+	        message: 'dots',
+	        index: i,
+	        slidesToScroll: _this.props.slidesToScroll,
+	        currentSlide: _this.props.currentSlide
+	      };
+
+	      return _react2['default'].createElement('li', { key: i, className: className }, _react2['default'].createElement('button', { onClick: _this.clickHandler.bind(_this, dotOptions) }, i));
+	    });
+
+	    return _react2['default'].createElement('ul', { className: this.props.dotsClass, style: { display: 'block' } }, dots);
+	  }
+	});
+	exports.Dots = Dots;
+
+/***/ },
+/* 187 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) {
+	  for (var i = 1; i < arguments.length; i++) {
+	    var source = arguments[i];for (var key in source) {
+	      if (Object.prototype.hasOwnProperty.call(source, key)) {
+	        target[key] = source[key];
+	      }
+	    }
+	  }return target;
+	};
+
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { 'default': obj };
+	}
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _classnames = __webpack_require__(168);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
+	var PrevArrow = _react2['default'].createClass({
+	  displayName: 'PrevArrow',
+
+	  clickHandler: function clickHandler(options, e) {
+	    e.preventDefault();
+	    this.props.clickHandler(options, e);
+	  },
+	  render: function render() {
+	    var prevClasses = { 'slick-prev': true };
+	    var prevHandler = this.clickHandler.bind(this, { message: 'previous' });
+
+	    if (!this.props.infinite && (this.props.currentSlide === 0 || this.props.slideCount <= this.props.slidesToShow)) {
+	      prevClasses['slick-disabled'] = true;
+	      prevHandler = null;
+	    }
+
+	    var prevArrowProps = {
+	      key: '0',
+	      ref: 'previous',
+	      'data-role': 'none',
+	      className: (0, _classnames2['default'])(prevClasses),
+	      style: { display: 'block' },
+	      onClick: prevHandler
+	    };
+	    var prevArrow;
+
+	    if (this.props.prevArrow) {
+	      prevArrow = _react2['default'].createElement(this.props.prevArrow, prevArrowProps);
+	    } else {
+	      prevArrow = _react2['default'].createElement('button', _extends({ key: '0', type: 'button' }, prevArrowProps), ' Previous');
+	    }
+
+	    return prevArrow;
+	  }
+	});
+
+	exports.PrevArrow = PrevArrow;
+	var NextArrow = _react2['default'].createClass({
+	  displayName: 'NextArrow',
+
+	  clickHandler: function clickHandler(options, e) {
+	    e.preventDefault();
+	    this.props.clickHandler(options, e);
+	  },
+	  render: function render() {
+	    var nextClasses = { 'slick-next': true };
+	    var nextHandler = this.clickHandler.bind(this, { message: 'next' });
+
+	    if (!this.props.infinite) {
+	      if (this.props.centerMode && this.props.currentSlide >= this.props.slideCount - 1) {
+	        nextClasses['slick-disabled'] = true;
+	        nextHandler = null;
+	      } else {
+	        if (this.props.currentSlide >= this.props.slideCount - this.props.slidesToShow) {
+	          nextClasses['slick-disabled'] = true;
+	          nextHandler = null;
+	        }
+	      }
+
+	      if (this.props.slideCount <= this.props.slidesToShow) {
+	        nextClasses['slick-disabled'] = true;
+	        nextHandler = null;
+	      }
+	    }
+
+	    var nextArrowProps = {
+	      key: '1',
+	      ref: 'next',
+	      'data-role': 'none',
+	      className: (0, _classnames2['default'])(nextClasses),
+	      style: { display: 'block' },
+	      onClick: nextHandler
+	    };
+
+	    var nextArrow;
+
+	    if (this.props.nextArrow) {
+	      nextArrow = _react2['default'].createElement(this.props.nextArrow, nextArrowProps);
+	    } else {
+	      nextArrow = _react2['default'].createElement('button', _extends({ key: '1', type: 'button' }, nextArrowProps), ' Next');
+	    }
+
+	    return nextArrow;
+	  }
+	});
+	exports.NextArrow = NextArrow;
+
+/***/ },
+/* 188 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var camel2hyphen = __webpack_require__(189);
+
+	var isDimension = function isDimension(feature) {
+	  var re = /[height|width]$/;
+	  return re.test(feature);
+	};
+
+	var obj2mq = function obj2mq(obj) {
+	  var mq = '';
+	  var features = Object.keys(obj);
+	  features.forEach(function (feature, index) {
+	    var value = obj[feature];
+	    feature = camel2hyphen(feature);
+	    // Add px to dimension features
+	    if (isDimension(feature) && typeof value === 'number') {
+	      value = value + 'px';
+	    }
+	    if (value === true) {
+	      mq += feature;
+	    } else if (value === false) {
+	      mq += 'not ' + feature;
+	    } else {
+	      mq += '(' + feature + ': ' + value + ')';
+	    }
+	    if (index < features.length - 1) {
+	      mq += ' and ';
+	    }
+	  });
+	  return mq;
+	};
+
+	var json2mq = function json2mq(query) {
+	  var mq = '';
+	  if (typeof query === 'string') {
+	    return query;
+	  }
+	  // Handling array of media queries
+	  if (query instanceof Array) {
+	    query.forEach(function (q, index) {
+	      mq += obj2mq(q);
+	      if (index < query.length - 1) {
+	        mq += ', ';
+	      }
+	    });
+	    return mq;
+	  }
+	  // Handling single media query
+	  return obj2mq(query);
+	};
+
+	module.exports = json2mq;
+
+/***/ },
+/* 189 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	var camel2hyphen = function camel2hyphen(str) {
+	  return str.replace(/[A-Z]/g, function (match) {
+	    return '-' + match.toLowerCase();
+	  }).toLowerCase();
+	};
+
+	module.exports = camel2hyphen;
+
+/***/ },
+/* 190 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var canUseDOM = __webpack_require__(191);
+	var enquire = canUseDOM && __webpack_require__(192);
+	var json2mq = __webpack_require__(188);
+
+	var ResponsiveMixin = {
+	  media: function media(query, handler) {
+	    query = json2mq(query);
+	    if (typeof handler === 'function') {
+	      handler = {
+	        match: handler
+	      };
+	    }
+	    enquire.register(query, handler);
+
+	    // Queue the handlers to unregister them at unmount 
+	    if (!this._responsiveMediaHandlers) {
+	      this._responsiveMediaHandlers = [];
+	    }
+	    this._responsiveMediaHandlers.push({ query: query, handler: handler });
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    if (this._responsiveMediaHandlers) {
+	      this._responsiveMediaHandlers.forEach(function (obj) {
+	        enquire.unregister(obj.query, obj.handler);
+	      });
+	    }
+	  }
+	};
+
+	module.exports = ResponsiveMixin;
+
+/***/ },
+/* 191 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	var canUseDOM = !!(typeof window !== 'undefined' && window.document && window.document.createElement);
+
+	module.exports = canUseDOM;
+
+/***/ },
+/* 192 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
+
+	/*!
+	 * enquire.js v2.1.1 - Awesome Media Queries in JavaScript
+	 * Copyright (c) 2014 Nick Williams - http://wicky.nillia.ms/enquire.js
+	 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
+	 */
+
+	;(function (name, context, factory) {
+	    var matchMedia = window.matchMedia;
+
+	    if (typeof module !== 'undefined' && module.exports) {
+	        module.exports = factory(matchMedia);
+	    } else if (true) {
+	        !(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
+	            return context[name] = factory(matchMedia);
+	        }.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    } else {
+	        context[name] = factory(matchMedia);
+	    }
+	})('enquire', undefined, function (matchMedia) {
+
+	    'use strict';
+
+	    /*jshint unused:false */
+	    /**
+	     * Helper function for iterating over a collection
+	     *
+	     * @param collection
+	     * @param fn
+	     */
+
+	    function each(collection, fn) {
+	        var i = 0,
+	            length = collection.length,
+	            cont;
+
+	        for (i; i < length; i++) {
+	            cont = fn(collection[i], i);
+	            if (cont === false) {
+	                break; //allow early exit
+	            }
+	        }
+	    }
+
+	    /**
+	     * Helper function for determining whether target object is an array
+	     *
+	     * @param target the object under test
+	     * @return {Boolean} true if array, false otherwise
+	     */
+	    function isArray(target) {
+	        return Object.prototype.toString.apply(target) === '[object Array]';
+	    }
+
+	    /**
+	     * Helper function for determining whether target object is a function
+	     *
+	     * @param target the object under test
+	     * @return {Boolean} true if function, false otherwise
+	     */
+	    function isFunction(target) {
+	        return typeof target === 'function';
+	    }
+
+	    /**
+	     * Delegate to handle a media query being matched and unmatched.
+	     *
+	     * @param {object} options
+	     * @param {function} options.match callback for when the media query is matched
+	     * @param {function} [options.unmatch] callback for when the media query is unmatched
+	     * @param {function} [options.setup] one-time callback triggered the first time a query is matched
+	     * @param {boolean} [options.deferSetup=false] should the setup callback be run immediately, rather than first time query is matched?
+	     * @constructor
+	     */
+	    function QueryHandler(options) {
+	        this.options = options;
+	        !options.deferSetup && this.setup();
+	    }
+	    QueryHandler.prototype = {
+
+	        /**
+	         * coordinates setup of the handler
+	         *
+	         * @function
+	         */
+	        setup: function setup() {
+	            if (this.options.setup) {
+	                this.options.setup();
+	            }
+	            this.initialised = true;
+	        },
+
+	        /**
+	         * coordinates setup and triggering of the handler
+	         *
+	         * @function
+	         */
+	        on: function on() {
+	            !this.initialised && this.setup();
+	            this.options.match && this.options.match();
+	        },
+
+	        /**
+	         * coordinates the unmatch event for the handler
+	         *
+	         * @function
+	         */
+	        off: function off() {
+	            this.options.unmatch && this.options.unmatch();
+	        },
+
+	        /**
+	         * called when a handler is to be destroyed.
+	         * delegates to the destroy or unmatch callbacks, depending on availability.
+	         *
+	         * @function
+	         */
+	        destroy: function destroy() {
+	            this.options.destroy ? this.options.destroy() : this.off();
+	        },
+
+	        /**
+	         * determines equality by reference.
+	         * if object is supplied compare options, if function, compare match callback
+	         *
+	         * @function
+	         * @param {object || function} [target] the target for comparison
+	         */
+	        equals: function equals(target) {
+	            return this.options === target || this.options.match === target;
+	        }
+
+	    };
+	    /**
+	     * Represents a single media query, manages it's state and registered handlers for this query
+	     *
+	     * @constructor
+	     * @param {string} query the media query string
+	     * @param {boolean} [isUnconditional=false] whether the media query should run regardless of whether the conditions are met. Primarily for helping older browsers deal with mobile-first design
+	     */
+	    function MediaQuery(query, isUnconditional) {
+	        this.query = query;
+	        this.isUnconditional = isUnconditional;
+	        this.handlers = [];
+	        this.mql = matchMedia(query);
+
+	        var self = this;
+	        this.listener = function (mql) {
+	            self.mql = mql;
+	            self.assess();
+	        };
+	        this.mql.addListener(this.listener);
+	    }
+	    MediaQuery.prototype = {
+
+	        /**
+	         * add a handler for this query, triggering if already active
+	         *
+	         * @param {object} handler
+	         * @param {function} handler.match callback for when query is activated
+	         * @param {function} [handler.unmatch] callback for when query is deactivated
+	         * @param {function} [handler.setup] callback for immediate execution when a query handler is registered
+	         * @param {boolean} [handler.deferSetup=false] should the setup callback be deferred until the first time the handler is matched?
+	         */
+	        addHandler: function addHandler(handler) {
+	            var qh = new QueryHandler(handler);
+	            this.handlers.push(qh);
+
+	            this.matches() && qh.on();
+	        },
+
+	        /**
+	         * removes the given handler from the collection, and calls it's destroy methods
+	         * 
+	         * @param {object || function} handler the handler to remove
+	         */
+	        removeHandler: function removeHandler(handler) {
+	            var handlers = this.handlers;
+	            each(handlers, function (h, i) {
+	                if (h.equals(handler)) {
+	                    h.destroy();
+	                    return !handlers.splice(i, 1); //remove from array and exit each early
+	                }
+	            });
+	        },
+
+	        /**
+	         * Determine whether the media query should be considered a match
+	         * 
+	         * @return {Boolean} true if media query can be considered a match, false otherwise
+	         */
+	        matches: function matches() {
+	            return this.mql.matches || this.isUnconditional;
+	        },
+
+	        /**
+	         * Clears all handlers and unbinds events
+	         */
+	        clear: function clear() {
+	            each(this.handlers, function (handler) {
+	                handler.destroy();
+	            });
+	            this.mql.removeListener(this.listener);
+	            this.handlers.length = 0; //clear array
+	        },
+
+	        /*
+	         * Assesses the query, turning on all handlers if it matches, turning them off if it doesn't match
+	         */
+	        assess: function assess() {
+	            var action = this.matches() ? 'on' : 'off';
+
+	            each(this.handlers, function (handler) {
+	                handler[action]();
+	            });
+	        }
+	    };
+	    /**
+	     * Allows for registration of query handlers.
+	     * Manages the query handler's state and is responsible for wiring up browser events
+	     *
+	     * @constructor
+	     */
+	    function MediaQueryDispatch() {
+	        if (!matchMedia) {
+	            throw new Error('matchMedia not present, legacy browsers require a polyfill');
+	        }
+
+	        this.queries = {};
+	        this.browserIsIncapable = !matchMedia('only all').matches;
+	    }
+
+	    MediaQueryDispatch.prototype = {
+
+	        /**
+	         * Registers a handler for the given media query
+	         *
+	         * @param {string} q the media query
+	         * @param {object || Array || Function} options either a single query handler object, a function, or an array of query handlers
+	         * @param {function} options.match fired when query matched
+	         * @param {function} [options.unmatch] fired when a query is no longer matched
+	         * @param {function} [options.setup] fired when handler first triggered
+	         * @param {boolean} [options.deferSetup=false] whether setup should be run immediately or deferred until query is first matched
+	         * @param {boolean} [shouldDegrade=false] whether this particular media query should always run on incapable browsers
+	         */
+	        register: function register(q, options, shouldDegrade) {
+	            var queries = this.queries,
+	                isUnconditional = shouldDegrade && this.browserIsIncapable;
+
+	            if (!queries[q]) {
+	                queries[q] = new MediaQuery(q, isUnconditional);
+	            }
+
+	            //normalise to object in an array
+	            if (isFunction(options)) {
+	                options = { match: options };
+	            }
+	            if (!isArray(options)) {
+	                options = [options];
+	            }
+	            each(options, function (handler) {
+	                queries[q].addHandler(handler);
+	            });
+
+	            return this;
+	        },
+
+	        /**
+	         * unregisters a query and all it's handlers, or a specific handler for a query
+	         *
+	         * @param {string} q the media query to target
+	         * @param {object || function} [handler] specific handler to unregister
+	         */
+	        unregister: function unregister(q, handler) {
+	            var query = this.queries[q];
+
+	            if (query) {
+	                if (handler) {
+	                    query.removeHandler(handler);
+	                } else {
+	                    query.clear();
+	                    delete this.queries[q];
+	                }
+	            }
+
+	            return this;
+	        }
+	    };
+
+	    return new MediaQueryDispatch();
+	});
+
+/***/ },
+/* 193 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _lodash = __webpack_require__(162);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
+
+	var _searchableimage = __webpack_require__(194);
+
+	var _searchableimage2 = _interopRequireDefault(_searchableimage);
+
+	var _editableDiv = __webpack_require__(173);
+
+	var _editableDiv2 = _interopRequireDefault(_editableDiv);
+
+	var _data = __webpack_require__(195);
+
+	var _superagent = __webpack_require__(165);
+
+	var _superagent2 = _interopRequireDefault(_superagent);
+
+	var _toastr = __webpack_require__(169);
+
+	var _toastr2 = _interopRequireDefault(_toastr);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var AppEditor = (function (_React$Component) {
+	    _inherits(AppEditor, _React$Component);
+
+	    function AppEditor(props) {
+	        _classCallCheck(this, AppEditor);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AppEditor).call(this, props));
+
+	        _this.url = document.querySelector("meta[name='image_url']").getAttribute('content');
+
+	        _this.state = { image: '' };
+	        return _this;
+	    }
+
+	    _createClass(AppEditor, [{
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            var _this2 = this;
+
+	            this.setState({ data: '' });
+	            _superagent2.default.get(this.url).set('Accept', 'application/json').end(function (err, res) {
+	                if (!err) _this2.setState({ data: res.body });
+	            });
+	        }
+	    }, {
+	        key: 'updateImage',
+	        value: function updateImage(image) {
+	            var _this3 = this;
+
+	            _superagent2.default.put(this.url).set('Accept', 'application/json').set('Content-Type', 'application/json').send(image).end(function (err, res) {
+	                console.log(res.body);
+	                if (!err) {
+
+	                    _toastr2.default.info("Successfully updated " + image.title, '', { closeButton: true });
+	                    _this3.editImage(res.body);
+	                }
+	            });
+	        }
+	    }, {
+	        key: 'changeImage',
+	        value: function changeImage(image) {
+	            this.setState({ image: image });
+	        }
+	    }, {
+	        key: 'editImage',
+	        value: function editImage(image) {
+	            var index = _lodash2.default.findIndex(this.state.data, function (img) {
+	                return img.id == image.id;
+	            });
+	            this.state.data[index] = image;
+	            this.changeImage(image);
+	        }
+	    }, {
+	        key: 'deleteImage',
+	        value: function deleteImage(image) {
+	            var _this4 = this;
+
+	            _superagent2.default.del(this.url).send(image).end(function (err, res) {
+	                if (!err) {
+	                    _lodash2.default.remove(_this4.state.data, function (m) {
+	                        return image.id == m.id;
+	                    });
+	                    _toastr2.default.info("successfully removed " + image.title, '', { closeButton: true });
+	                    _this4.setState({ image: '' });
+	                }
+	            });
+	        }
+	    }, {
+	        key: 'addImage',
+	        value: function addImage(image) {
+	            this.state.data.unshift(image);
+	            this.forceUpdate();
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'row' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'col-sm-3' },
+	                    _react2.default.createElement(_searchableimage2.default, { data: this.state.data, addImage: this.addImage.bind(this), changeImage: this.changeImage.bind(this) })
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'col-sm-9' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'edit-div' },
+	                        _react2.default.createElement(_editableDiv2.default, { image: this.state.image, editImage: this.editImage.bind(this), deleteImage: this.deleteImage.bind(this),
+	                            updateImage: this.updateImage.bind(this)
+	                        })
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return AppEditor;
+	})(_react2.default.Component);
+
+	exports.default = AppEditor;
+
+/***/ },
+/* 194 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDropzone = __webpack_require__(160);
+
+	var _reactDropzone2 = _interopRequireDefault(_reactDropzone);
+
+	var _lodash = __webpack_require__(162);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
+
+	var _superagent = __webpack_require__(165);
+
+	var _superagent2 = _interopRequireDefault(_superagent);
+
+	var _classnames = __webpack_require__(168);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
+	var _toastr = __webpack_require__(169);
+
+	var _toastr2 = _interopRequireDefault(_toastr);
+
+	__webpack_require__(172);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	//import '/node_modules/toastr/build/toastr.css'
+
+	var SearchableImage = (function (_React$Component) {
+	    _inherits(SearchableImage, _React$Component);
+
+	    function SearchableImage() {
+	        _classCallCheck(this, SearchableImage);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SearchableImage).call(this));
+
+	        _this.state = { filterText: '' };
+	        return _this;
+	    }
+
+	    _createClass(SearchableImage, [{
+	        key: 'handleUserInput',
+	        value: function handleUserInput(filterText) {
+	            this.setState({ filterText: filterText });
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'upload-div' },
+	                _react2.default.createElement(SearchBar, { filterText: this.state.filterText,
+	                    onUserInput: this.handleUserInput.bind(this)
+	                }),
+	                _react2.default.createElement(UploadDiv, { data: this.props.data, addImage: this.props.addImage,
+	                    filterText: this.state.filterText, changeImage: this.props.changeImage
+	                })
+	            );
+	        }
+	    }]);
+
+	    return SearchableImage;
+	})(_react2.default.Component);
+
+	exports.default = SearchableImage;
+
+	var SearchBar = (function (_React$Component2) {
+	    _inherits(SearchBar, _React$Component2);
+
+	    function SearchBar() {
+	        _classCallCheck(this, SearchBar);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(SearchBar).apply(this, arguments));
+	    }
+
+	    _createClass(SearchBar, [{
+	        key: 'handleChange',
+	        value: function handleChange() {
+	            this.props.onUserInput(this.refs.filter.value);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'form',
+	                { className: 'form' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'form-group' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'input-group' },
+	                        _react2.default.createElement('input', { type: 'text', className: 'form-control',
+	                            placeholder: 'Search your pictures...',
+	                            ref: 'filter',
+	                            value: this.props.filterText,
+	                            onChange: this.handleChange.bind(this)
+	                        }),
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'input-group-addon' },
+	                            _react2.default.createElement('i', { className: 'mdi mdi-magnify' })
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return SearchBar;
+	})(_react2.default.Component);
+
+	var UploadDiv = (function (_React$Component3) {
+	    _inherits(UploadDiv, _React$Component3);
+
+	    function UploadDiv() {
+	        _classCallCheck(this, UploadDiv);
+
+	        var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(UploadDiv).call(this));
+
+	        _this3.progress = '';
+
+	        return _this3;
+	    }
+
+	    _createClass(UploadDiv, [{
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            this.setState({ activeKey: 'default',
+	                isUploading: false,
+	                percentage: 1,
+	                preview: '',
+	                filename: '' });
+	        }
+	    }, {
+	        key: 'changeActiveKey',
+	        value: function changeActiveKey(key, image) {
+	            this.setState({ activeKey: key });
+	            this.props.changeImage(image);
+	        }
+	    }, {
+	        key: 'onDrop',
+	        value: function onDrop(files) {
+	            var _this4 = this;
+
+	            var url = document.querySelector("meta[name='image_url']").getAttribute('content');
+
+	            files.forEach(function (file) {
+	                _this4.setState({ filename: file.name });
+	                var reader = new FileReader();
+	                reader.readAsDataURL(file);
+	                reader.onload = function (e) {
+	                    _this4.setState({ preview: e.target.result });
+	                };
+	                _superagent2.default.post(url).attach("image", file, file.name).set('Accept', 'application/json').on('progress', function (e) {
+	                    console.log(e.percent, file.name, e);
+	                    _this4.setState({ percentage: e.percent, isUploading: true });
+	                }).end(function (err, res) {
+	                    _this4.setState({ isUploading: false });
+	                    if (err) {
+	                        console.log(res);
+	                        return _toastr2.default.error(res.body, 'unable to upload ' + file.name, { closeButton: true });
+	                    }
+
+	                    _toastr2.default.success("successfully uploaded " + file.name, '', { closeButton: true });
+	                    _this4.props.addImage(res.body);
+	                });
+	            });
+	        }
+	    }, {
+	        key: 'onOpenClick',
+	        value: function onOpenClick() {
+	            this.refs.dropzone.open();
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var sections = [];
+	            var data = this.props.data;
+	            var dropzone = _react2.default.createElement(
+	                'div',
+	                { ref: 'progresszone', className: 'dropzone text-center' },
+	                _react2.default.createElement(
+	                    _reactDropzone2.default,
+	                    { ref: 'dropzone', className: 'drop', onDrop: this.onDrop.bind(this), accept: 'image/*' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        null,
+	                        _react2.default.createElement(
+	                            'h5',
+	                            null,
+	                            'Click or drop your images here'
+	                        ),
+	                        _react2.default.createElement(ProgressBar, { percentage: this.state.percentage || '100', filename: this.state.filename, preview: this.state.preview, isUploading: this.state.isUploading })
+	                    )
+	                )
+	            );
+	            if (data.length < 1) {
+	                return _react2.default.createElement(
+	                    'div',
+	                    { className: 'upload-img' },
+	                    ' ',
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'uploaded' },
+	                        _react2.default.createElement(
+	                            'h5',
+	                            null,
+	                            ' You dont have any images yet '
+	                        )
+	                    ),
+	                    dropzone
+	                );
+	            }
+	            data.forEach((function (image, i) {
+	                if (image.title.toLowerCase().indexOf(this.props.filterText.toLowerCase()) == -1) return;
+
+	                sections.push(_react2.default.createElement(SectionDiv, { key: i, getKey: image.id, image: image, activeKey: this.state.activeKey,
+	                    changeKey: this.changeActiveKey.bind(this) }));
+	            }).bind(this));
+	            if (sections.length < 1) {
+	                return _react2.default.createElement(
+	                    'div',
+	                    { className: 'upload-img' },
+	                    ' ',
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'uploaded' },
+	                        ' ',
+	                        _react2.default.createElement(
+	                            'h5',
+	                            null,
+	                            ' No Images matches your criteria '
+	                        )
+	                    ),
+	                    dropzone
+	                );
+	            } else {
+	                return _react2.default.createElement(
+	                    'div',
+	                    { className: 'upload-img' },
+	                    sections,
+	                    dropzone
+	                );
+	            }
+	        }
+	    }]);
+
+	    return UploadDiv;
+	})(_react2.default.Component);
+
+	var SectionDiv = (function (_React$Component4) {
+	    _inherits(SectionDiv, _React$Component4);
+
+	    function SectionDiv() {
+	        _classCallCheck(this, SectionDiv);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(SectionDiv).apply(this, arguments));
+	    }
+
+	    _createClass(SectionDiv, [{
+	        key: 'handleChange',
+	        value: function handleChange(e) {
+	            e.preventDefault();
+
+	            this.props.changeKey(this.props.getKey, this.props.image);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var activeUpload = (0, _classnames2.default)({
+	                'uploaded': true,
+	                'active': this.props.getKey == this.props.activeKey
+	            });
+	            return _react2.default.createElement(
+	                'div',
+	                { className: activeUpload, onClick: this.handleChange.bind(this) },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'media' },
+	                    _react2.default.createElement(
+	                        'a',
+	                        { className: 'media-left', href: '#' },
+	                        _react2.default.createElement('img', { className: 'media-object', src: '/media/' + this.props.image.picture, alt: 'Generic placeholder image', width: '150', height: '150' })
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'media-body' },
+	                        _react2.default.createElement(
+	                            'p',
+	                            { className: 'media-heading' },
+	                            this.props.image.title,
+	                            _react2.default.createElement('br', null),
+	                            _react2.default.createElement(
+	                                'small',
+	                                null,
+	                                ' Uploaded on ',
+	                                this.props.image.registered
+	                            )
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return SectionDiv;
+	})(_react2.default.Component);
+
+	var ProgressBar = (function (_React$Component5) {
+	    _inherits(ProgressBar, _React$Component5);
+
+	    function ProgressBar(props) {
+	        _classCallCheck(this, ProgressBar);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(ProgressBar).call(this, props));
+	    }
+
+	    _createClass(ProgressBar, [{
+	        key: 'render',
+	        value: function render() {
+	            if (this.props.isUploading) {
+	                return _react2.default.createElement(
+	                    'div',
+	                    { className: 'progresszone' },
+	                    _react2.default.createElement(
+	                        'p',
+	                        null,
+	                        this.props.filename
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'row' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'col-sm-4' },
+	                            _react2.default.createElement('img', { src: this.props.preview })
+	                        ),
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'col-sm-8' },
+	                            _react2.default.createElement(
+	                                'progress',
+	                                { className: 'progress progress-striped progress-info', value: this.props.percentage, max: '100' },
+	                                this.props.perecentage,
+	                                '%'
+	                            )
+	                        )
+	                    )
+	                );
+	            }
+	            return _react2.default.createElement('div', null);
+	        }
+	    }]);
+
+	    return ProgressBar;
+	})(_react2.default.Component);
+
+/***/ },
+/* 195 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var data = exports.data = [{
+	  "id": 0,
+	  "thumbail": "http://placehold.it/149x167",
+	  "picture": "http://placehold.it/737x652",
+	  "title": "LYRICHORD",
+	  "registered": "Friday, December 18, 2015 12:16 AM"
+	}, {
+	  "id": 1,
+	  "thumbail": "http://placehold.it/111x107",
+	  "picture": "http://placehold.it/601x668",
+	  "title": "INCUBUS",
+	  "registered": "Friday, November 21, 2014 2:05 AM"
+	}, {
+	  "id": 2,
+	  "thumbail": "http://placehold.it/133x132",
+	  "picture": "http://placehold.it/709x703",
+	  "title": "NORALI",
+	  "registered": "Wednesday, September 30, 2015 12:20 AM"
+	}, {
+	  "id": 3,
+	  "thumbail": "http://placehold.it/127x163",
+	  "picture": "http://placehold.it/642x694",
+	  "title": "PRINTSPAN",
+	  "registered": "Tuesday, July 1, 2014 10:39 PM"
+	}, {
+	  "id": 4,
+	  "thumbail": "http://placehold.it/107x183",
+	  "picture": "http://placehold.it/758x710",
+	  "title": "MACRONAUT",
+	  "registered": "Sunday, December 13, 2015 3:24 PM"
+	}, {
+	  "id": 5,
+	  "thumbail": "http://placehold.it/193x173",
+	  "picture": "http://placehold.it/650x763",
+	  "title": "ENDIPINE",
+	  "registered": "Saturday, November 7, 2015 12:19 AM"
+	}, {
+	  "id": 6,
+	  "thumbail": "http://placehold.it/139x128",
+	  "picture": "http://placehold.it/726x794",
+	  "title": "EARGO",
+	  "registered": "Thursday, August 21, 2014 1:46 PM"
+	}, {
+	  "id": 7,
+	  "thumbail": "http://placehold.it/108x179",
+	  "picture": "http://placehold.it/747x685",
+	  "title": "LIMAGE",
+	  "registered": "Saturday, February 21, 2015 9:50 PM"
+	}, {
+	  "id": 8,
+	  "thumbail": "http://placehold.it/153x173",
+	  "picture": "http://placehold.it/743x698",
+	  "title": "FOSSIEL",
+	  "registered": "Friday, October 9, 2015 12:16 PM"
+	}, {
+	  "id": 9,
+	  "thumbail": "http://placehold.it/199x158",
+	  "picture": "http://placehold.it/692x717",
+	  "title": "BOINK",
+	  "registered": "Tuesday, May 26, 2015 12:52 PM"
+	}, {
+	  "id": 10,
+	  "thumbail": "http://placehold.it/139x109",
+	  "picture": "http://placehold.it/698x634",
+	  "title": "PYRAMAX",
+	  "registered": "Wednesday, May 27, 2015 9:12 PM"
+	}, {
+	  "id": 11,
+	  "thumbail": "http://placehold.it/188x172",
+	  "picture": "http://placehold.it/711x601",
+	  "title": "UXMOX",
+	  "registered": "Wednesday, December 3, 2014 7:31 PM"
+	}, {
+	  "id": 12,
+	  "thumbail": "http://placehold.it/187x166",
+	  "picture": "http://placehold.it/736x703",
+	  "title": "COMVERGES",
+	  "registered": "Wednesday, July 8, 2015 9:07 PM"
+	}, {
+	  "id": 13,
+	  "thumbail": "http://placehold.it/110x107",
+	  "picture": "http://placehold.it/778x603",
+	  "title": "DIGITALUS",
+	  "registered": "Monday, May 25, 2015 7:38 AM"
+	}, {
+	  "id": 14,
+	  "thumbail": "http://placehold.it/121x162",
+	  "picture": "http://placehold.it/679x762",
+	  "title": "VALREDA",
+	  "registered": "Friday, July 10, 2015 10:40 PM"
+	}, {
+	  "id": 15,
+	  "thumbail": "http://placehold.it/140x177",
+	  "picture": "http://placehold.it/677x625",
+	  "title": "DOGTOWN",
+	  "registered": "Wednesday, April 23, 2014 7:00 AM"
+	}, {
+	  "id": 16,
+	  "thumbail": "http://placehold.it/151x170",
+	  "picture": "http://placehold.it/740x782",
+	  "title": "COMDOM",
+	  "registered": "Wednesday, August 27, 2014 8:02 AM"
+	}, {
+	  "id": 17,
+	  "thumbail": "http://placehold.it/197x191",
+	  "picture": "http://placehold.it/646x746",
+	  "title": "RODEOMAD",
+	  "registered": "Wednesday, October 29, 2014 12:42 PM"
+	}, {
+	  "id": 18,
+	  "thumbail": "http://placehold.it/127x105",
+	  "picture": "http://placehold.it/750x604",
+	  "title": "DECRATEX",
+	  "registered": "Sunday, September 6, 2015 6:18 PM"
+	}, {
+	  "id": 19,
+	  "thumbail": "http://placehold.it/147x107",
+	  "picture": "http://placehold.it/615x644",
+	  "title": "NORSUP",
+	  "registered": "Monday, April 7, 2014 8:54 AM"
+	}, {
+	  "id": 20,
+	  "thumbail": "http://placehold.it/168x109",
+	  "picture": "http://placehold.it/660x617",
+	  "title": "KANGLE",
+	  "registered": "Thursday, October 1, 2015 11:45 AM"
+	}, {
+	  "id": 21,
+	  "thumbail": "http://placehold.it/166x143",
+	  "picture": "http://placehold.it/648x681",
+	  "title": "VIOCULAR",
+	  "registered": "Thursday, August 28, 2014 12:56 AM"
+	}, {
+	  "id": 22,
+	  "thumbail": "http://placehold.it/108x113",
+	  "picture": "http://placehold.it/779x685",
+	  "title": "ORBALIX",
+	  "registered": "Wednesday, July 1, 2015 12:46 AM"
+	}, {
+	  "id": 23,
+	  "thumbail": "http://placehold.it/191x150",
+	  "picture": "http://placehold.it/692x640",
+	  "title": "CYTRAK",
+	  "registered": "Tuesday, April 8, 2014 8:24 AM"
+	}, {
+	  "id": 24,
+	  "thumbail": "http://placehold.it/194x139",
+	  "picture": "http://placehold.it/690x683",
+	  "title": "ROBOID",
+	  "registered": "Thursday, July 3, 2014 7:00 PM"
+	}];
 
 /***/ }
 /******/ ]);

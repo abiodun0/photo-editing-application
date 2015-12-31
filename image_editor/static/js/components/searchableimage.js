@@ -66,8 +66,16 @@ class SearchBar extends React.Component{
 class UploadDiv extends React.Component{
     constructor(){
         super();
+        this.progress ='';
 
-        this.state = {activeKey:'default'};
+    }
+    componentWillMount() {
+       this.setState({activeKey: 'default',
+       isUploading: false,
+       percentage:1,
+       preview:'',
+       filename:''});
+          
     }
     changeActiveKey(key,image){
         this.setState({activeKey: key});
@@ -76,20 +84,32 @@ class UploadDiv extends React.Component{
     onDrop(files) {
         let url = document.querySelector("meta[name='image_url']").getAttribute('content');
         
+        
         files.forEach((file)=> {
+            this.setState({filename: file.name})
+            let reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (e) => {
+                this.setState({preview: e.target.result});
+            }
             request.post(url)
             .attach("image", file, file.name)
             .set('Accept', 'application/json')
             .on('progress',(e)=>{
-                this.progress = (<ProgressBar percentage={e.percent || '100'} filename={file.name}/>);
+                console.log(e.percent, file.name, e);
+                this.setState({percentage: e.percent,isUploading: true});
 
             })
             .end((err, res) => {
-                if(!err){
+                this.setState({isUploading: false});
+                if(err){
+                    console.log(res)
+                    return toastr.error(res.body,'unable to upload ' + file.name,{closeButton:true});
+                }
+                
                 toastr.success("successfully uploaded " + file.name,'',{closeButton: true});
                 this.props.addImage(res.body);
 
-            }
             })
         });
         
@@ -105,8 +125,7 @@ class UploadDiv extends React.Component{
             <Dropzone ref="dropzone" className="drop" onDrop={this.onDrop.bind(this)} accept="image/*">
             <div >
                     <h5>Click or drop your images here</h5>
-                    {this.progress}
-                    <ProgressBar percentage="20" filename="image.js"/>
+                    <ProgressBar percentage={this.state.percentage || '100'} filename={this.state.filename} preview={this.state.preview} isUploading={this.state.isUploading}/>
                 
                 </div>
             </Dropzone>
@@ -184,12 +203,22 @@ class ProgressBar extends React.Component {
         super(props);
     }
     render() {
+        if(this.props.isUploading){
         return(
-            <div class="progresszone">
-            <h5>{this.props.filename}</h5>
+            <div className="progresszone">
+            <p>{this.props.filename}</p>
+            <div className="row">
+            <div className="col-sm-4">
+             <img src={this.props.preview} />
+             </div>
+             <div className="col-sm-8">
             <progress className="progress progress-striped progress-info" value={this.props.percentage} max="100">{this.props.perecentage}%</progress>
             </div>
-            );
+            </div>
+            </div>
+        );
+    }
+    return(<div />)
     }
 }
 
