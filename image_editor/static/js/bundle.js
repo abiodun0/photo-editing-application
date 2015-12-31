@@ -33098,8 +33098,11 @@
 	        value: function componentWillMount() {
 	            var _this2 = this;
 
-	            this.setState({ data: '' });
-	            _superagent2.default.get(this.url).set('Accept', 'application/json').end(function (err, res) {
+	            this.setState({ data: '', isLoading: true });
+	            _superagent2.default.get(this.url).set('Accept', 'application/json').on('progress', function (e) {
+	                console.log("progress", e);
+	            }).end(function (err, res) {
+	                _this2.setState({ isLoading: false });
 	                if (!err) _this2.setState({ data: res.body });
 	            });
 	        }
@@ -33108,8 +33111,9 @@
 	        value: function updateImage(image) {
 	            var _this3 = this;
 
+	            this.setState({ isLoading: true });
 	            _superagent2.default.put(this.url).set('Accept', 'application/json').set('Content-Type', 'application/json').send(image).end(function (err, res) {
-	                console.log(res.body);
+	                _this3.setState({ isLoading: false });
 	                if (!err) {
 
 	                    _toastr2.default.info("Successfully updated " + image.title, '', { closeButton: true });
@@ -33155,6 +33159,10 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
+	            var loadingDiv = '';
+	            if (this.state.isLoading) {
+	                loadingDiv = _react2.default.createElement('img', { src: 'https://raw.githubusercontent.com/BenBBear/ionic-cache-src/master/img/loader.gif', width: '70', height: '70', style: { marginLeft: 'auto', marginRight: 'auto', display: 'block' } });
+	            }
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'row' },
@@ -33169,6 +33177,7 @@
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'edit-div' },
+	                        loadingDiv,
 	                        _react2.default.createElement(_editableDiv2.default, { image: this.state.image, editImage: this.editImage.bind(this), deleteImage: this.deleteImage.bind(this),
 	                            updateImage: this.updateImage.bind(this)
 	                        })

@@ -15,21 +15,26 @@ export default class AppEditor extends React.Component{
         this.state = {image:''};
     }
     componentWillMount() {
-            this.setState({data:''});
+            this.setState({data:'',isLoading:true});
             request.get(this.url)
             .set('Accept', 'application/json')
+            .on('progress',(e)=>{
+                console.log("progress", e);
+            })
             .end((err, res) => {
+                this.setState({isLoading:false})
                 if(!err) this.setState({data:res.body});
                 
             });
         }
     updateImage(image){
+        this.setState({isLoading:true})
         request.put(this.url)
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
             .send(image)
             .end((err, res) => {
-                console.log(res.body)
+                this.setState({isLoading:false})
                 if(!err){
 
                     toastr.info("Successfully updated " + image.title,'',{closeButton: true})
@@ -70,6 +75,10 @@ export default class AppEditor extends React.Component{
         this.forceUpdate();
     }
     render(){
+        let loadingDiv = '';
+        if(this.state.isLoading) {
+            loadingDiv = (<img src="https://raw.githubusercontent.com/BenBBear/ionic-cache-src/master/img/loader.gif" width="70" height="70" style={{marginLeft:'auto',marginRight: 'auto',display:'block'}}/>);
+        }
         return(
              <div className="row">
              <div className="col-sm-3">
@@ -77,6 +86,7 @@ export default class AppEditor extends React.Component{
              </div>
             <div className="col-sm-9">
                 <div className="edit-div">
+                    {loadingDiv}
                     <EditableDiv image={this.state.image} editImage={this.editImage.bind(this)} deleteImage={this.deleteImage.bind(this)}
                     updateImage={this.updateImage.bind(this)}
                     />
