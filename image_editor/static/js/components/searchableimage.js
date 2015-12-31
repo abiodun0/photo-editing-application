@@ -81,15 +81,14 @@ class UploadDiv extends React.Component{
             .attach("image", file, file.name)
             .set('Accept', 'application/json')
             .on('progress',(e)=>{
-                console.log(this.refs.progresszone)
-                this.refs.progresszone.appendChild(<div> Hello </div>);
-                console.log(e.percent);
+                this.progress = (<ProgressBar percentage={e.percent || '100'} filename={file.name}/>);
 
             })
             .end((err, res) => {
                 if(!err){
-                toastr.success("successfully uploaded " + file.name);
+                toastr.success("successfully uploaded " + file.name,'',{closeButton: true});
                 this.props.addImage(res.body);
+
             }
             })
         });
@@ -102,15 +101,21 @@ class UploadDiv extends React.Component{
     render(){
         let sections = [];
         let data = this.props.data;
+        let dropzone = (<div ref="progresszone" className="dropzone text-center">
+            <Dropzone ref="dropzone" className="drop" onDrop={this.onDrop.bind(this)} accept="image/*">
+            <div >
+                    <h5>Click or drop your images here</h5>
+                    {this.progress}
+                    <ProgressBar percentage="20" filename="image.js"/>
+                
+                </div>
+            </Dropzone>
+            </div>);
         if(data.length<1){
             return(
                 <div className="upload-img"> <div className="uploaded"> 
                 <h5> You dont have any images yet </h5></div>
-                <div className="dropzone text-center">
-                <Dropzone ref="dropzone" className="drop" onDrop={this.onDrop.bind(this)}>
-                    <h5>Click or drop your images here</h5>
-                </Dropzone>
-                </div>
+                {dropzone}
                 </div>
                 );
         }
@@ -125,11 +130,7 @@ class UploadDiv extends React.Component{
         return(
           
             <div className="upload-img"> <div className="uploaded"> <h5> No Images matches your criteria </h5></div>
-            <div className="dropzone text-center">
-            <Dropzone ref="dropzone" className="drop" onDrop={this.onDrop.bind(this)}>
-                    <h5>Click or drop your images here</h5>
-            </Dropzone>
-            </div>
+            {dropzone}
             </div>
 
             
@@ -138,15 +139,7 @@ class UploadDiv extends React.Component{
            else {
             return (
             <div className="upload-img">{sections}
-            <div className="dropzone text-center">
-            <Dropzone ref="dropzone" className="drop" onDrop={this.onDrop.bind(this)} accept="image/*">
-            <div ref="progresszone">
-                    <h5>Click or drop your images here</h5>
-                
-                </div>
-            </Dropzone>
-            </div>
-            
+            {dropzone}
             </div>);
         }
 
@@ -192,8 +185,11 @@ class ProgressBar extends React.Component {
     }
     render() {
         return(
+            <div class="progresszone">
+            <h5>{this.props.filename}</h5>
             <progress className="progress progress-striped progress-info" value={this.props.percentage} max="100">{this.props.perecentage}%</progress>
-            )
+            </div>
+            );
     }
 }
 

@@ -32,7 +32,7 @@ export default class AppEditor extends React.Component{
                 console.log(res.body)
                 if(!err){
 
-                    toastr.info("Successfully updated " + image.title)
+                    toastr.info("Successfully updated " + image.title,'',{closeButton: true})
                     this.editImage(res.body);
                 } 
                 
@@ -58,7 +58,7 @@ export default class AppEditor extends React.Component{
             _.remove(this.state.data,(m)=>{
             return image.id == m.id;
         });
-            toastr.info("successfully removed " + image.title)
+            toastr.info("successfully removed " + image.title,'',{closeButton: true})
             this.setState({image: ''});
 
             }

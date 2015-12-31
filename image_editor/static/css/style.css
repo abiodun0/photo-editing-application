@@ -44,8 +44,9 @@ body{
   border:dashed 1px black;
   cursor:pointer;
   padding:0 20px;
+  overflow:auto;
 }
-.drop .progress{
+.drop .progresszone{
   margin:10px 0px;
 }
 .navbar.navbar-light{

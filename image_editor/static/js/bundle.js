@@ -19873,16 +19873,10 @@
 
 	            files.forEach(function (file) {
 	                _superagent2.default.post(url).attach("image", file, file.name).set('Accept', 'application/json').on('progress', function (e) {
-	                    console.log(_this4.refs.progresszone);
-	                    _this4.refs.progresszone.appendChild(_react2.default.createElement(
-	                        'div',
-	                        null,
-	                        ' Hello '
-	                    ));
-	                    console.log(e.percent);
+	                    _this4.progress = _react2.default.createElement(ProgressBar, { percentage: e.percent || '100', filename: file.name });
 	                }).end(function (err, res) {
 	                    if (!err) {
-	                        _toastr2.default.success("successfully uploaded " + file.name);
+	                        _toastr2.default.success("successfully uploaded " + file.name, '', { closeButton: true });
 	                        _this4.props.addImage(res.body);
 	                    }
 	                });
@@ -19898,6 +19892,25 @@
 	        value: function render() {
 	            var sections = [];
 	            var data = this.props.data;
+	            var dropzone = _react2.default.createElement(
+	                'div',
+	                { ref: 'progresszone', className: 'dropzone text-center' },
+	                _react2.default.createElement(
+	                    _reactDropzone2.default,
+	                    { ref: 'dropzone', className: 'drop', onDrop: this.onDrop.bind(this), accept: 'image/*' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        null,
+	                        _react2.default.createElement(
+	                            'h5',
+	                            null,
+	                            'Click or drop your images here'
+	                        ),
+	                        this.progress,
+	                        _react2.default.createElement(ProgressBar, { percentage: '20', filename: 'image.js' })
+	                    )
+	                )
+	            );
 	            if (data.length < 1) {
 	                return _react2.default.createElement(
 	                    'div',
@@ -19912,19 +19925,7 @@
 	                            ' You dont have any images yet '
 	                        )
 	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'dropzone text-center' },
-	                        _react2.default.createElement(
-	                            _reactDropzone2.default,
-	                            { ref: 'dropzone', className: 'drop', onDrop: this.onDrop.bind(this) },
-	                            _react2.default.createElement(
-	                                'h5',
-	                                null,
-	                                'Click or drop your images here'
-	                            )
-	                        )
-	                    )
+	                    dropzone
 	                );
 	            }
 	            data.forEach((function (image, i) {
@@ -19948,42 +19949,14 @@
 	                            ' No Images matches your criteria '
 	                        )
 	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'dropzone text-center' },
-	                        _react2.default.createElement(
-	                            _reactDropzone2.default,
-	                            { ref: 'dropzone', className: 'drop', onDrop: this.onDrop.bind(this) },
-	                            _react2.default.createElement(
-	                                'h5',
-	                                null,
-	                                'Click or drop your images here'
-	                            )
-	                        )
-	                    )
+	                    dropzone
 	                );
 	            } else {
 	                return _react2.default.createElement(
 	                    'div',
 	                    { className: 'upload-img' },
 	                    sections,
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'dropzone text-center' },
-	                        _react2.default.createElement(
-	                            _reactDropzone2.default,
-	                            { ref: 'dropzone', className: 'drop', onDrop: this.onDrop.bind(this), accept: 'image/*' },
-	                            _react2.default.createElement(
-	                                'div',
-	                                { ref: 'progresszone' },
-	                                _react2.default.createElement(
-	                                    'h5',
-	                                    null,
-	                                    'Click or drop your images here'
-	                                )
-	                            )
-	                        )
-	                    )
+	                    dropzone
 	                );
 	            }
 	        }
@@ -20063,10 +20036,19 @@
 	        key: 'render',
 	        value: function render() {
 	            return _react2.default.createElement(
-	                'progress',
-	                { className: 'progress progress-striped progress-info', value: this.props.percentage, max: '100' },
-	                this.props.perecentage,
-	                '%'
+	                'div',
+	                { 'class': 'progresszone' },
+	                _react2.default.createElement(
+	                    'h5',
+	                    null,
+	                    this.props.filename
+	                ),
+	                _react2.default.createElement(
+	                    'progress',
+	                    { className: 'progress progress-striped progress-info', value: this.props.percentage, max: '100' },
+	                    this.props.perecentage,
+	                    '%'
+	                )
 	            );
 	        }
 	    }]);
@@ -31192,7 +31174,7 @@
 	                console.log(res.body);
 	                if (!err) {
 
-	                    _toastr2.default.info("Successfully updated " + image.title);
+	                    _toastr2.default.info("Successfully updated " + image.title, '', { closeButton: true });
 	                    _this3.editImage(res.body);
 	                }
 	            });
@@ -31221,7 +31203,7 @@
 	                    _lodash2.default.remove(_this4.state.data, function (m) {
 	                        return image.id == m.id;
 	                    });
-	                    _toastr2.default.info("successfully removed " + image.title);
+	                    _toastr2.default.info("successfully removed " + image.title, '', { closeButton: true });
 	                    _this4.setState({ image: '' });
 	                }
 	            });
@@ -31421,16 +31403,10 @@
 
 	            files.forEach(function (file) {
 	                _superagent2.default.post(url).attach("image", file, file.name).set('Accept', 'application/json').on('progress', function (e) {
-	                    console.log(_this4.refs.progresszone);
-	                    _this4.refs.progresszone.appendChild(_react2.default.createElement(
-	                        'div',
-	                        null,
-	                        ' Hello '
-	                    ));
-	                    console.log(e.percent);
+	                    _this4.progress = _react2.default.createElement(ProgressBar, { percentage: e.percent || '100', filename: file.name });
 	                }).end(function (err, res) {
 	                    if (!err) {
-	                        _toastr2.default.success("successfully uploaded " + file.name);
+	                        _toastr2.default.success("successfully uploaded " + file.name, '', { closeButton: true });
 	                        _this4.props.addImage(res.body);
 	                    }
 	                });
@@ -31446,6 +31422,25 @@
 	        value: function render() {
 	            var sections = [];
 	            var data = this.props.data;
+	            var dropzone = _react2.default.createElement(
+	                'div',
+	                { ref: 'progresszone', className: 'dropzone text-center' },
+	                _react2.default.createElement(
+	                    _reactDropzone2.default,
+	                    { ref: 'dropzone', className: 'drop', onDrop: this.onDrop.bind(this), accept: 'image/*' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        null,
+	                        _react2.default.createElement(
+	                            'h5',
+	                            null,
+	                            'Click or drop your images here'
+	                        ),
+	                        this.progress,
+	                        _react2.default.createElement(ProgressBar, { percentage: '20', filename: 'image.js' })
+	                    )
+	                )
+	            );
 	            if (data.length < 1) {
 	                return _react2.default.createElement(
 	                    'div',
@@ -31460,19 +31455,7 @@
 	                            ' You dont have any images yet '
 	                        )
 	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'dropzone text-center' },
-	                        _react2.default.createElement(
-	                            _reactDropzone2.default,
-	                            { ref: 'dropzone', className: 'drop', onDrop: this.onDrop.bind(this) },
-	                            _react2.default.createElement(
-	                                'h5',
-	                                null,
-	                                'Click or drop your images here'
-	                            )
-	                        )
-	                    )
+	                    dropzone
 	                );
 	            }
 	            data.forEach((function (image, i) {
@@ -31496,42 +31479,14 @@
 	                            ' No Images matches your criteria '
 	                        )
 	                    ),
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'dropzone text-center' },
-	                        _react2.default.createElement(
-	                            _reactDropzone2.default,
-	                            { ref: 'dropzone', className: 'drop', onDrop: this.onDrop.bind(this) },
-	                            _react2.default.createElement(
-	                                'h5',
-	                                null,
-	                                'Click or drop your images here'
-	                            )
-	                        )
-	                    )
+	                    dropzone
 	                );
 	            } else {
 	                return _react2.default.createElement(
 	                    'div',
 	                    { className: 'upload-img' },
 	                    sections,
-	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'dropzone text-center' },
-	                        _react2.default.createElement(
-	                            _reactDropzone2.default,
-	                            { ref: 'dropzone', className: 'drop', onDrop: this.onDrop.bind(this), accept: 'image/*' },
-	                            _react2.default.createElement(
-	                                'div',
-	                                { ref: 'progresszone' },
-	                                _react2.default.createElement(
-	                                    'h5',
-	                                    null,
-	                                    'Click or drop your images here'
-	                                )
-	                            )
-	                        )
-	                    )
+	                    dropzone
 	                );
 	            }
 	        }
@@ -31611,10 +31566,19 @@
 	        key: 'render',
 	        value: function render() {
 	            return _react2.default.createElement(
-	                'progress',
-	                { className: 'progress progress-striped progress-info', value: this.props.percentage, max: '100' },
-	                this.props.perecentage,
-	                '%'
+	                'div',
+	                { 'class': 'progresszone' },
+	                _react2.default.createElement(
+	                    'h5',
+	                    null,
+	                    this.props.filename
+	                ),
+	                _react2.default.createElement(
+	                    'progress',
+	                    { className: 'progress progress-striped progress-info', value: this.props.percentage, max: '100' },
+	                    this.props.perecentage,
+	                    '%'
+	                )
 	            );
 	        }
 	    }]);
