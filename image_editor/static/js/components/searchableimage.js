@@ -3,6 +3,8 @@ import Dropzone from 'react-dropzone';
 import _ from 'lodash';
 import request from 'superagent';
 import classNames from 'classnames';
+import toastr from 'toastr';
+//import '/node_modules/toastr/build/toastr.css'
 import 'superagent-django-csrf';
 
 
@@ -78,10 +80,17 @@ class UploadDiv extends React.Component{
             request.post(url)
             .attach("image", file, file.name)
             .set('Accept', 'application/json')
+            .on('progress',(e)=>{
+                console.log(this.refs.progresszone)
+                this.refs.progresszone.appendChild(<div> Hello </div>);
+                console.log(e.percent);
+
+            })
             .end((err, res) => {
-                console.log(err);
-                console.log(res);
+                if(!err){
+                toastr.success("successfully uploaded " + file.name);
                 this.props.addImage(res.body);
+            }
             })
         });
         
@@ -131,7 +140,10 @@ class UploadDiv extends React.Component{
             <div className="upload-img">{sections}
             <div className="dropzone text-center">
             <Dropzone ref="dropzone" className="drop" onDrop={this.onDrop.bind(this)} accept="image/*">
+            <div ref="progresszone">
                     <h5>Click or drop your images here</h5>
+                
+                </div>
             </Dropzone>
             </div>
             
@@ -173,3 +185,16 @@ class SectionDiv extends React.Component{
 
     }
 }
+
+class ProgressBar extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    render() {
+        return(
+            <progress className="progress progress-striped progress-info" value={this.props.percentage} max="100">{this.props.perecentage}%</progress>
+            )
+    }
+}
+
+

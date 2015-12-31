@@ -4,6 +4,7 @@ import SearchableImage from './searchableimage';
 import EditableDiv from './editableDiv';
 import {data} from './data';
 import request from 'superagent';
+import toastr from 'toastr';
 
 
 export default class AppEditor extends React.Component{
@@ -29,7 +30,11 @@ export default class AppEditor extends React.Component{
             .send(image)
             .end((err, res) => {
                 console.log(res.body)
-                if(!err) this.editImage(res.body);
+                if(!err){
+
+                    toastr.info("Successfully updated " + image.title)
+                    this.editImage(res.body);
+                } 
                 
             });
         }
@@ -53,6 +58,7 @@ export default class AppEditor extends React.Component{
             _.remove(this.state.data,(m)=>{
             return image.id == m.id;
         });
+            toastr.info("successfully removed " + image.title)
             this.setState({image: ''});
 
             }
