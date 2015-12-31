@@ -1,7 +1,11 @@
 import React from 'react';
 import Dropzone from 'react-dropzone';
 import _ from 'lodash';
+import request from 'superagent';
 import classNames from 'classnames';
+import toastr from 'toastr';
+//import '/node_modules/toastr/build/toastr.css'
+import 'superagent-django-csrf';
 
 
 export default class SearchableImage extends React.Component{
@@ -22,7 +26,7 @@ export default class SearchableImage extends React.Component{
                 onUserInput={this.handleUserInput.bind(this)} 
                 />
 
-                <UploadDiv data={this.props.data}
+                <UploadDiv data={this.props.data} addImage={this.props.addImage}
                 filterText={this.state.filterText} changeImage={this.props.changeImage}
                 />
             </div>
@@ -70,7 +74,26 @@ class UploadDiv extends React.Component{
         this.props.changeImage(image);
     }
     onDrop(files) {
-      console.log("files", files);
+        let url = document.querySelector("meta[name='image_url']").getAttribute('content');
+        
+        files.forEach((file)=> {
+            request.post(url)
+            .attach("image", file, file.name)
+            .set('Accept', 'application/json')
+            .on('progress',(e)=>{
+                console.log(this.refs.progresszone)
+                this.refs.progresszone.appendChild(<div> Hello </div>);
+                console.log(e.percent);
+
+            })
+            .end((err, res) => {
+                if(!err){
+                toastr.success("successfully uploaded " + file.name);
+                this.props.addImage(res.body);
+            }
+            })
+        });
+        
     }
 
     onOpenClick() {
@@ -84,7 +107,7 @@ class UploadDiv extends React.Component{
                 <div className="upload-img"> <div className="uploaded"> 
                 <h5> You dont have any images yet </h5></div>
                 <div className="dropzone text-center">
-                <Dropzone ref="dropzone" className="drop" onDrop={this.onDrop}>
+                <Dropzone ref="dropzone" className="drop" onDrop={this.onDrop.bind(this)}>
                     <h5>Click or drop your images here</h5>
                 </Dropzone>
                 </div>
@@ -103,7 +126,7 @@ class UploadDiv extends React.Component{
           
             <div className="upload-img"> <div className="uploaded"> <h5> No Images matches your criteria </h5></div>
             <div className="dropzone text-center">
-            <Dropzone ref="dropzone" className="drop" onDrop={this.onDrop}>
+            <Dropzone ref="dropzone" className="drop" onDrop={this.onDrop.bind(this)}>
                     <h5>Click or drop your images here</h5>
             </Dropzone>
             </div>
@@ -116,8 +139,11 @@ class UploadDiv extends React.Component{
             return (
             <div className="upload-img">{sections}
             <div className="dropzone text-center">
-            <Dropzone ref="dropzone" className="drop" onDrop={this.onDrop}>
+            <Dropzone ref="dropzone" className="drop" onDrop={this.onDrop.bind(this)} accept="image/*">
+            <div ref="progresszone">
                     <h5>Click or drop your images here</h5>
+                
+                </div>
             </Dropzone>
             </div>
             
@@ -145,7 +171,7 @@ class SectionDiv extends React.Component{
                 <div className={activeUpload} onClick={this.handleChange.bind(this)}>
                 <div className="media">
                     <a className="media-left" href="#" >
-                    <img className="media-object" src={this.props.image.thumbail} alt="Generic placeholder image" width="150" height="150"/>
+                    <img className="media-object" src={`/media/${this.props.image.picture}`} alt="Generic placeholder image" width="150" height="150"/>
                     </a>
                     <div className="media-body">
                         <p className="media-heading">{this.props.image.title}
@@ -159,3 +185,16 @@ class SectionDiv extends React.Component{
 
     }
 }
+
+class ProgressBar extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    render() {
+        return(
+            <progress className="progress progress-striped progress-info" value={this.props.percentage} max="100">{this.props.perecentage}%</progress>
+            )
+    }
+}
+
+

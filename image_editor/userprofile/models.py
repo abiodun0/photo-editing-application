@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 
 
 # Create your models here.
@@ -20,5 +22,27 @@ class Images(models.Model):
     owner = models.ForeignKey(User,related_name="images")
     image = models.ImageField(upload_to='uploads/')
     title = models.CharField(max_length=100, null=True)
+    filtered = models.BooleanField(default=False)
+    current_filter = models.CharField(max_length=100, null=True,blank=True,default='')
+    filter_path = models.CharField(max_length=200,null=True,default='')
     date_created = models.DateTimeField(
         auto_now_add=True)
+
+    def to_json(self):
+        json_items = {
+        'id': self.id,
+        'title': self.title,
+        'picture': str(self.image),
+        'date_created': str(self.date_created),
+        'current_filter':self.current_filter,
+        'filter_path':self.filter_path,
+        'filtered': self.filtered
+        }
+        return json_items
+    class Meta:
+        ordering = ['-date_created']
+
+@receiver(pre_delete, sender=Images)
+def delete_image(sender, instance, **kwargs):
+    # Pass false so modelfield so it doesnt save the model
+    instance.image.delete(False)

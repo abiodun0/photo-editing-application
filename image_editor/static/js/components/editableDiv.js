@@ -20,7 +20,9 @@ export default class EditableDiv extends React.Component{
         return(
             <div>
             <ImageDiv image={this.state.image} editImage={this.props.editImage} 
-            deleteImage={this.props.deleteImage} resetImage={this.resetImage.bind(this)}/>
+            deleteImage={this.props.deleteImage} resetImage={this.resetImage.bind(this)}
+            updateImage={this.props.updateImage}
+            />
             <FilterDiv image={this.state.image} changeFilter={this.props.editImage}/>
             </div>
             );
@@ -34,10 +36,20 @@ class ImageDiv extends React.Component{
         this.setState({editMode: false});  
           
     }
+    componentWillUpdate(nextProps, nextState) {
+        if(this.props.image.picture !== nextProps.image.picture){
+            if(this.state.editMode) this.props.updateImage(this.props.image);
+            this.setState({editMode: false}); 
+        }
+          
+    }
     toggleEdit(e){
         e.preventDefault();
+        e.stopPropagation();
+        if(this.state.editMode) this.props.updateImage(this.props.image);
         this.setState({editMode: !this.state.editMode});
     }
+
 
     changeTitle(e){
         e.preventDefault();
@@ -65,7 +77,8 @@ class ImageDiv extends React.Component{
                     <form className={`${!this.state.editMode ? 'hide':''} form-inline`} action="#" onSubmit={this.toggleEdit.bind(this)}>
                       <div className="form-group">
                         <div className="input-group">
-                          <input type="text" ref="title"  className="form-control" value={this.props.image.title} onChange={this.changeTitle.bind(this)}/>
+                          <input type="text" ref="title"  className="form-control" value={this.props.image.title} onChange={this.changeTitle.bind(this)}
+                          />
                           </div>
                         </div>
                       <button type="submit" className="btn btn-default">Save</button>
@@ -83,7 +96,7 @@ class ImageDiv extends React.Component{
             <button className={`${buttonClass} pull-sm-right`}><span className="mdi mdi-share-variant"></span></button>
             <button className={`${buttonClass} pull-sm-right`}><span className="mdi mdi-download"></span></button></div>
             <div className="edit text-center">
-            <img src={this.props.image.picture || ''} />
+            <img src={this.props.image.picture? `/media/${this.props.image.picture}`:''} />
             </div>
             </div>
             );
@@ -108,7 +121,7 @@ class FilterDiv extends React.Component{
             });
             return (
                 <div className={activeFilter} key={i} onClick={this.activateFilter.bind(this,filter)}>
-                <img src={this.props.image.thumbail} width="100" height="100"/>
+                <img src={`/media/${this.props.image.picture}`} width="100" height="100"/>
                 <p className="lead">{filter}</p>
                 </div>
                 );
