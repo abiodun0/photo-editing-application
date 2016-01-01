@@ -35,6 +35,7 @@ export default class AppEditor extends React.Component{
             .send(image)
             .end((err, res) => {
                 this.setState({isLoading:false})
+                console.log(res.text);
                 if(!err){
 
                     toastr.info("Successfully updated " + image.title,'',{closeButton: true})
@@ -75,9 +76,9 @@ export default class AppEditor extends React.Component{
         this.forceUpdate();
     }
     render(){
-        let loadingDiv = '';
+        let loadingDiv;
         if(this.state.isLoading) {
-            loadingDiv = (<img src="https://raw.githubusercontent.com/BenBBear/ionic-cache-src/master/img/loader.gif" width="70" height="70" style={{marginLeft:'auto',marginRight: 'auto',display:'block'}}/>);
+            loadingDiv = (<img src="https://raw.githubusercontent.com/BenBBear/ionic-cache-src/master/img/loader.gif" width="70" height="70" style={{marginLeft:'auto',marginRight: 'auto',display:'block',position:'absolute',top:-15+'px',left: 45+'%', right: 45 + '%'}}/>);
         }
         return(
              <div className="row">
@@ -87,7 +88,8 @@ export default class AppEditor extends React.Component{
             <div className="col-sm-9">
                 <div className="edit-div">
                     {loadingDiv}
-                    <EditableDiv image={this.state.image} editImage={this.editImage.bind(this)} deleteImage={this.deleteImage.bind(this)}
+
+                    <EditableDiv image={this.state.image} editImage={this.changeImage.bind(this)} deleteImage={this.deleteImage.bind(this)}
                     updateImage={this.updateImage.bind(this)}
                     />
                 </div>

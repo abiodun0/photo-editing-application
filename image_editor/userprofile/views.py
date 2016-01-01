@@ -10,6 +10,7 @@ from django.views.generic import TemplateView,View
 from django.contrib.auth.models import User
 from userprofile.models import UserProfile, Images
 from userprofile.forms import ImageForm
+from userprofile.filter import apply_filter
 
 # Create your views here.
 
@@ -99,6 +100,17 @@ class ImagesView(View):
         if image.title != image_json['title']:
             image.title = image_json['title']
             image.save()
+        if image.filtered != image_json['filtered']:
+            image.filtered = image_json['filtered']
+            image.current_filter = None
+            image.save()
+        if image_json['filtered'] and image.current_filter != image_json['current_filter']:
+            print image_json['current_filter']
+            image = apply_filter(image, image_json['current_filter'])
+            image.current_filter = image_json['current_filter']
+            image.filtered = image_json['filtered']
+            image.save()
+
         response_json = json.dumps(image.to_json())
         return HttpResponse(response_json, content_type="application/json")
 

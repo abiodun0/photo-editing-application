@@ -30901,8 +30901,10 @@
 	    }, {
 	        key: 'resetImage',
 	        value: function resetImage() {
-	            delete this.props.image['filter'];
-	            this.setState({ image: this.props.image });
+	            var image_copy = _lodash2.default.clone(this.props.image);
+	            image_copy['filtered'] = false;
+	            console.log(image_copy);
+	            this.props.updateImage(image_copy);
 	        }
 	    }, {
 	        key: 'render',
@@ -30914,7 +30916,7 @@
 	                    deleteImage: this.props.deleteImage, resetImage: this.resetImage.bind(this),
 	                    updateImage: this.props.updateImage
 	                }),
-	                _react2.default.createElement(FilterDiv, { image: this.state.image, changeFilter: this.props.editImage })
+	                _react2.default.createElement(FilterDiv, { image: this.state.image, changeFilter: this.props.updateImage })
 	            );
 	        }
 	    }]);
@@ -30972,15 +30974,18 @@
 	    }, {
 	        key: 'resetImage',
 	        value: function resetImage() {
+	            if (!confirm("are you sure you want to reset the filters")) return;
 	            this.props.resetImage();
 	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
+	            console.log(this.props.image);
 	            var buttonClass = (0, _classnames2.default)({
 	                'btn': true,
 	                'disabled': !_lodash2.default.isObject(this.props.image)
 	            });
+	            var picture = this.props.image.filtered ? this.props.image.filter_path : this.props.image.picture;
 	            return _react2.default.createElement(
 	                'div',
 	                null,
@@ -31018,7 +31023,7 @@
 	                        _react2.default.createElement(
 	                            'h6',
 	                            { className: 'text-uppercase' },
-	                            _lodash2.default.isObject(this.props.image) ? this.props.image.filter || 'No Filter Applied' : '',
+	                            _lodash2.default.isObject(this.props.image) ? this.props.image.current_filter || 'No Filter Applied' : '',
 	                            ' '
 	                        )
 	                    )
@@ -31055,7 +31060,7 @@
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'edit text-center' },
-	                    _react2.default.createElement('img', { src: this.props.image.picture ? '/media/' + this.props.image.picture : '' })
+	                    _react2.default.createElement('img', { src: this.props.image.picture ? '/media/' + picture + '?' + Math.random().toString(36).slice(2) : '' })
 	                )
 	            );
 	        }
@@ -31074,23 +31079,22 @@
 	    }
 
 	    _createClass(FilterDiv, [{
-	        key: 'componentWillReceiveProps',
-	        value: function componentWillReceiveProps(nextProps) {
-	            this.state = { activeFilter: '' };
-	        }
-	    }, {
 	        key: 'activateFilter',
 	        value: function activateFilter(filter) {
-	            var image = _lodash2.default.clone(this.props.image);
-	            image['filter'] = filter;
-	            this.setState({ activeFilter: filter });
-	            this.props.changeFilter(image);
+	            if (filter != this.props.image.current_filter) {
+	                console.log("did you get here");
+	                var image = _lodash2.default.clone(this.props.image);
+	                image['filtered'] = true;
+	                image['current_filter'] = filter;
+	                this.props.changeFilter(image);
+	                this.setState({ activeFilter: filter });
+	            }
 	        }
 	    }, {
 	        key: 'createFilterDiv',
 	        value: function createFilterDiv(filter, i) {
 	            var activeFilter = (0, _classnames2.default)({
-	                'active': this.props.image.filter == filter
+	                'active': this.props.image.current_filter == filter
 	            });
 	            return _react2.default.createElement(
 	                'div',
@@ -31106,7 +31110,7 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var filters = ['gray', 'Hd', 'serpia', 'black', 'orange', 'sunny'];
+	            var filters = ['BLUR', 'CONTOUR', 'DETAIL', 'EDGE_ENHANCE', 'EDGE_ENHANCE_MORE', 'EMBOSS', 'FIND_EDGES', 'SMOOTH'];
 	            var settings = {
 	                className: 'slider',
 	                infinite: true,
@@ -33114,6 +33118,7 @@
 	            this.setState({ isLoading: true });
 	            _superagent2.default.put(this.url).set('Accept', 'application/json').set('Content-Type', 'application/json').send(image).end(function (err, res) {
 	                _this3.setState({ isLoading: false });
+	                console.log(res.text);
 	                if (!err) {
 
 	                    _toastr2.default.info("Successfully updated " + image.title, '', { closeButton: true });
@@ -33159,9 +33164,9 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var loadingDiv = '';
+	            var loadingDiv = undefined;
 	            if (this.state.isLoading) {
-	                loadingDiv = _react2.default.createElement('img', { src: 'https://raw.githubusercontent.com/BenBBear/ionic-cache-src/master/img/loader.gif', width: '70', height: '70', style: { marginLeft: 'auto', marginRight: 'auto', display: 'block' } });
+	                loadingDiv = _react2.default.createElement('img', { src: 'https://raw.githubusercontent.com/BenBBear/ionic-cache-src/master/img/loader.gif', width: '70', height: '70', style: { marginLeft: 'auto', marginRight: 'auto', display: 'block', position: 'absolute', top: -15 + 'px', left: 45 + '%', right: 45 + '%' } });
 	            }
 	            return _react2.default.createElement(
 	                'div',
@@ -33178,7 +33183,7 @@
 	                        'div',
 	                        { className: 'edit-div' },
 	                        loadingDiv,
-	                        _react2.default.createElement(_editableDiv2.default, { image: this.state.image, editImage: this.editImage.bind(this), deleteImage: this.deleteImage.bind(this),
+	                        _react2.default.createElement(_editableDiv2.default, { image: this.state.image, editImage: this.changeImage.bind(this), deleteImage: this.deleteImage.bind(this),
 	                            updateImage: this.updateImage.bind(this)
 	                        })
 	                    )

@@ -12,8 +12,10 @@ export default class EditableDiv extends React.Component{
         this.setState({image: nextProps.image})
     }
     resetImage(){
-        delete this.props.image['filter'];
-        this.setState({image: this.props.image});
+        let image_copy = _.clone(this.props.image);
+        image_copy['filtered'] = false;
+        console.log(image_copy)
+        this.props.updateImage(image_copy)
     }
 
     render(){
@@ -23,7 +25,7 @@ export default class EditableDiv extends React.Component{
             deleteImage={this.props.deleteImage} resetImage={this.resetImage.bind(this)}
             updateImage={this.props.updateImage}
             />
-            <FilterDiv image={this.state.image} changeFilter={this.props.editImage}/>
+            <FilterDiv image={this.state.image} changeFilter={this.props.updateImage}/>
             </div>
             );
     }
@@ -63,13 +65,16 @@ class ImageDiv extends React.Component{
         this.props.deleteImage(this.props.image);
     }
     resetImage(){
+        if(!confirm("are you sure you want to reset the filters")) return;
         this.props.resetImage()
     }
     render(){
+        console.log(this.props.image);
         var buttonClass = classNames({
                 'btn':true,
                 'disabled': !_.isObject(this.props.image)
             });
+        let picture = this.props.image.filtered? this.props.image.filter_path: this.props.image.picture
         return(
             <div>
             <div className="card text-xs-center">
@@ -84,7 +89,7 @@ class ImageDiv extends React.Component{
                       <button type="submit" className="btn btn-default">Save</button>
                     </form>
                   <h6 className={`${this.state.editMode ? 'hide':''} text-uppercase`}>{_.isObject(this.props.image)?  (this.props.image.title || 'No Name'): 'No Image Selected'} </h6>
-                  <h6 className="text-uppercase">{_.isObject(this.props.image)?  (this.props.image.filter || 'No Filter Applied'): ''} </h6>
+                  <h6 className="text-uppercase">{_.isObject(this.props.image)?  (this.props.image.current_filter || 'No Filter Applied'): ''} </h6>
                 </blockquote>
 
             </div>
@@ -96,7 +101,7 @@ class ImageDiv extends React.Component{
             <button className={`${buttonClass} pull-sm-right`}><span className="mdi mdi-share-variant"></span></button>
             <button className={`${buttonClass} pull-sm-right`}><span className="mdi mdi-download"></span></button></div>
             <div className="edit text-center">
-            <img src={this.props.image.picture? `/media/${this.props.image.picture}`:''} />
+            <img src={this.props.image.picture? `/media/${picture}?${Math.random().toString(36).slice(2)}`:''} />
             </div>
             </div>
             );
@@ -104,20 +109,21 @@ class ImageDiv extends React.Component{
 }
 class FilterDiv extends React.Component{
 
-    componentWillReceiveProps(nextProps) {
-        this.state = {activeFilter: ''};
-          
-    }
+
     activateFilter(filter){
-        let image = _.clone(this.props.image)
-        image['filter'] = filter
-        this.setState({activeFilter: filter});
-        this.props.changeFilter(image);
+        if(filter != this.props.image.current_filter){
+            console.log("did you get here");
+            let image = _.clone(this.props.image)
+            image['filtered'] = true;
+            image['current_filter'] = filter
+            this.props.changeFilter(image);
+            this.setState({activeFilter: filter});
+    }
     }
     
     createFilterDiv(filter,i){
         var activeFilter = classNames({
-                'active': this.props.image.filter == filter
+                'active': this.props.image.current_filter == filter
             });
             return (
                 <div className={activeFilter} key={i} onClick={this.activateFilter.bind(this,filter)}>
@@ -128,7 +134,7 @@ class FilterDiv extends React.Component{
         }
 
     render(){
-        let filters = ['gray', 'Hd', 'serpia','black','orange','sunny'];
+        let filters = ['BLUR', 'CONTOUR', 'DETAIL','EDGE_ENHANCE','EDGE_ENHANCE_MORE','EMBOSS','FIND_EDGES','SMOOTH'];
         var settings = {
             className:'slider',
             infinite: true,
