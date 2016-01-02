@@ -123,6 +123,9 @@ body{
   height:150px;
   background-color:white;
 }
+.slider .slick-slide{
+  width:250px;
+}
 .slider div{
   cursor:pointer;
   margin:auto;
@@ -139,6 +142,7 @@ body{
   text-align:center;
 }
 .slider .active{
+  cursor:default;
   background-color: #0275D8;
   color:white;
 }
@@ -151,7 +155,28 @@ body{
 .slick-next{
   right:20px;
 }
-
+.BLUR{
+  -moz-filter: blur(1px);
+  -o-filter: blur(1px);
+  -ms-filter: blur(1px);
+  -webkit-filter: blur(1px);
+}
+.CONTOUR{
+  -moz-filter: brightness(1.5) grayscale(90%);
+  -o-filter: brightness(1.5) grayscale(90%);
+  -ms-filter: brightness(1.5) grayscale(90%);
+  -webkit-filter: brightness(1.5) grayscale(90%);
+}
+.DETAIL{
+    -moz-filter: saturate(200%);
+  -o-filter: saturate(200%);
+  -ms-filter: saturate(200%);
+}
+.EMBOSS{
+     -webkit-filter: contrast(800%) grayscale(100%);
+    -moz-filter: contrast(800%) grayscale(100%);
+    -ms-filter: contrast(800%) grayscale(100%);
+}
 .slider button,.slider button:hover,.slider button:before, .slider button:after{
   background-color:#ccc;
   color:#fff;

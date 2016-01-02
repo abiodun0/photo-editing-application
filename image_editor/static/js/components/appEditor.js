@@ -1,22 +1,21 @@
 import React from 'react';
 import _ from 'lodash';
-import SearchableImage from './searchableimage';
-import EditableDiv from './editableDiv';
-import {data} from './data';
+import SearchableImage from './imagespanel';
+import EditableDiv from './editpanel';
 import request from 'superagent';
 import toastr from 'toastr';
+import 'superagent-django-csrf';
+const imageUrl = document.querySelector("meta[name='image_url']").getAttribute('content');
 
 
 export default class AppEditor extends React.Component{
     constructor(props){
         super(props);
-        this.url = document.querySelector("meta[name='image_url']").getAttribute('content');
-
         this.state = {image:''};
     }
     componentWillMount() {
             this.setState({data:'',isLoading:true});
-            request.get(this.url)
+            request.get(imageUrl)
             .set('Accept', 'application/json')
             .on('progress',(e)=>{
                 console.log("progress", e);
@@ -27,9 +26,9 @@ export default class AppEditor extends React.Component{
                 
             });
         }
-    updateImage(image){
+    updateImage(image, filter=null){
         this.setState({isLoading:true})
-        request.put(this.url)
+        request.put(imageUrl)
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
             .send(image)
@@ -37,15 +36,19 @@ export default class AppEditor extends React.Component{
                 this.setState({isLoading:false})
                 console.log(res.text);
                 if(!err){
-
-                    toastr.info("Successfully updated " + image.title,'',{closeButton: true})
-                    this.editImage(res.body);
-                } 
-                
-            });
+                    if(filter){
+                         toastr.info("Successfully added " + filter.toLowerCase() + " to " + image.title,'',{closeButton: true})
+                     }
+                    else{
+                         toastr.info("Successfully updated " + image.title,'',{closeButton: true})
+                     }
+                     this.editImage(res.body);
+                 }
+             });
         }
     changeImage(image){
         this.setState({image: image});
+
       
     }
     editImage(image){
@@ -57,13 +60,15 @@ export default class AppEditor extends React.Component{
     }
 
     deleteImage(image){
-        request.del(this.url)
+        this.setState({isLoading:true});
+        request.del(imageUrl)
         .send(image)
         .end((err, res) => {
             if(!err){
             _.remove(this.state.data,(m)=>{
             return image.id == m.id;
         });
+            this.setState({isLoading:false});
             toastr.info("successfully removed " + image.title,'',{closeButton: true})
             this.setState({image: ''});
 
@@ -89,7 +94,7 @@ export default class AppEditor extends React.Component{
                 <div className="edit-div">
                     {loadingDiv}
 
-                    <EditableDiv image={this.state.image} editImage={this.changeImage.bind(this)} deleteImage={this.deleteImage.bind(this)}
+                    <EditableDiv image={this.state.image} editImage={this.editImage.bind(this)} deleteImage={this.deleteImage.bind(this)}
                     updateImage={this.updateImage.bind(this)}
                     />
                 </div>

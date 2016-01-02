@@ -28,6 +28,7 @@ class Images(models.Model):
     filter_path = models.ImageField(upload_to='filtered/', storage=OverwriteStorage(), null=True, default=None)
     date_created = models.DateTimeField(
         auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
 
     def to_json(self):
         json_items = {
@@ -35,13 +36,14 @@ class Images(models.Model):
         'title': self.title,
         'picture': str(self.image),
         'date_created': str(self.date_created),
+        'date_modified': str(self.date_modified),
         'current_filter':self.current_filter,
         'filter_path':str(self.filter_path),
         'filtered': self.filtered
         }
         return json_items
     class Meta:
-        ordering = ['-date_created']
+        ordering = ['-date_modified']
 
 @receiver(pre_delete, sender=Images)
 def delete_image(sender, instance, **kwargs):

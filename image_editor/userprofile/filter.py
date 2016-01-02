@@ -6,6 +6,8 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 
 def apply_filter(image,filters):
     original = Image.open(image.image.path)
+    if original.mode not in ('L', 'RGB'):
+        original = original.convert('RGB')
     image_type = original.format.lower()
     image_effect = getattr(ImageFilter, filters)
     effect = original.filter(image_effect)

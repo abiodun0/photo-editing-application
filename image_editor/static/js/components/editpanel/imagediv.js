@@ -1,24 +1,6 @@
 import React from 'react';
-import Slider from 'react-slick';
 import classNames from 'classnames';
 import _ from 'lodash';
-const fbId = document.querySelector("meta[name='fb-id']").getAttribute('content');
-
-export default class EditableDiv extends React.Component{
-
-    render(){
-        return(
-            <div>
-            <ImageDiv image={this.props.image} editImage={this.props.editImage} 
-            deleteImage={this.props.deleteImage}
-            updateImage={this.props.updateImage}
-            />
-            <FilterDiv image={this.props.image} changeFilter={this.props.updateImage}/>
-            </div>
-            );
-    }
-}
-
 
 class ImageDiv extends React.Component{
     
@@ -96,51 +78,6 @@ class ImageDiv extends React.Component{
             );
     }
 }
-class FilterDiv extends React.Component{
 
-    activateFilter(filter){
-        if(filter != this.props.image.current_filter){
-            let image = _.clone(this.props.image)
-            image['filtered'] = true;
-            image['current_filter'] = filter
-            this.props.changeFilter(image, filter);
-        }
-    }
-    
-    _createFilterDiv(filter,i){
-        var activeFilter = classNames({
-                'active': this.props.image.current_filter == filter
-            });
-            return (
-                <div className={`${activeFilter} ${filter}`} key={i} onClick={this.activateFilter.bind(this,filter)}>
-                <img src={`/media/${this.props.image.picture}`} width="100" height="100"/>
-                <p className="lead">{filter}</p>
-                </div>
-                );
-        }
 
-    render(){
-        let filters = ['BLUR', 'CONTOUR', 'DETAIL','EDGE_ENHANCE','EDGE_ENHANCE_MORE','EMBOSS','FIND_EDGES','SMOOTH'];
-        var settings = {
-            className:'slider',
-            infinite: false,
-            speed: 500,
-            slidesToShow: 5,
-            slidesToScroll: 5,
-            arrows:true
-        };
-        if (this.props.image){
-        return(
-            
-             <Slider {...settings}>
-             {filters.map(this._createFilterDiv.bind(this))}
-            </Slider>
-            );
-    }
-    else{
-        return(<div />)
-    }
-
-    }
-}
-
+export default ImageDiv;

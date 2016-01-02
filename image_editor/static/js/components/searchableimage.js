@@ -5,6 +5,7 @@ import request from 'superagent';
 import classNames from 'classnames';
 import toastr from 'toastr';
 //import '/node_modules/toastr/build/toastr.css'
+import moment from 'moment';
 import 'superagent-django-csrf';
 
 
@@ -64,11 +65,7 @@ class SearchBar extends React.Component{
 }
 
 class UploadDiv extends React.Component{
-    constructor(){
-        super();
-        this.progress ='';
 
-    }
     componentWillMount() {
        this.setState({activeKey: 'default',
        isUploading: false,
@@ -115,9 +112,6 @@ class UploadDiv extends React.Component{
         
     }
 
-    onOpenClick() {
-      this.refs.dropzone.open();
-    }
     render(){
         let sections = [];
         let data = this.props.data;
@@ -188,7 +182,7 @@ class SectionDiv extends React.Component{
                     <div className="media-body">
                         <p className="media-heading">{this.props.image.title}
                             <br/>
-                            <small> Uploaded on {this.props.image.registered}</small>
+                            <small> Modified {moment(this.props.image.date_modified).fromNow()}</small>
                         </p>
                     </div>
                 </div>
@@ -199,9 +193,6 @@ class SectionDiv extends React.Component{
 }
 
 class ProgressBar extends React.Component {
-    constructor(props) {
-        super(props);
-    }
     render() {
         if(this.props.isUploading){
         return(

@@ -105,7 +105,6 @@ class ImagesView(View):
             image.current_filter = None
             image.save()
         if image_json['filtered'] and image.current_filter != image_json['current_filter']:
-            print image_json['current_filter']
             image = apply_filter(image, image_json['current_filter'])
             image.current_filter = image_json['current_filter']
             image.filtered = image_json['filtered']
