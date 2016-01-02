@@ -28,5 +28,9 @@ class SearchBar extends React.Component{
             );
     }
 }
+SearchBar.propTypes = {
+  onUserInput: React.PropTypes.func.isRequired,
 
+  filterText: React.PropTypes.string.isRequired,
+};
 export default SearchBar

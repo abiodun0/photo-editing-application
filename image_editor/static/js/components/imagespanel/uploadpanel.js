@@ -48,14 +48,17 @@ class UploadPanel extends React.Component{
             <Dropzone ref="dropzone" className="drop" onDrop={this.onDrop.bind(this)} accept="image/*">
             <div >
                     <h5>Click or drop your images here</h5>
-                    <ProgressBar percentage={this.state.percentage} filename={this.state.filename} preview={this.state.preview} isUploading={this.state.isUploading}/>
+                    <ProgressBar percentage={this.state.percentage || 0 } filename={this.state.filename || '' } preview={this.state.preview || ''} isUploading={this.state.isUploading || false}/>
                 
                 </div>
             </Dropzone>
             </div>);
     }
 }
+UploadPanel.propTypes = {
+  addImage: React.PropTypes.func.isRequired
 
+};
 export default UploadPanel;
 
 

@@ -13,5 +13,13 @@ class FilterImage extends React.Component{
     }
     
 }
+FilterImage.propTypes = {
 
+    image: React.PropTypes.string.isRequired,
+    filter: React.PropTypes.string.isRequired,
+    className: React.PropTypes.string.isRequired,
+
+
+    onClick: React.PropTypes.func.isRequired
+};
 export default FilterImage;

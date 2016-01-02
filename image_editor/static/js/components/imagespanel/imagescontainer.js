@@ -6,7 +6,7 @@ import ImageDiv from './imagediv';
 class ImagesContainer extends React.Component{
 
     componentWillMount() {
-       this.setState({activeKey: 'default',
+       this.setState({activeKey: 0,
        isUploading: false,
        percentage:1,
        preview:'',
@@ -57,5 +57,15 @@ class ImagesContainer extends React.Component{
         
     }
 }
+
+ImagesContainer.propTypes = {
+
+    data: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+
+    filterText: React.PropTypes.string.isRequired,
+
+    changeImage: React.PropTypes.func.isRequired,
+    addImage: React.PropTypes.func.isRequired
+};
 
 export default ImagesContainer;

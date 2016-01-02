@@ -20,5 +20,14 @@ class ProgressBar extends React.Component {
     return(<div />)
     }
 }
+ProgressBar.propTypes = {
+
+    preview: React.PropTypes.string.isRequired,
+
+    isUploading: React.PropTypes.bool.isRequired,
+
+  filename: React.PropTypes.string.isRequired,
+  percentage: React.PropTypes.number.isRequired,
+};
 
 export default ProgressBar;

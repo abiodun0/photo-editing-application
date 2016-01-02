@@ -78,6 +78,14 @@ class ImageDiv extends React.Component{
             );
     }
 }
+ImageDiv.propTypes = {
 
+    image: React.PropTypes.oneOfType([React.PropTypes.object,React.PropTypes.string]).isRequired,
+
+    updateImage: React.PropTypes.func.isRequired,
+    deleteImage: React.PropTypes.func.isRequired,
+    editImage: React.PropTypes.func.isRequired
+
+};
 
 export default ImageDiv;

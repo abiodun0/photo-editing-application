@@ -9,12 +9,12 @@ const imageUrl = document.querySelector("meta[name='image_url']").getAttribute('
 
 
 export default class AppEditor extends React.Component{
-    constructor(props){
-        super(props);
+    constructor(){
+        super();
         this.state = {image:''};
     }
     componentWillMount() {
-            this.setState({data:'',isLoading:true});
+            this.setState({data:[],isLoading:true});
             request.get(imageUrl)
             .set('Accept', 'application/json')
             .on('progress',(e)=>{

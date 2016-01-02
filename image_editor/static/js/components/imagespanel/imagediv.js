@@ -33,5 +33,14 @@ class ImageDiv extends React.Component{
 
     }
 }
+ImageDiv.propTypes = {
 
-export default ImageDiv
+    image: React.PropTypes.object.isRequired,
+
+    getKey: React.PropTypes.number.isRequired,
+    activeKey: React.PropTypes.number.isRequired,
+
+    changeKey: React.PropTypes.func.isRequired
+};
+
+export default ImageDiv;

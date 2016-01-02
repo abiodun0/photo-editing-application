@@ -47,4 +47,12 @@ class FilterDiv extends React.Component{
     }
 }
 
+FilterDiv.propTypes = {
+
+    image: React.PropTypes.oneOfType([React.PropTypes.object,React.PropTypes.string]).isRequired,
+
+
+    changeFilter: React.PropTypes.func.isRequired
+};
+
 export default FilterDiv;

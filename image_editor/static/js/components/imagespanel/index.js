@@ -29,4 +29,12 @@ class SearchableImage extends React.Component{
             );
     }
 }
+SearchableImage.propTypes = {
+
+    data: React.PropTypes.array.isRequired,
+
+    changeImage: React.PropTypes.func.isRequired,
+    addImage: React.PropTypes.func.isRequired
+};
+
 export default SearchableImage;

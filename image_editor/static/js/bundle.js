@@ -19758,10 +19758,10 @@
 	var AppEditor = (function (_React$Component) {
 	    _inherits(AppEditor, _React$Component);
 
-	    function AppEditor(props) {
+	    function AppEditor() {
 	        _classCallCheck(this, AppEditor);
 
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AppEditor).call(this, props));
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AppEditor).call(this));
 
 	        _this.state = { image: '' };
 	        return _this;
@@ -19772,7 +19772,7 @@
 	        value: function componentWillMount() {
 	            var _this2 = this;
 
-	            this.setState({ data: '', isLoading: true });
+	            this.setState({ data: [], isLoading: true });
 	            _superagent2.default.get(imageUrl).set('Accept', 'application/json').on('progress', function (e) {
 	                console.log("progress", e);
 	            }).end(function (err, res) {
@@ -26806,6 +26806,14 @@
 	    return SearchableImage;
 	})(_react2.default.Component);
 
+	SearchableImage.propTypes = {
+
+	    data: _react2.default.PropTypes.array.isRequired,
+
+	    changeImage: _react2.default.PropTypes.func.isRequired,
+	    addImage: _react2.default.PropTypes.func.isRequired
+	};
+
 	exports.default = SearchableImage;
 
 /***/ },
@@ -26878,6 +26886,11 @@
 	  return SearchBar;
 	})(_react2.default.Component);
 
+	SearchBar.propTypes = {
+	  onUserInput: _react2.default.PropTypes.func.isRequired,
+
+	  filterText: _react2.default.PropTypes.string.isRequired
+	};
 	exports.default = SearchBar;
 
 /***/ },
@@ -26928,7 +26941,7 @@
 	    _createClass(ImagesContainer, [{
 	        key: 'componentWillMount',
 	        value: function componentWillMount() {
-	            this.setState({ activeKey: 'default',
+	            this.setState({ activeKey: 0,
 	                isUploading: false,
 	                percentage: 1,
 	                preview: '',
@@ -26999,6 +27012,16 @@
 
 	    return ImagesContainer;
 	})(_react2.default.Component);
+
+	ImagesContainer.propTypes = {
+
+	    data: _react2.default.PropTypes.arrayOf(_react2.default.PropTypes.object).isRequired,
+
+	    filterText: _react2.default.PropTypes.string.isRequired,
+
+	    changeImage: _react2.default.PropTypes.func.isRequired,
+	    addImage: _react2.default.PropTypes.func.isRequired
+	};
 
 	exports.default = ImagesContainer;
 
@@ -27100,7 +27123,7 @@
 	                            null,
 	                            'Click or drop your images here'
 	                        ),
-	                        _react2.default.createElement(_progressbar2.default, { percentage: this.state.percentage, filename: this.state.filename, preview: this.state.preview, isUploading: this.state.isUploading })
+	                        _react2.default.createElement(_progressbar2.default, { percentage: this.state.percentage || 0, filename: this.state.filename || '', preview: this.state.preview || '', isUploading: this.state.isUploading || false })
 	                    )
 	                )
 	            );
@@ -27110,6 +27133,10 @@
 	    return UploadPanel;
 	})(_react2.default.Component);
 
+	UploadPanel.propTypes = {
+	    addImage: _react2.default.PropTypes.func.isRequired
+
+	};
 	exports.default = UploadPanel;
 
 /***/ },
@@ -30997,6 +31024,16 @@
 	    return ProgressBar;
 	})(_react2.default.Component);
 
+	ProgressBar.propTypes = {
+
+	    preview: _react2.default.PropTypes.string.isRequired,
+
+	    isUploading: _react2.default.PropTypes.bool.isRequired,
+
+	    filename: _react2.default.PropTypes.string.isRequired,
+	    percentage: _react2.default.PropTypes.number.isRequired
+	};
+
 	exports.default = ProgressBar;
 
 /***/ },
@@ -31088,6 +31125,16 @@
 
 	    return ImageDiv;
 	})(_react2.default.Component);
+
+	ImageDiv.propTypes = {
+
+	    image: _react2.default.PropTypes.object.isRequired,
+
+	    getKey: _react2.default.PropTypes.number.isRequired,
+	    activeKey: _react2.default.PropTypes.number.isRequired,
+
+	    changeKey: _react2.default.PropTypes.func.isRequired
+	};
 
 	exports.default = ImageDiv;
 
@@ -39777,8 +39824,7 @@
 	                null,
 	                _react2.default.createElement(_imagediv2.default, { image: this.props.image, editImage: this.props.editImage,
 	                    deleteImage: this.props.deleteImage,
-	                    updateImage: this.props.updateImage
-	                }),
+	                    updateImage: this.props.updateImage }),
 	                _react2.default.createElement(_filterdiv2.default, { image: this.props.image, changeFilter: this.props.updateImage })
 	            );
 	        }
@@ -39786,6 +39832,16 @@
 
 	    return EditableDiv;
 	})(_react2.default.Component);
+
+	_imagediv2.default.propTypes = {
+
+	    image: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.object, _react2.default.PropTypes.string]).isRequired,
+
+	    updateImage: _react2.default.PropTypes.func.isRequired,
+	    deleteImage: _react2.default.PropTypes.func.isRequired,
+	    editImage: _react2.default.PropTypes.func.isRequired
+
+	};
 
 	exports.default = EditableDiv;
 
@@ -39965,6 +40021,16 @@
 	    return ImageDiv;
 	})(_react2.default.Component);
 
+	ImageDiv.propTypes = {
+
+	    image: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.object, _react2.default.PropTypes.string]).isRequired,
+
+	    updateImage: _react2.default.PropTypes.func.isRequired,
+	    deleteImage: _react2.default.PropTypes.func.isRequired,
+	    editImage: _react2.default.PropTypes.func.isRequired
+
+	};
+
 	exports.default = ImageDiv;
 
 /***/ },
@@ -40060,6 +40126,13 @@
 
 	    return FilterDiv;
 	})(_react2.default.Component);
+
+	FilterDiv.propTypes = {
+
+	    image: _react2.default.PropTypes.oneOfType([_react2.default.PropTypes.object, _react2.default.PropTypes.string]).isRequired,
+
+	    changeFilter: _react2.default.PropTypes.func.isRequired
+	};
 
 	exports.default = FilterDiv;
 
@@ -42038,6 +42111,14 @@
 	    return FilterImage;
 	})(_react2.default.Component);
 
+	FilterImage.propTypes = {
+
+	    image: _react2.default.PropTypes.string.isRequired,
+	    filter: _react2.default.PropTypes.string.isRequired,
+	    className: _react2.default.PropTypes.string.isRequired,
+
+	    onClick: _react2.default.PropTypes.func.isRequired
+	};
 	exports.default = FilterImage;
 
 /***/ }
