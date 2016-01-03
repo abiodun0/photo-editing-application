@@ -1,11 +1,27 @@
 import React from 'react';
 import classNames from 'classnames';
 import _ from 'lodash';
+const fbId = document.querySelector("meta[name='fb-id']").getAttribute('content');
 
 class ImageDiv extends React.Component{
     
     componentWillMount() {
         this.setState({editMode: false});
+        window.fbAsyncInit = function() {
+                FB.init({
+                  appId      : fbId,
+                  xfbml      : true,
+                  version    : 'v2.5'
+                    });
+            };
+            (function(d, s, id){
+                 var js, fjs = d.getElementsByTagName(s)[0];
+                 if (d.getElementById(id)) {return;}
+                 js = d.createElement(s); js.id = id;
+                 js.src = "//connect.facebook.net/en_US/sdk.js";
+                 fjs.parentNode.insertBefore(js, fjs);
+               }(document, 'script', 'facebook-jssdk'));
+
 
           
     }
@@ -39,6 +55,22 @@ class ImageDiv extends React.Component{
         console.log(image_copy)
         this.props.updateImage(image_copy);
     }
+    shareImage(){
+
+        FB.ui({
+          method: 'feed',
+          name: 'I just edited ' + this.props.image.title +  ' on image editor',
+          display: 'popup',
+          link: window.location.protocol + '//' + window.location.host,
+          caption: 'Image editor is your instagram on web',
+          picture: this.refs.filtedimage.src,
+          description: "I just updated my image",
+        }, (res) =>{
+            console.log(res);
+        });
+
+    }
+
 
     render(){
         var buttonClass = classNames({
@@ -69,7 +101,7 @@ class ImageDiv extends React.Component{
             <button className={buttonClass} onClick={_.isObject(this.props.image)? this.deleteImage.bind(this): ''}><span className="mdi mdi-delete"></span></button>
             <button className={buttonClass} onClick={_.isObject(this.props.image)? this.resetImage.bind(this): ''}><span className="mdi mdi-backup-restore"></span></button>
 
-            <button className={`${buttonClass} pull-sm-right`}><span className="mdi mdi-share-variant"></span></button>
+            <button className={`${buttonClass} pull-sm-right`} onClick={_.isObject(this.props.image)? this.shareImage.bind(this): ''}><span className="mdi mdi-share-variant"></span></button>
             <button className={`${buttonClass} pull-sm-right`}><span className="mdi mdi-download"></span></button></div>
             <div className="edit text-center">
             <img ref="filtedimage" src={this.props.image.picture? `/media/${picture}?${Math.random().toString(36).slice(2)}`:'/static/img/no_image_selected.gif'} />

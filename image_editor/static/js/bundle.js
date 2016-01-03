@@ -39877,6 +39877,8 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+	var fbId = document.querySelector("meta[name='fb-id']").getAttribute('content');
+
 	var ImageDiv = (function (_React$Component) {
 	    _inherits(ImageDiv, _React$Component);
 
@@ -39890,6 +39892,23 @@
 	        key: 'componentWillMount',
 	        value: function componentWillMount() {
 	            this.setState({ editMode: false });
+	            window.fbAsyncInit = function () {
+	                FB.init({
+	                    appId: fbId,
+	                    xfbml: true,
+	                    version: 'v2.5'
+	                });
+	            };
+	            (function (d, s, id) {
+	                var js,
+	                    fjs = d.getElementsByTagName(s)[0];
+	                if (d.getElementById(id)) {
+	                    return;
+	                }
+	                js = d.createElement(s);js.id = id;
+	                js.src = "//connect.facebook.net/en_US/sdk.js";
+	                fjs.parentNode.insertBefore(js, fjs);
+	            })(document, 'script', 'facebook-jssdk');
 	        }
 	    }, {
 	        key: 'componentWillUpdate',
@@ -39929,6 +39948,22 @@
 	            image_copy['filtered'] = false;
 	            console.log(image_copy);
 	            this.props.updateImage(image_copy);
+	        }
+	    }, {
+	        key: 'shareImage',
+	        value: function shareImage() {
+
+	            FB.ui({
+	                method: 'feed',
+	                name: 'I just edited ' + this.props.image.title + ' on image editor',
+	                display: 'popup',
+	                link: window.location.protocol + '//' + window.location.host,
+	                caption: 'Image editor is your instagram on web',
+	                picture: this.refs.filtedimage.src,
+	                description: "I just updated my image"
+	            }, function (res) {
+	                console.log(res);
+	            });
 	        }
 	    }, {
 	        key: 'render',
@@ -40000,7 +40035,7 @@
 	                    ),
 	                    _react2.default.createElement(
 	                        'button',
-	                        { className: buttonClass + ' pull-sm-right' },
+	                        { className: buttonClass + ' pull-sm-right', onClick: _lodash2.default.isObject(this.props.image) ? this.shareImage.bind(this) : '' },
 	                        _react2.default.createElement('span', { className: 'mdi mdi-share-variant' })
 	                    ),
 	                    _react2.default.createElement(
