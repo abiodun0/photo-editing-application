@@ -21,10 +21,7 @@ class ImageDiv extends React.Component{
                  js.src = "//connect.facebook.net/en_US/sdk.js";
                  fjs.parentNode.insertBefore(js, fjs);
                }(document, 'script', 'facebook-jssdk'));
-
-
-          
-    }
+          }
     componentWillUpdate(nextProps, nextState) {
         if(this.props.image.picture !== nextProps.image.picture){
             if(this.state.editMode) this.props.updateImage(this.props.image);

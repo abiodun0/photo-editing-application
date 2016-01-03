@@ -1,50 +1,27 @@
 import React from 'react';
 import _ from 'lodash';
-import SearchableImage from './imagespanel';
-import EditableDiv from './editpanel';
-import request from 'superagent';
 import toastr from 'toastr';
-import 'superagent-django-csrf';
-const imageUrl = document.querySelector("meta[name='image_url']").getAttribute('content');
+import ImageApi from './api/imageApi';
+import ImagesPanel from './imagespanel';
+import EditableDiv from './editpanel';
 
 
 export default class AppEditor extends React.Component{
     constructor(){
         super();
-        this.state = {image:''};
+        this.state = {image:'',
+           isUploading: false,
+           percentage:1,
+           preview:'',
+           filename:''};
     }
     componentWillMount() {
-            this.setState({data:[],isLoading:true});
-            request.get(imageUrl)
-            .set('Accept', 'application/json')
-            .on('progress',(e)=>{
-                console.log("progress", e);
-            })
-            .end((err, res) => {
-                this.setState({isLoading:false})
-                if(!err) this.setState({data:res.body});
-                
+        ImageApi.getAllImages((object)=>{
+                this.setState(object)
             });
         }
     updateImage(image, filter=null){
-        this.setState({isLoading:true})
-        request.put(imageUrl)
-            .set('Accept', 'application/json')
-            .set('Content-Type', 'application/json')
-            .send(image)
-            .end((err, res) => {
-                this.setState({isLoading:false})
-                if(err) return console.log(res.text);
-                else{
-                    if(filter){
-                         toastr.info("Successfully added " + filter.toLowerCase() + " to " + image.title,'',{closeButton: true})
-                     }
-                    else{
-                         toastr.info("Successfully updated " + image.title,'',{closeButton: true})
-                     }
-                     this.editImage(res.body);
-                 }
-             });
+        ImageApi.updateImage.call(this,image, filter);
         }
     changeImage(image){
         this.setState({image: image});
@@ -60,22 +37,14 @@ export default class AppEditor extends React.Component{
     }
 
     deleteImage(image){
-        this.setState({isLoading:true});
-        request.del(imageUrl)
-        .send(image)
-        .end((err, res) => {
-            if(!err){
-            _.remove(this.state.data,(m)=>{
-            return image.id == m.id;
-        });
-            this.setState({isLoading:false});
-            toastr.info("successfully removed " + image.title,'',{closeButton: true})
-            this.setState({image: ''});
-
-            }
-        });
+        ImageApi.deleteImage.call(this, image);
 
     }
+    uploadImage(files){
+        ImageApi.uploadImage.call(this, files);
+
+    }
+
     addImage(image){
         this.state.data.unshift(image);
         this.forceUpdate();
@@ -88,7 +57,11 @@ export default class AppEditor extends React.Component{
         return(
              <div className="row">
              <div className="col-sm-3">
-             <SearchableImage data={this.state.data} addImage={this.addImage.bind(this)} changeImage={this.changeImage.bind(this)}/>
+             <ImagesPanel data={this.state.data} uploadImage={this.uploadImage.bind(this)}
+             filename={this.state.filename}
+             preview={this.state.preview} isUploading={this.state.isUploading} percentage={this.state.percentage}
+
+             changeImage={this.changeImage.bind(this)}/>
              </div>
             <div className="col-sm-9">
                 <div className="edit-div">

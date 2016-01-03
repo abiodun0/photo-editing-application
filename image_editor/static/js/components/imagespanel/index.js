@@ -3,7 +3,7 @@ import SearchBar from './searchbar';
 import ImagesContainer from './imagescontainer';
 
 
-class SearchableImage extends React.Component{
+class ImagesPanel extends React.Component{
     constructor(){
         super();
 
@@ -21,20 +21,22 @@ class SearchableImage extends React.Component{
                 onUserInput={this.handleUserInput.bind(this)} 
                 />
 
-                <ImagesContainer data={this.props.data} addImage={this.props.addImage}
-                filterText={this.state.filterText} changeImage={this.props.changeImage}
+                <ImagesContainer data={this.props.data} uploadImage={this.props.uploadImage}
+                filterText={this.state.filterText} filename={this.props.filename}
+                preview={this.props.preview} isUploading={this.props.isUploading} percentage={this.props.percentage}
+                changeImage={this.props.changeImage}
                 />
             </div>
 
             );
     }
 }
-SearchableImage.propTypes = {
+ImagesPanel.propTypes = {
 
     data: React.PropTypes.array.isRequired,
 
     changeImage: React.PropTypes.func.isRequired,
-    addImage: React.PropTypes.func.isRequired
+    uploadImage: React.PropTypes.func.isRequired
 };
 
-export default SearchableImage;
+export default ImagesPanel;

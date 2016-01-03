@@ -19727,6 +19727,14 @@
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
+	var _toastr = __webpack_require__(172);
+
+	var _toastr2 = _interopRequireDefault(_toastr);
+
+	var _imageApi = __webpack_require__(293);
+
+	var _imageApi2 = _interopRequireDefault(_imageApi);
+
 	var _imagespanel = __webpack_require__(163);
 
 	var _imagespanel2 = _interopRequireDefault(_imagespanel);
@@ -19734,16 +19742,6 @@
 	var _editpanel = __webpack_require__(265);
 
 	var _editpanel2 = _interopRequireDefault(_editpanel);
-
-	var _superagent = __webpack_require__(169);
-
-	var _superagent2 = _interopRequireDefault(_superagent);
-
-	var _toastr = __webpack_require__(172);
-
-	var _toastr2 = _interopRequireDefault(_toastr);
-
-	__webpack_require__(269);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -19753,8 +19751,6 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var imageUrl = document.querySelector("meta[name='image_url']").getAttribute('content');
-
 	var AppEditor = (function (_React$Component) {
 	    _inherits(AppEditor, _React$Component);
 
@@ -19763,7 +19759,11 @@
 
 	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AppEditor).call(this));
 
-	        _this.state = { image: '' };
+	        _this.state = { image: '',
+	            isUploading: false,
+	            percentage: 1,
+	            preview: '',
+	            filename: '' };
 	        return _this;
 	    }
 
@@ -19772,33 +19772,16 @@
 	        value: function componentWillMount() {
 	            var _this2 = this;
 
-	            this.setState({ data: [], isLoading: true });
-	            _superagent2.default.get(imageUrl).set('Accept', 'application/json').on('progress', function (e) {
-	                console.log("progress", e);
-	            }).end(function (err, res) {
-	                _this2.setState({ isLoading: false });
-	                if (!err) _this2.setState({ data: res.body });
+	            _imageApi2.default.getAllImages(function (object) {
+	                _this2.setState(object);
 	            });
 	        }
 	    }, {
 	        key: 'updateImage',
 	        value: function updateImage(image) {
-	            var _this3 = this;
-
 	            var filter = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
 
-	            this.setState({ isLoading: true });
-	            _superagent2.default.put(imageUrl).set('Accept', 'application/json').set('Content-Type', 'application/json').send(image).end(function (err, res) {
-	                _this3.setState({ isLoading: false });
-	                if (err) return console.log(res.text);else {
-	                    if (filter) {
-	                        _toastr2.default.info("Successfully added " + filter.toLowerCase() + " to " + image.title, '', { closeButton: true });
-	                    } else {
-	                        _toastr2.default.info("Successfully updated " + image.title, '', { closeButton: true });
-	                    }
-	                    _this3.editImage(res.body);
-	                }
-	            });
+	            _imageApi2.default.updateImage.call(this, image, filter);
 	        }
 	    }, {
 	        key: 'changeImage',
@@ -19817,19 +19800,12 @@
 	    }, {
 	        key: 'deleteImage',
 	        value: function deleteImage(image) {
-	            var _this4 = this;
-
-	            this.setState({ isLoading: true });
-	            _superagent2.default.del(imageUrl).send(image).end(function (err, res) {
-	                if (!err) {
-	                    _lodash2.default.remove(_this4.state.data, function (m) {
-	                        return image.id == m.id;
-	                    });
-	                    _this4.setState({ isLoading: false });
-	                    _toastr2.default.info("successfully removed " + image.title, '', { closeButton: true });
-	                    _this4.setState({ image: '' });
-	                }
-	            });
+	            _imageApi2.default.deleteImage.call(this, image);
+	        }
+	    }, {
+	        key: 'uploadImage',
+	        value: function uploadImage(files) {
+	            _imageApi2.default.uploadImage.call(this, files);
 	        }
 	    }, {
 	        key: 'addImage',
@@ -19850,7 +19826,11 @@
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'col-sm-3' },
-	                    _react2.default.createElement(_imagespanel2.default, { data: this.state.data, addImage: this.addImage.bind(this), changeImage: this.changeImage.bind(this) })
+	                    _react2.default.createElement(_imagespanel2.default, { data: this.state.data, uploadImage: this.uploadImage.bind(this),
+	                        filename: this.state.filename,
+	                        preview: this.state.preview, isUploading: this.state.isUploading, percentage: this.state.percentage,
+
+	                        changeImage: this.changeImage.bind(this) })
 	                ),
 	                _react2.default.createElement(
 	                    'div',
@@ -26769,19 +26749,19 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var SearchableImage = (function (_React$Component) {
-	    _inherits(SearchableImage, _React$Component);
+	var ImagesPanel = (function (_React$Component) {
+	    _inherits(ImagesPanel, _React$Component);
 
-	    function SearchableImage() {
-	        _classCallCheck(this, SearchableImage);
+	    function ImagesPanel() {
+	        _classCallCheck(this, ImagesPanel);
 
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SearchableImage).call(this));
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(ImagesPanel).call(this));
 
 	        _this.state = { filterText: '' };
 	        return _this;
 	    }
 
-	    _createClass(SearchableImage, [{
+	    _createClass(ImagesPanel, [{
 	        key: 'handleUserInput',
 	        value: function handleUserInput(filterText) {
 	            this.setState({ filterText: filterText });
@@ -26795,25 +26775,27 @@
 	                _react2.default.createElement(_searchbar2.default, { filterText: this.state.filterText,
 	                    onUserInput: this.handleUserInput.bind(this)
 	                }),
-	                _react2.default.createElement(_imagescontainer2.default, { data: this.props.data, addImage: this.props.addImage,
-	                    filterText: this.state.filterText, changeImage: this.props.changeImage
+	                _react2.default.createElement(_imagescontainer2.default, { data: this.props.data, uploadImage: this.props.uploadImage,
+	                    filterText: this.state.filterText, filename: this.props.filename,
+	                    preview: this.props.preview, isUploading: this.props.isUploading, percentage: this.props.percentage,
+	                    changeImage: this.props.changeImage
 	                })
 	            );
 	        }
 	    }]);
 
-	    return SearchableImage;
+	    return ImagesPanel;
 	})(_react2.default.Component);
 
-	SearchableImage.propTypes = {
+	ImagesPanel.propTypes = {
 
 	    data: _react2.default.PropTypes.array.isRequired,
 
 	    changeImage: _react2.default.PropTypes.func.isRequired,
-	    addImage: _react2.default.PropTypes.func.isRequired
+	    uploadImage: _react2.default.PropTypes.func.isRequired
 	};
 
-	exports.default = SearchableImage;
+	exports.default = ImagesPanel;
 
 /***/ },
 /* 164 */
@@ -26940,11 +26922,7 @@
 	    _createClass(ImagesContainer, [{
 	        key: 'componentWillMount',
 	        value: function componentWillMount() {
-	            this.setState({ activeKey: 0,
-	                isUploading: false,
-	                percentage: 1,
-	                preview: '',
-	                filename: '' });
+	            this.setState({ activeKey: 0 });
 	        }
 	    }, {
 	        key: 'changeActiveKey',
@@ -26957,7 +26935,9 @@
 	        value: function render() {
 	            var sections = [];
 	            var data = this.props.data;
-	            var dropzone = _react2.default.createElement(_uploadpanel2.default, { addImage: this.props.addImage.bind(this), percentage: this.state.percentage || '100', filename: this.state.filename, preview: this.state.preview, isUploading: this.state.isUploading });
+	            var dropzone = _react2.default.createElement(_uploadpanel2.default, { uploadImage: this.props.uploadImage.bind(this),
+	                percentage: this.props.percentage || 100, filename: this.props.filename,
+	                preview: this.props.preview, isUploading: this.props.isUploading });
 	            if (data.length < 1) {
 	                return _react2.default.createElement(
 	                    'div',
@@ -27019,7 +26999,7 @@
 	    filterText: _react2.default.PropTypes.string.isRequired,
 
 	    changeImage: _react2.default.PropTypes.func.isRequired,
-	    addImage: _react2.default.PropTypes.func.isRequired
+	    uploadImage: _react2.default.PropTypes.func.isRequired
 	};
 
 	exports.default = ImagesContainer;
@@ -27044,10 +27024,6 @@
 
 	var _reactDropzone2 = _interopRequireDefault(_reactDropzone);
 
-	var _superagent = __webpack_require__(169);
-
-	var _superagent2 = _interopRequireDefault(_superagent);
-
 	var _toastr = __webpack_require__(172);
 
 	var _toastr2 = _interopRequireDefault(_toastr);
@@ -27055,6 +27031,10 @@
 	var _progressbar = __webpack_require__(175);
 
 	var _progressbar2 = _interopRequireDefault(_progressbar);
+
+	var _imageApi = __webpack_require__(293);
+
+	var _imageApi2 = _interopRequireDefault(_imageApi);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -27079,31 +27059,7 @@
 	    _createClass(UploadPanel, [{
 	        key: 'onDrop',
 	        value: function onDrop(files) {
-	            var _this2 = this;
-
-	            var url = document.querySelector("meta[name='image_url']").getAttribute('content');
-
-	            files.forEach(function (file) {
-	                _this2.setState({ filename: file.name });
-	                var reader = new FileReader();
-	                reader.readAsDataURL(file);
-	                reader.onload = function (e) {
-	                    _this2.setState({ preview: e.target.result });
-	                };
-	                _superagent2.default.post(url).attach("image", file, file.name).set('Accept', 'application/json').on('progress', function (e) {
-	                    console.log(e.percent, file.name, e);
-	                    _this2.setState({ percentage: e.percent, isUploading: true });
-	                }).end(function (err, res) {
-	                    _this2.setState({ isUploading: false });
-	                    if (err) {
-	                        console.log(res);
-	                        return _toastr2.default.error(res.body, 'unable to upload ' + file.name, { closeButton: true });
-	                    }
-
-	                    _toastr2.default.success("successfully uploaded " + file.name, '', { closeButton: true });
-	                    _this2.props.addImage(res.body);
-	                });
-	            });
+	            this.props.uploadImage(files);
 	        }
 	    }, {
 	        key: 'render',
@@ -27113,7 +27069,7 @@
 	                { ref: 'progresszone', className: 'dropzone text-center' },
 	                _react2.default.createElement(
 	                    _reactDropzone2.default,
-	                    { ref: 'dropzone', className: 'drop', onDrop: this.onDrop.bind(this), accept: 'image/*' },
+	                    { ref: 'dropzone', className: 'drop', onDrop: this.onDrop.bind(this) },
 	                    _react2.default.createElement(
 	                        'div',
 	                        null,
@@ -27122,7 +27078,7 @@
 	                            null,
 	                            'Click or drop your images here'
 	                        ),
-	                        _react2.default.createElement(_progressbar2.default, { percentage: this.state.percentage || 0, filename: this.state.filename || '', preview: this.state.preview || '', isUploading: this.state.isUploading || false })
+	                        _react2.default.createElement(_progressbar2.default, { percentage: this.props.percentage || 0, filename: this.props.filename || '', preview: this.props.preview || '', isUploading: this.props.isUploading || false })
 	                    )
 	                )
 	            );
@@ -27133,7 +27089,12 @@
 	})(_react2.default.Component);
 
 	UploadPanel.propTypes = {
-	    addImage: _react2.default.PropTypes.func.isRequired
+	    uploadImage: _react2.default.PropTypes.func.isRequired,
+
+	    preview: _react2.default.PropTypes.string.isRequired,
+	    isUploading: _react2.default.PropTypes.bool.isRequired,
+	    filename: _react2.default.PropTypes.string.isRequired,
+	    percentage: _react2.default.PropTypes.number.isRequired
 
 	};
 	exports.default = UploadPanel;
@@ -30986,6 +30947,7 @@
 	    _createClass(ProgressBar, [{
 	        key: "render",
 	        value: function render() {
+	            console.log(this.props.preview);
 	            if (this.props.isUploading) {
 	                return _react2.default.createElement(
 	                    "div",
@@ -30993,7 +30955,9 @@
 	                    _react2.default.createElement(
 	                        "p",
 	                        null,
-	                        this.props.filename
+	                        "Uploading ",
+	                        this.props.filename,
+	                        "..."
 	                    ),
 	                    _react2.default.createElement(
 	                        "div",
@@ -42153,6 +42117,110 @@
 	    onClick: _react2.default.PropTypes.func.isRequired
 	};
 	exports.default = FilterImage;
+
+/***/ },
+/* 290 */,
+/* 291 */,
+/* 292 */,
+/* 293 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _superagent = __webpack_require__(169);
+
+	var _superagent2 = _interopRequireDefault(_superagent);
+
+	var _toastr = __webpack_require__(172);
+
+	var _toastr2 = _interopRequireDefault(_toastr);
+
+	var _lodash = __webpack_require__(160);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
+
+	__webpack_require__(269);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var imageUrl = document.querySelector("meta[name='image_url']").getAttribute('content');
+
+	var ImageApi = {
+
+	    getAllImages: function getAllImages(cb) {
+	        cb({ data: [], isLoading: true });
+	        _toastr2.default.info("Loading your images...!", null, { timeOut: 0, positionClass: "toast-top-center" });
+	        _superagent2.default.get(imageUrl).set('Accept', 'application/json').end(function (err, res) {
+	            cb({ isLoading: false });
+	            _toastr2.default.clear();
+	            if (!err) cb({ data: res.body });
+	        });
+	    },
+	    updateImage: function updateImage(image, filter) {
+	        var _this = this;
+
+	        this.setState({ isLoading: true });
+	        _toastr2.default.info("Updating " + image.title + "...", null, { timeOut: 0, positionClass: "toast-top-center" });
+	        _superagent2.default.put(imageUrl).set('Accept', 'application/json').set('Content-Type', 'application/json').send(image).end(function (err, res) {
+	            _this.setState({ isLoading: false });
+	            if (err) return console.log(res.text);else {
+	                if (filter) {
+	                    _toastr2.default.info("Successfully added " + filter.toLowerCase() + " to " + image.title, '', { closeButton: true, positionClass: "toast-top-right" });
+	                } else {
+	                    _toastr2.default.info("Successfully updated " + image.title, '', { closeButton: true });
+	                }
+	                _this.editImage(res.body);
+	                _toastr2.default.clear();
+	            }
+	        });
+	    },
+	    deleteImage: function deleteImage(imageObj) {
+	        var _this2 = this;
+
+	        _toastr2.default.error("Deleting " + imageObj.title + "...", null, { timeOut: 0, positionClass: "toast-top-center" });
+	        this.setState({ isLoading: true });
+	        _superagent2.default.del(imageUrl).send(imageObj).end(function (err, res) {
+	            if (!err) {
+	                _lodash2.default.remove(_this2.state.data, function (m) {
+	                    return imageObj.id == m.id;
+	                });
+	                _this2.setState({ isLoading: false });
+	                _toastr2.default.clear();
+	                _toastr2.default.info("successfully removed " + imageObj.title, '', { closeButton: true, positionClass: "toast-top-right" });
+	                _this2.setState({ image: '' });
+	            }
+	        });
+	    },
+	    uploadImage: function uploadImage(files) {
+	        var _this3 = this;
+
+	        files.forEach(function (file) {
+	            _this3.setState({ filename: file.name });
+	            var reader = new FileReader();
+	            reader.readAsDataURL(file);
+	            reader.onload = function (e) {
+	                _this3.setState({ preview: e.target.result });
+	            };
+	            _superagent2.default.post(imageUrl).attach("image", file, file.name).set('Accept', 'application/json').on('progress', function (e) {
+	                console.log(e.percent);
+	                _this3.setState({ percentage: e.percent, isUploading: true });
+	            }).end(function (err, res) {
+	                _this3.setState({ isUploading: false });
+	                if (err) {
+	                    return _toastr2.default.error(res.body, 'unable to upload ' + file.name, { closeButton: true });
+	                }
+
+	                _toastr2.default.success("successfully uploaded " + file.name, '', { closeButton: true });
+	                _this3.addImage(res.body);
+	            });
+	        });
+	    }
+	};
+	exports.default = ImageApi;
 
 /***/ }
 /******/ ]);
