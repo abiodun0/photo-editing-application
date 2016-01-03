@@ -40012,7 +40012,7 @@
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'edit text-center' },
-	                    _react2.default.createElement('img', { ref: 'filtedimage', src: this.props.image.picture ? '/media/' + picture + '?' + Math.random().toString(36).slice(2) : '' })
+	                    _react2.default.createElement('img', { ref: 'filtedimage', src: this.props.image.picture ? '/media/' + picture + '?' + Math.random().toString(36).slice(2) : '/static/img/no_image_selected.gif' })
 	                )
 	            );
 	        }

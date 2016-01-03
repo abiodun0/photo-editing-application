@@ -28,9 +28,5 @@ deploy:
     branch: master
   run:
     - "export DJANGO_SETTINGS_MODULE=image_editor.settings.production"
-    - "python image_editor/manage.py collectstatic --noinput"
-    - "python image_editor/manage.py makemigrations"
-    - "python image_editor/manage.py migrate"
-    - "python image_editor/manage.py syncdb --noinput"
   after_deploy:
     - "heroku ps:scale web=1 --app django-bucketlist"
