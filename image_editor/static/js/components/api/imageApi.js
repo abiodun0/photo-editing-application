@@ -9,10 +9,12 @@ const ImageApi = {
 
     getAllImages:(cb)=>{
         cb({data:[],isLoading:true});
+        toastr.info("Loading your images...!",null,{timeOut: 0, positionClass: "toast-top-center",});
         request.get(imageUrl)
             .set('Accept', 'application/json')
             .end((err, res) => {
                 cb({isLoading:false})
+                toastr.clear();
                 if(!err) cb({data:res.body});
                 
             });
@@ -20,6 +22,7 @@ const ImageApi = {
     },
     updateImage:function (image, filter){
             this.setState({isLoading:true});
+            toastr.info("Updating "+ image.title +"...",null,{timeOut: 0, positionClass: "toast-top-center",});
             request.put(imageUrl)
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
@@ -29,16 +32,18 @@ const ImageApi = {
                 if(err) return console.log(res.text);
                 else{
                     if(filter){
-                         toastr.info("Successfully added " + filter.toLowerCase() + " to " + image.title,'',{closeButton: true})
+                         toastr.info("Successfully added " + filter.toLowerCase() + " to " + image.title,'',{closeButton: true,positionClass: "toast-top-right"})
                      }
                     else{
                          toastr.info("Successfully updated " + image.title,'',{closeButton: true})
                      }
                      this.editImage(res.body);
+                     toastr.clear();
                  }
              });
     },
     deleteImage: function(imageObj){
+        toastr.error("Deleting "+ imageObj.title +"...",null,{timeOut: 0, positionClass: "toast-top-center",});
         this.setState({isLoading:true});
         request.del(imageUrl)
         .send(imageObj)
@@ -48,7 +53,8 @@ const ImageApi = {
             return imageObj.id == m.id;
         });
             this.setState({isLoading:false});
-            toastr.info("successfully removed " + imageObj.title,'',{closeButton: true})
+            toastr.clear();
+            toastr.info("successfully removed " + imageObj.title,'',{closeButton: true, positionClass: "toast-top-right"})
             this.setState({image: ''});
 
             }

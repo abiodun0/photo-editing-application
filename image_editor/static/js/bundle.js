@@ -42153,8 +42153,10 @@
 
 	    getAllImages: function getAllImages(cb) {
 	        cb({ data: [], isLoading: true });
+	        _toastr2.default.info("Loading your images...!", null, { timeOut: 0, positionClass: "toast-top-center" });
 	        _superagent2.default.get(imageUrl).set('Accept', 'application/json').end(function (err, res) {
 	            cb({ isLoading: false });
+	            _toastr2.default.clear();
 	            if (!err) cb({ data: res.body });
 	        });
 	    },
@@ -42162,21 +42164,24 @@
 	        var _this = this;
 
 	        this.setState({ isLoading: true });
+	        _toastr2.default.info("Updating " + image.title + "...", null, { timeOut: 0, positionClass: "toast-top-center" });
 	        _superagent2.default.put(imageUrl).set('Accept', 'application/json').set('Content-Type', 'application/json').send(image).end(function (err, res) {
 	            _this.setState({ isLoading: false });
 	            if (err) return console.log(res.text);else {
 	                if (filter) {
-	                    _toastr2.default.info("Successfully added " + filter.toLowerCase() + " to " + image.title, '', { closeButton: true });
+	                    _toastr2.default.info("Successfully added " + filter.toLowerCase() + " to " + image.title, '', { closeButton: true, positionClass: "toast-top-right" });
 	                } else {
 	                    _toastr2.default.info("Successfully updated " + image.title, '', { closeButton: true });
 	                }
 	                _this.editImage(res.body);
+	                _toastr2.default.clear();
 	            }
 	        });
 	    },
 	    deleteImage: function deleteImage(imageObj) {
 	        var _this2 = this;
 
+	        _toastr2.default.error("Deleting " + imageObj.title + "...", null, { timeOut: 0, positionClass: "toast-top-center" });
 	        this.setState({ isLoading: true });
 	        _superagent2.default.del(imageUrl).send(imageObj).end(function (err, res) {
 	            if (!err) {
@@ -42184,7 +42189,8 @@
 	                    return imageObj.id == m.id;
 	                });
 	                _this2.setState({ isLoading: false });
-	                _toastr2.default.info("successfully removed " + imageObj.title, '', { closeButton: true });
+	                _toastr2.default.clear();
+	                _toastr2.default.info("successfully removed " + imageObj.title, '', { closeButton: true, positionClass: "toast-top-right" });
 	                _this2.setState({ image: '' });
 	            }
 	        });
