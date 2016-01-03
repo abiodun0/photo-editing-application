@@ -80,6 +80,7 @@ const ImageApi = {
             })
             .end((err, res) => {
                 this.setState({isUploading: false});
+                console.log(res.text);
                 if(err){
                     return toastr.error(res.body,'unable to upload ' + file.name,{closeButton:true});
                 }
