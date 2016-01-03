@@ -18,14 +18,14 @@ const ImageApi = {
             });
 
     },
-    updateImage:(image, filter, instance, cb)=>{
-            cb({isLoading:true});
+    updateImage:function (image, filter){
+            this.setState({isLoading:true});
             request.put(imageUrl)
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
             .send(image)
             .end((err, res) => {
-                cb({isLoading:false})
+                this.setState({isLoading:false})
                 if(err) return console.log(res.text);
                 else{
                     if(filter){
@@ -34,51 +34,51 @@ const ImageApi = {
                     else{
                          toastr.info("Successfully updated " + image.title,'',{closeButton: true})
                      }
-                     instance.editImage(res.body);
+                     this.editImage(res.body);
                  }
              });
     },
-    deleteImage:(imageObj, instance, cb)=>{
-        cb({isLoading:true});
+    deleteImage: function(imageObj){
+        this.setState({isLoading:true});
         request.del(imageUrl)
         .send(imageObj)
         .end((err, res) => {
             if(!err){
-            _.remove(instance.state.data,(m)=>{
+            _.remove(this.state.data,(m)=>{
             return imageObj.id == m.id;
         });
-            cb({isLoading:false});
+            this.setState({isLoading:false});
             toastr.info("successfully removed " + imageObj.title,'',{closeButton: true})
-            cb({image: ''});
+            this.setState({image: ''});
 
             }
         });
     },
-    uploadImage:(files, instance, cb)=>{
-        
-        
+    uploadImage: function(files){
+
         files.forEach((file)=> {
-            cb({filename: file.name})
+            this.setState({filename: file.name})
             let reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = (e) => {
-                cb({preview: e.target.result});
+                this.setState({preview: e.target.result});
             }
             request.post(imageUrl)
             .attach("image", file, file.name)
             .set('Accept', 'application/json')
             .on('progress',(e)=>{
-                cb({percentage: e.percent,isUploading: true});
+                console.log(e.percent)
+                this.setState({percentage: e.percent,isUploading: true});
 
             })
             .end((err, res) => {
-                cb({isUploading: false});
+                this.setState({isUploading: false});
                 if(err){
                     return toastr.error(res.body,'unable to upload ' + file.name,{closeButton:true});
                 }
                 
                 toastr.success("successfully uploaded " + file.name,'',{closeButton: true});
-                instance.addImage(res.body);
+                this.addImage(res.body);
 
             })
         });

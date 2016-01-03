@@ -19779,13 +19779,9 @@
 	    }, {
 	        key: 'updateImage',
 	        value: function updateImage(image) {
-	            var _this3 = this;
-
 	            var filter = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
 
-	            _imageApi2.default.updateImage(image, filter, this, function (object) {
-	                _this3.setState(object);
-	            });
+	            _imageApi2.default.updateImage.call(this, image, filter);
 	        }
 	    }, {
 	        key: 'changeImage',
@@ -19804,20 +19800,12 @@
 	    }, {
 	        key: 'deleteImage',
 	        value: function deleteImage(image) {
-	            var _this4 = this;
-
-	            _imageApi2.default.deleteImage(image, this, function (object) {
-	                _this4.setState(object);
-	            });
+	            _imageApi2.default.deleteImage.call(this, image);
 	        }
 	    }, {
 	        key: 'uploadImage',
 	        value: function uploadImage(files) {
-	            var _this5 = this;
-
-	            _imageApi2.default.uploadImage(files, this, function (object) {
-	                _this5.setState(object);
-	            });
+	            _imageApi2.default.uploadImage.call(this, files);
 	        }
 	    }, {
 	        key: 'addImage',
@@ -26761,19 +26749,19 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var SearchableImage = (function (_React$Component) {
-	    _inherits(SearchableImage, _React$Component);
+	var ImagesPanel = (function (_React$Component) {
+	    _inherits(ImagesPanel, _React$Component);
 
-	    function SearchableImage() {
-	        _classCallCheck(this, SearchableImage);
+	    function ImagesPanel() {
+	        _classCallCheck(this, ImagesPanel);
 
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SearchableImage).call(this));
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(ImagesPanel).call(this));
 
 	        _this.state = { filterText: '' };
 	        return _this;
 	    }
 
-	    _createClass(SearchableImage, [{
+	    _createClass(ImagesPanel, [{
 	        key: 'handleUserInput',
 	        value: function handleUserInput(filterText) {
 	            this.setState({ filterText: filterText });
@@ -26796,10 +26784,10 @@
 	        }
 	    }]);
 
-	    return SearchableImage;
+	    return ImagesPanel;
 	})(_react2.default.Component);
 
-	SearchableImage.propTypes = {
+	ImagesPanel.propTypes = {
 
 	    data: _react2.default.PropTypes.array.isRequired,
 
@@ -26807,7 +26795,7 @@
 	    uploadImage: _react2.default.PropTypes.func.isRequired
 	};
 
-	exports.default = SearchableImage;
+	exports.default = ImagesPanel;
 
 /***/ },
 /* 164 */
@@ -30959,6 +30947,7 @@
 	    _createClass(ProgressBar, [{
 	        key: "render",
 	        value: function render() {
+	            console.log(this.props.preview);
 	            if (this.props.isUploading) {
 	                return _react2.default.createElement(
 	                    "div",
@@ -42169,52 +42158,58 @@
 	            if (!err) cb({ data: res.body });
 	        });
 	    },
-	    updateImage: function updateImage(image, filter, instance, cb) {
-	        cb({ isLoading: true });
+	    updateImage: function updateImage(image, filter) {
+	        var _this = this;
+
+	        this.setState({ isLoading: true });
 	        _superagent2.default.put(imageUrl).set('Accept', 'application/json').set('Content-Type', 'application/json').send(image).end(function (err, res) {
-	            cb({ isLoading: false });
+	            _this.setState({ isLoading: false });
 	            if (err) return console.log(res.text);else {
 	                if (filter) {
 	                    _toastr2.default.info("Successfully added " + filter.toLowerCase() + " to " + image.title, '', { closeButton: true });
 	                } else {
 	                    _toastr2.default.info("Successfully updated " + image.title, '', { closeButton: true });
 	                }
-	                instance.editImage(res.body);
+	                _this.editImage(res.body);
 	            }
 	        });
 	    },
-	    deleteImage: function deleteImage(imageObj, instance, cb) {
-	        cb({ isLoading: true });
+	    deleteImage: function deleteImage(imageObj) {
+	        var _this2 = this;
+
+	        this.setState({ isLoading: true });
 	        _superagent2.default.del(imageUrl).send(imageObj).end(function (err, res) {
 	            if (!err) {
-	                _lodash2.default.remove(instance.state.data, function (m) {
+	                _lodash2.default.remove(_this2.state.data, function (m) {
 	                    return imageObj.id == m.id;
 	                });
-	                cb({ isLoading: false });
+	                _this2.setState({ isLoading: false });
 	                _toastr2.default.info("successfully removed " + imageObj.title, '', { closeButton: true });
-	                cb({ image: '' });
+	                _this2.setState({ image: '' });
 	            }
 	        });
 	    },
-	    uploadImage: function uploadImage(files, instance, cb) {
+	    uploadImage: function uploadImage(files) {
+	        var _this3 = this;
 
 	        files.forEach(function (file) {
-	            cb({ filename: file.name });
+	            _this3.setState({ filename: file.name });
 	            var reader = new FileReader();
 	            reader.readAsDataURL(file);
 	            reader.onload = function (e) {
-	                cb({ preview: e.target.result });
+	                _this3.setState({ preview: e.target.result });
 	            };
 	            _superagent2.default.post(imageUrl).attach("image", file, file.name).set('Accept', 'application/json').on('progress', function (e) {
-	                cb({ percentage: e.percent, isUploading: true });
+	                console.log(e.percent);
+	                _this3.setState({ percentage: e.percent, isUploading: true });
 	            }).end(function (err, res) {
-	                cb({ isUploading: false });
+	                _this3.setState({ isUploading: false });
 	                if (err) {
 	                    return _toastr2.default.error(res.body, 'unable to upload ' + file.name, { closeButton: true });
 	                }
 
 	                _toastr2.default.success("successfully uploaded " + file.name, '', { closeButton: true });
-	                instance.addImage(res.body);
+	                _this3.addImage(res.body);
 	            });
 	        });
 	    }

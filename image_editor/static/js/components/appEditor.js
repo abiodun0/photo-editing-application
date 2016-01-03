@@ -2,7 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import toastr from 'toastr';
 import ImageApi from './api/imageApi';
-import SearchableImage from './imagespanel';
+import ImagesPanel from './imagespanel';
 import EditableDiv from './editpanel';
 
 
@@ -21,9 +21,7 @@ export default class AppEditor extends React.Component{
             });
         }
     updateImage(image, filter=null){
-        ImageApi.updateImage(image, filter, this, (object)=>{
-                this.setState(object)
-            });
+        ImageApi.updateImage.call(this,image, filter);
         }
     changeImage(image){
         this.setState({image: image});
@@ -39,15 +37,11 @@ export default class AppEditor extends React.Component{
     }
 
     deleteImage(image){
-        ImageApi.deleteImage(image,this,(object)=>{
-                this.setState(object)
-            });
+        ImageApi.deleteImage.call(this, image);
 
     }
     uploadImage(files){
-        ImageApi.uploadImage(files, this, (object)=>{
-            this.setState(object);
-        });
+        ImageApi.uploadImage.call(this, files);
 
     }
 
@@ -63,7 +57,7 @@ export default class AppEditor extends React.Component{
         return(
              <div className="row">
              <div className="col-sm-3">
-             <SearchableImage data={this.state.data} uploadImage={this.uploadImage.bind(this)}
+             <ImagesPanel data={this.state.data} uploadImage={this.uploadImage.bind(this)}
              filename={this.state.filename}
              preview={this.state.preview} isUploading={this.state.isUploading} percentage={this.state.percentage}
 

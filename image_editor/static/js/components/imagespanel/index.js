@@ -3,7 +3,7 @@ import SearchBar from './searchbar';
 import ImagesContainer from './imagescontainer';
 
 
-class SearchableImage extends React.Component{
+class ImagesPanel extends React.Component{
     constructor(){
         super();
 
@@ -31,7 +31,7 @@ class SearchableImage extends React.Component{
             );
     }
 }
-SearchableImage.propTypes = {
+ImagesPanel.propTypes = {
 
     data: React.PropTypes.array.isRequired,
 
@@ -39,4 +39,4 @@ SearchableImage.propTypes = {
     uploadImage: React.PropTypes.func.isRequired
 };
 
-export default SearchableImage;
+export default ImagesPanel;

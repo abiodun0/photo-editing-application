@@ -2,6 +2,7 @@ import React from 'react';
 
 class ProgressBar extends React.Component {
     render() {
+        console.log(this.props.preview);
         if(this.props.isUploading){
         return(
             <div className="progresszone">
