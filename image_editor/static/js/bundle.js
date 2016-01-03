@@ -42214,6 +42214,7 @@
 	                _this3.setState({ percentage: e.percent, isUploading: true });
 	            }).end(function (err, res) {
 	                _this3.setState({ isUploading: false });
+	                console.log(res.text);
 	                if (err) {
 	                    return _toastr2.default.error(res.body, 'unable to upload ' + file.name, { closeButton: true });
 	                }

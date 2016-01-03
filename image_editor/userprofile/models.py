@@ -53,7 +53,10 @@ def delete_image(sender, instance, **kwargs):
 
 @receiver(pre_save, sender=Images)
 def update_image(sender, instance, update_fields, **kwargs):
-    prev_instance = sender.objects.get(pk=instance.id)
+    try:
+        prev_instance = sender.objects.get(pk=instance.id)
+    except:
+        pass
 
     try:
         update_field = next(iter(update_fields))
