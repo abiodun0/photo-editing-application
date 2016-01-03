@@ -27069,7 +27069,7 @@
 	                { ref: 'progresszone', className: 'dropzone text-center' },
 	                _react2.default.createElement(
 	                    _reactDropzone2.default,
-	                    { ref: 'dropzone', className: 'drop', onDrop: this.onDrop.bind(this) },
+	                    { ref: 'dropzone', className: 'drop', onDrop: this.onDrop.bind(this), accept: 'image/*' },
 	                    _react2.default.createElement(
 	                        'div',
 	                        null,
