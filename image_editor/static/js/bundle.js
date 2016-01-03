@@ -19790,8 +19790,7 @@
 	            this.setState({ isLoading: true });
 	            _superagent2.default.put(imageUrl).set('Accept', 'application/json').set('Content-Type', 'application/json').send(image).end(function (err, res) {
 	                _this3.setState({ isLoading: false });
-	                console.log(res.text);
-	                if (!err) {
+	                if (err) return console.log(res.text);else {
 	                    if (filter) {
 	                        _toastr2.default.info("Successfully added " + filter.toLowerCase() + " to " + image.title, '', { closeButton: true });
 	                    } else {

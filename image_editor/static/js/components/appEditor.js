@@ -34,8 +34,8 @@ export default class AppEditor extends React.Component{
             .send(image)
             .end((err, res) => {
                 this.setState({isLoading:false})
-                console.log(res.text);
-                if(!err){
+                if(err) return console.log(res.text);
+                else{
                     if(filter){
                          toastr.info("Successfully added " + filter.toLowerCase() + " to " + image.title,'',{closeButton: true})
                      }

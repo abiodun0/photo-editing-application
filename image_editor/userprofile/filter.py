@@ -5,6 +5,7 @@ from cStringIO import StringIO
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 def apply_filter(image,filters):
+    print image
     original = Image.open(image.image.path)
     if original.mode not in ('L', 'RGB'):
         original = original.convert('RGB')
