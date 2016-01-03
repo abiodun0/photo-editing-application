@@ -21,6 +21,7 @@ def apply_filter(image,filters):
     suf = SimpleUploadedFile(os.path.split(image.image.name)[-1],
                  temp_handle.read(), content_type='image/%s' % (image_type))
 
-    image.filter_path.save('%s_filter.%s'%(os.path.splitext(suf.name)[0],image_type), suf, save=False)
+    image.filter_path.save('%s_filter.%s'%(os.path.splitext(suf.name)[0],image_type), suf,save=False)
+    image.save(update_fields=['filter_path'])
     return image
 

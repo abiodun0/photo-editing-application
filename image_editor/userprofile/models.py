@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, pre_save
 from django.dispatch import receiver
 from userprofile.overwrite_storage import OverwriteStorage
 
@@ -25,7 +25,7 @@ class Images(models.Model):
     title = models.CharField(max_length=100, null=True)
     filtered = models.BooleanField(default=False)
     current_filter = models.CharField(max_length=100, null=True,blank=True,default='')
-    filter_path = models.ImageField(upload_to='filtered/', storage=OverwriteStorage(), null=True, default=None)
+    filter_path = models.ImageField(upload_to='filtered/', null=True, default=None)
     date_created = models.DateTimeField(
         auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -50,3 +50,14 @@ def delete_image(sender, instance, **kwargs):
     # Pass false so modelfield so it doesnt save the model
     instance.image.delete(False)
     instance.filter_path.delete(False)
+
+@receiver(pre_save, sender=Images)
+def update_image(sender, instance, update_fields, **kwargs):
+    prev_instance = sender.objects.get(pk=instance.id)
+
+    try:
+        update_field = next(iter(update_fields))
+        if update_field == 'filter_path':
+            prev_instance.filter_path.delete()
+    except:
+        pass

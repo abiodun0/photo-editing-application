@@ -16,7 +16,7 @@ class UploadPanel extends React.Component{
     }
     render(){
         return(<div ref="progresszone" className="dropzone text-center">
-            <Dropzone ref="dropzone" className="drop" onDrop={this.onDrop.bind(this)} >
+            <Dropzone ref="dropzone" className="drop" onDrop={this.onDrop.bind(this)} accept="image/*">
             <div >
                     <h5>Click or drop your images here</h5>
                     <ProgressBar percentage={this.props.percentage || 0 } filename={this.props.filename || '' } preview={this.props.preview || ''} isUploading={this.props.isUploading || false}/>

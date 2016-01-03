@@ -107,7 +107,7 @@ class ImagesView(LoginRequiredMixin,View):
             image = apply_filter(image, image_json['current_filter'])
             image.current_filter = image_json['current_filter']
             image.filtered = image_json['filtered']
-            image.save()
+            image.save();
 
         response_json = json.dumps(image.to_json())
         return HttpResponse(response_json, content_type="application/json")

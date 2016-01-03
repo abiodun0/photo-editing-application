@@ -35,6 +35,8 @@ ImagesPanel.propTypes = {
 
     data: React.PropTypes.array.isRequired,
 
+    preview: React.PropTypes.string.isRequired,
+
     changeImage: React.PropTypes.func.isRequired,
     uploadImage: React.PropTypes.func.isRequired
 };
