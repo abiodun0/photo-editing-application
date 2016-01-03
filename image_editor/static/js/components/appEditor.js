@@ -1,45 +1,54 @@
 import React from 'react';
 import _ from 'lodash';
-import SearchableImage from './searchableimage';
-import EditableDiv from './editableDiv';
-import {data} from './data';
+import SearchableImage from './imagespanel';
+import EditableDiv from './editpanel';
 import request from 'superagent';
 import toastr from 'toastr';
+import 'superagent-django-csrf';
+const imageUrl = document.querySelector("meta[name='image_url']").getAttribute('content');
 
 
 export default class AppEditor extends React.Component{
-    constructor(props){
-        super(props);
-        this.url = document.querySelector("meta[name='image_url']").getAttribute('content');
-
+    constructor(){
+        super();
         this.state = {image:''};
     }
     componentWillMount() {
-            this.setState({data:''});
-            request.get(this.url)
+            this.setState({data:[],isLoading:true});
+            request.get(imageUrl)
             .set('Accept', 'application/json')
+            .on('progress',(e)=>{
+                console.log("progress", e);
+            })
             .end((err, res) => {
+                this.setState({isLoading:false})
                 if(!err) this.setState({data:res.body});
                 
             });
         }
-    updateImage(image){
-        request.put(this.url)
+    updateImage(image, filter=null){
+        this.setState({isLoading:true})
+        request.put(imageUrl)
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
             .send(image)
             .end((err, res) => {
-                console.log(res.body)
+                this.setState({isLoading:false})
+                console.log(res.text);
                 if(!err){
-
-                    toastr.info("Successfully updated " + image.title)
-                    this.editImage(res.body);
-                } 
-                
-            });
+                    if(filter){
+                         toastr.info("Successfully added " + filter.toLowerCase() + " to " + image.title,'',{closeButton: true})
+                     }
+                    else{
+                         toastr.info("Successfully updated " + image.title,'',{closeButton: true})
+                     }
+                     this.editImage(res.body);
+                 }
+             });
         }
     changeImage(image){
         this.setState({image: image});
+
       
     }
     editImage(image){
@@ -51,14 +60,16 @@ export default class AppEditor extends React.Component{
     }
 
     deleteImage(image){
-        request.del(this.url)
+        this.setState({isLoading:true});
+        request.del(imageUrl)
         .send(image)
         .end((err, res) => {
             if(!err){
             _.remove(this.state.data,(m)=>{
             return image.id == m.id;
         });
-            toastr.info("successfully removed " + image.title)
+            this.setState({isLoading:false});
+            toastr.info("successfully removed " + image.title,'',{closeButton: true})
             this.setState({image: ''});
 
             }
@@ -70,6 +81,10 @@ export default class AppEditor extends React.Component{
         this.forceUpdate();
     }
     render(){
+        let loadingDiv;
+        if(this.state.isLoading) {
+            loadingDiv = (<img src="https://raw.githubusercontent.com/BenBBear/ionic-cache-src/master/img/loader.gif" width="70" height="70" style={{marginLeft:'auto',marginRight: 'auto',display:'block',position:'absolute',top:-15+'px',left: 45+'%', right: 45 + '%'}}/>);
+        }
         return(
              <div className="row">
              <div className="col-sm-3">
@@ -77,6 +92,8 @@ export default class AppEditor extends React.Component{
              </div>
             <div className="col-sm-9">
                 <div className="edit-div">
+                    {loadingDiv}
+
                     <EditableDiv image={this.state.image} editImage={this.editImage.bind(this)} deleteImage={this.deleteImage.bind(this)}
                     updateImage={this.updateImage.bind(this)}
                     />
