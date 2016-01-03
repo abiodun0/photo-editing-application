@@ -6,11 +6,7 @@ import ImageDiv from './imagediv';
 class ImagesContainer extends React.Component{
 
     componentWillMount() {
-       this.setState({activeKey: 0,
-       isUploading: false,
-       percentage:1,
-       preview:'',
-       filename:''});
+       this.setState({activeKey: 0});
           
     }
     changeActiveKey(key,image){
@@ -22,7 +18,9 @@ class ImagesContainer extends React.Component{
     render(){
         let sections = [];
         let data = this.props.data;
-        let dropzone = (<UploadPanel  addImage={this.props.addImage.bind(this)} percentage={this.state.percentage || '100'} filename={this.state.filename} preview={this.state.preview} isUploading={this.state.isUploading}/>);
+        let dropzone = (<UploadPanel  uploadImage={this.props.uploadImage.bind(this)} 
+            percentage={this.props.percentage || 100} filename={this.props.filename} 
+            preview={this.props.preview} isUploading={this.props.isUploading}/>);
         if(data.length<1){
             return(
                 <div className="upload-img"> <div className="uploaded"> 
@@ -65,7 +63,7 @@ ImagesContainer.propTypes = {
     filterText: React.PropTypes.string.isRequired,
 
     changeImage: React.PropTypes.func.isRequired,
-    addImage: React.PropTypes.func.isRequired
+    uploadImage: React.PropTypes.func.isRequired
 };
 
 export default ImagesContainer;

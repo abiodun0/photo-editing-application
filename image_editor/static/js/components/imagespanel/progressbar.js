@@ -5,7 +5,7 @@ class ProgressBar extends React.Component {
         if(this.props.isUploading){
         return(
             <div className="progresszone">
-            <p>{this.props.filename}</p>
+            <p>Uploading {this.props.filename}...</p>
             <div className="row">
             <div className="col-sm-4">
              <img src={this.props.preview} />
