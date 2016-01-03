@@ -72,7 +72,7 @@ class ImageDiv extends React.Component{
             <button className={`${buttonClass} pull-sm-right`}><span className="mdi mdi-share-variant"></span></button>
             <button className={`${buttonClass} pull-sm-right`}><span className="mdi mdi-download"></span></button></div>
             <div className="edit text-center">
-            <img ref="filtedimage" src={this.props.image.picture? `/media/${picture}?${Math.random().toString(36).slice(2)}`:''} />
+            <img ref="filtedimage" src={this.props.image.picture? `/media/${picture}?${Math.random().toString(36).slice(2)}`:'/static/img/no_image_selected.gif'} />
             </div>
             </div>
             );
