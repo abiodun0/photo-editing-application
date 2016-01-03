@@ -42116,7 +42116,6 @@
 	    image: _react2.default.PropTypes.string.isRequired,
 	    filter: _react2.default.PropTypes.string.isRequired,
 	    className: _react2.default.PropTypes.string.isRequired,
-
 	    onClick: _react2.default.PropTypes.func.isRequired
 	};
 	exports.default = FilterImage;

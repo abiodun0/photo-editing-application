@@ -15,7 +15,6 @@ script:
 - coverage run --source="image_editor" image_editor/manage.py test image_editor
 after_success:
 - coveralls
-before_deploy: git fetch origin master --unshallow
 deploy:
   provider: heroku
   buildpack:

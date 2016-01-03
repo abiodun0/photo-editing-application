@@ -74,12 +74,11 @@ class LoginView(IndexView):
                 profile.save()
                 return self.authenticate(user,request)
 
-class ImagesView(View):
+class ImagesView(LoginRequiredMixin,View):
     form_class = ImageForm
     def get(self, request, *args, **kwargs):
         images = request.user.images.all()
-        images_dict = [image.to_json() for image in images]
-                
+        images_dict = [image.to_json() for image in images]               
         response_json = json.dumps(images_dict)
         return HttpResponse(response_json, content_type="application/json")
     def post(self, request, *args, **kwargs):
