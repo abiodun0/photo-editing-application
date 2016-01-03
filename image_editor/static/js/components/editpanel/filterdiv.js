@@ -19,7 +19,9 @@ class FilterDiv extends React.Component{
         var activeFilter = classNames({
                 'active': this.props.image.current_filter == filter
             });
-            return (<FilterImage filter={filter} image={`/media/${this.props.image.picture}`} className={`${activeFilter} ${filter}`} key={i} onClick={this.activateFilter.bind(this,filter)} />);
+            return (<FilterImage filter={filter} image={`/media/${this.props.image.picture}`} 
+                className={`${activeFilter} ${filter}`} key={i} 
+                onClick={this.activateFilter.bind(this,filter)} />);
         }
 
     render(){

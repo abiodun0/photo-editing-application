@@ -23,11 +23,13 @@ const ImageApi = {
     updateImage:function (image, filter){
             this.setState({isLoading:true});
             toastr.info("Updating "+ image.title +"...",null,{timeOut: 0, positionClass: "toast-top-center",});
+
             request.put(imageUrl)
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
             .send(image)
             .end((err, res) => {
+                toastr.clear();
                 this.setState({isLoading:false})
                 if(err) return console.log(res.text);
                 else{
@@ -38,7 +40,7 @@ const ImageApi = {
                          toastr.info("Successfully updated " + image.title,'',{closeButton: true})
                      }
                      this.editImage(res.body);
-                     toastr.clear();
+                     
                  }
              });
     },
@@ -48,12 +50,12 @@ const ImageApi = {
         request.del(imageUrl)
         .send(imageObj)
         .end((err, res) => {
+            toastr.clear();
             if(!err){
             _.remove(this.state.data,(m)=>{
             return imageObj.id == m.id;
         });
             this.setState({isLoading:false});
-            toastr.clear();
             toastr.info("successfully removed " + imageObj.title,'',{closeButton: true, positionClass: "toast-top-right"})
             this.setState({image: ''});
 
@@ -73,7 +75,6 @@ const ImageApi = {
             .attach("image", file, file.name)
             .set('Accept', 'application/json')
             .on('progress',(e)=>{
-                console.log(e.percent)
                 this.setState({percentage: e.percent,isUploading: true});
 
             })

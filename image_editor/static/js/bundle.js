@@ -26791,6 +26791,8 @@
 
 	    data: _react2.default.PropTypes.array.isRequired,
 
+	    preview: _react2.default.PropTypes.string.isRequired,
+
 	    changeImage: _react2.default.PropTypes.func.isRequired,
 	    uploadImage: _react2.default.PropTypes.func.isRequired
 	};
@@ -40010,7 +40012,7 @@
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'edit text-center' },
-	                    _react2.default.createElement('img', { ref: 'filtedimage', src: this.props.image.picture ? '/media/' + picture + '?' + Math.random().toString(36).slice(2) : '/static/img/no_image_selected.gif' })
+	                    _react2.default.createElement('img', { ref: 'filtedimage', src: this.props.image.picture ? '/media/' + picture : '/static/img/no_image_selected.gif' })
 	                )
 	            );
 	        }
@@ -40096,7 +40098,9 @@
 	            var activeFilter = (0, _classnames2.default)({
 	                'active': this.props.image.current_filter == filter
 	            });
-	            return _react2.default.createElement(_filterimage2.default, { filter: filter, image: '/media/' + this.props.image.picture, className: activeFilter + ' ' + filter, key: i, onClick: this.activateFilter.bind(this, filter) });
+	            return _react2.default.createElement(_filterimage2.default, { filter: filter, image: '/media/' + this.props.image.picture,
+	                className: activeFilter + ' ' + filter, key: i,
+	                onClick: this.activateFilter.bind(this, filter) });
 	        }
 	    }, {
 	        key: 'render',
@@ -42165,7 +42169,9 @@
 
 	        this.setState({ isLoading: true });
 	        _toastr2.default.info("Updating " + image.title + "...", null, { timeOut: 0, positionClass: "toast-top-center" });
+
 	        _superagent2.default.put(imageUrl).set('Accept', 'application/json').set('Content-Type', 'application/json').send(image).end(function (err, res) {
+	            _toastr2.default.clear();
 	            _this.setState({ isLoading: false });
 	            if (err) return console.log(res.text);else {
 	                if (filter) {
@@ -42174,7 +42180,6 @@
 	                    _toastr2.default.info("Successfully updated " + image.title, '', { closeButton: true });
 	                }
 	                _this.editImage(res.body);
-	                _toastr2.default.clear();
 	            }
 	        });
 	    },
@@ -42184,12 +42189,12 @@
 	        _toastr2.default.error("Deleting " + imageObj.title + "...", null, { timeOut: 0, positionClass: "toast-top-center" });
 	        this.setState({ isLoading: true });
 	        _superagent2.default.del(imageUrl).send(imageObj).end(function (err, res) {
+	            _toastr2.default.clear();
 	            if (!err) {
 	                _lodash2.default.remove(_this2.state.data, function (m) {
 	                    return imageObj.id == m.id;
 	                });
 	                _this2.setState({ isLoading: false });
-	                _toastr2.default.clear();
 	                _toastr2.default.info("successfully removed " + imageObj.title, '', { closeButton: true, positionClass: "toast-top-right" });
 	                _this2.setState({ image: '' });
 	            }
@@ -42206,7 +42211,6 @@
 	                _this3.setState({ preview: e.target.result });
 	            };
 	            _superagent2.default.post(imageUrl).attach("image", file, file.name).set('Accept', 'application/json').on('progress', function (e) {
-	                console.log(e.percent);
 	                _this3.setState({ percentage: e.percent, isUploading: true });
 	            }).end(function (err, res) {
 	                _this3.setState({ isUploading: false });

@@ -70,7 +70,7 @@ class ImageDiv extends React.Component{
 
 
     render(){
-        var buttonClass = classNames({
+        let buttonClass = classNames({
                 'btn':true,
                 'disabled': !_.isObject(this.props.image)
             });
@@ -101,7 +101,7 @@ class ImageDiv extends React.Component{
             <button className={`${buttonClass} pull-sm-right`} onClick={_.isObject(this.props.image)? this.shareImage.bind(this): ''}><span className="mdi mdi-share-variant"></span></button>
             <button className={`${buttonClass} pull-sm-right`}><span className="mdi mdi-download"></span></button></div>
             <div className="edit text-center">
-            <img ref="filtedimage" src={this.props.image.picture? `/media/${picture}?${Math.random().toString(36).slice(2)}`:'/static/img/no_image_selected.gif'} />
+            <img ref="filtedimage" src={this.props.image.picture? `/media/${picture}`:'/static/img/no_image_selected.gif'} />
             </div>
             </div>
             );
