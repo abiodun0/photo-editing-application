@@ -22,10 +22,15 @@ deploy:
     - python
   api_key:
     secure: a371W2LJ2EJWk2/XOiWEl7VZBdviaqQ58va3hmqZvrMX4QLDXwvvtmtSJZCOnb73aS3TXVRsV91CzXvuRBPTVxIS+BnDrdhlNFWn0iDFPCR1Yv6uFVGgGOo+gAJy6d4FXuLnZRx3aX3KxcBWd6yHWxNjQ96rxiSs2G+ZdlCGC6K5db5KAXBt/6R2eJY3t7l0mb2Ad93wUX/3RUlUqbcc34LL9oAnad3g5BgoXlw8yzu1LKDL+73cs0k48l9miib0GSfnBQbRKa9I2btfHaNWpuFU8GLSOjuRf4AjfpgQ6HNkxh26yuRvIZlBwy7akdF1OiaD45qohdr5AidTDX7vTBhIQqMk3cRhngmmZ1edyhNnQXxEUEnl2D1dURWGoPM2bVdScXzQmJxV31FXPZ/uCLM8w85YvPmmmj2VCT2Pl1d3KE+3ClPT0/1iNIMmojPZD66FQhcHkR8LOH9M7JQx/LlOAUlIWnavfFR32w0lVj9CO2l1JXh45hv0UoDLyu/3aP6A1CelR2eWveV/izFFCQ4dJF/JwUCNjXvYEN106tGgEWsjjKvFOFTr81JOJZ37GXp2PNFCZzp8pZnyYX1NOjjn3ozrQBWJABBxGCN0iSwVBML0aqgT8AIeGMCJvKy20Cxq+3K+BodN5D4oyORq9ZRMD+76YrOdEsFTpbgs1OU=
-  skip_cleanup: true
-  strategy: git
   app: imageditor
   on:
     repo: andela-ashuaib/photo-editing-application
     branch: master
-
+  run:
+    - "export DJANGO_SETTINGS_MODULE=image_editor.settings.production"
+    - "python image_editor/manage.py collectstatic --noinput"
+    - "python image_editor/manage.py makemigrations"
+    - "python image_editor/manage.py migrate"
+    - "python image_editor/manage.py syncdb --noinput"
+  after_deploy:
+    - "heroku ps:scale web=1 --app django-bucketlist"

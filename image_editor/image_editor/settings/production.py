@@ -9,7 +9,6 @@ DATABASES = {
     'default': dj_database_url.config()
 }
 
-BOWER_PATH = '/app/node_modules/bower'
 
 # Enable Persistent Connections
 DATABASES['default']['CONN_MAX_AGE'] = 500
