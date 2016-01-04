@@ -24,4 +24,3 @@ def apply_filter(image,filters):
     image.filter_path.save('%s_filter.%s'%(os.path.splitext(suf.name)[0],image_type), suf,save=False)
     image.save(update_fields=['filter_path'])
     return image
-
