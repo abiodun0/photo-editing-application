@@ -30949,7 +30949,6 @@
 	    _createClass(ProgressBar, [{
 	        key: "render",
 	        value: function render() {
-	            console.log(this.props.preview);
 	            if (this.props.isUploading) {
 	                return _react2.default.createElement(
 	                    "div",
@@ -39834,6 +39833,10 @@
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
+	var _FacebookApi = __webpack_require__(294);
+
+	var _FacebookApi2 = _interopRequireDefault(_FacebookApi);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -39857,23 +39860,7 @@
 	        key: 'componentWillMount',
 	        value: function componentWillMount() {
 	            this.setState({ editMode: false });
-	            window.fbAsyncInit = function () {
-	                FB.init({
-	                    appId: fbId,
-	                    xfbml: true,
-	                    version: 'v2.5'
-	                });
-	            };
-	            (function (d, s, id) {
-	                var js,
-	                    fjs = d.getElementsByTagName(s)[0];
-	                if (d.getElementById(id)) {
-	                    return;
-	                }
-	                js = d.createElement(s);js.id = id;
-	                js.src = "//connect.facebook.net/en_US/sdk.js";
-	                fjs.parentNode.insertBefore(js, fjs);
-	            })(document, 'script', 'facebook-jssdk');
+	            _FacebookApi2.default.init();
 	        }
 	    }, {
 	        key: 'componentWillUpdate',
@@ -39917,18 +39904,7 @@
 	    }, {
 	        key: 'shareImage',
 	        value: function shareImage() {
-
-	            FB.ui({
-	                method: 'feed',
-	                name: 'I just edited ' + this.props.image.title + ' on image editor',
-	                display: 'popup',
-	                link: window.location.protocol + '//' + window.location.host,
-	                caption: 'Image editor is your instagram on web',
-	                picture: this.refs.filtedimage.src,
-	                description: "I just updated my image"
-	            }, function (res) {
-	                console.log(res);
-	            });
+	            _FacebookApi2.default.share(this.props.image, this.refs.filteredimage.src);
 	        }
 	    }, {
 	        key: 'render',
@@ -40012,7 +39988,7 @@
 	                _react2.default.createElement(
 	                    'div',
 	                    { className: 'edit text-center' },
-	                    _react2.default.createElement('img', { ref: 'filtedimage', src: this.props.image.picture ? '/media/' + picture : '/static/img/no_image_selected.gif' })
+	                    _react2.default.createElement('img', { ref: 'filteredimage', src: this.props.image.picture ? '/media/' + picture : '/static/img/no_image_selected.gif' })
 	                )
 	            );
 	        }
@@ -42214,7 +42190,6 @@
 	                _this3.setState({ percentage: e.percent, isUploading: true });
 	            }).end(function (err, res) {
 	                _this3.setState({ isUploading: false });
-	                console.log(res.text);
 	                if (err) {
 	                    return _toastr2.default.error(res.body, 'unable to upload ' + file.name, { closeButton: true });
 	                }
@@ -42226,6 +42201,56 @@
 	    }
 	};
 	exports.default = ImageApi;
+
+/***/ },
+/* 294 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var fbId = document.querySelector("meta[name='fb-id']").getAttribute('content');
+
+	var FaceBookApi = {
+
+	    init: function init() {
+	        window.fbAsyncInit = function () {
+	            FB.init({
+	                appId: fbId,
+	                xfbml: true,
+	                version: 'v2.5'
+	            });
+	        };
+	        (function (d, s, id) {
+	            var js,
+	                fjs = d.getElementsByTagName(s)[0];
+	            if (d.getElementById(id)) {
+	                return;
+	            }
+	            js = d.createElement(s);js.id = id;
+	            js.src = "//connect.facebook.net/en_US/sdk.js";
+	            fjs.parentNode.insertBefore(js, fjs);
+	        })(document, 'script', 'facebook-jssdk');
+	    },
+	    share: function share(image, source) {
+	        FB.ui({
+	            method: 'feed',
+	            name: 'I just edited ' + image.title + ' on image editor',
+	            display: 'popup',
+	            link: window.location.protocol + '//' + window.location.host,
+	            caption: 'Image editor is your instagram on web',
+	            picture: source,
+	            description: "I just updated my image"
+	        }, function (res) {
+	            console.log(res);
+	        });
+	    }
+
+	};
+	exports.default = FaceBookApi;
 
 /***/ }
 /******/ ]);
