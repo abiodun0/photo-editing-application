@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import pre_delete, pre_save
 from django.dispatch import receiver
-from userprofile.overwrite_storage import OverwriteStorage
 
 
 # Create your models here.

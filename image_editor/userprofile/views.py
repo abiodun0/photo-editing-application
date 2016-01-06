@@ -84,6 +84,7 @@ class ImagesView(LoginRequiredMixin,View):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST, request.FILES)
         #set the maximum upload file size to 10MB
+        
         if form.files['image'].size > 10485760:
             return json_response(data="file too large", status=500)
         image = form.save(commit=False)
