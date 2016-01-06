@@ -9,7 +9,7 @@ class ImageDiv extends React.Component{
     componentWillMount() {
         this.setState({editMode: false});
         FaceBookApi.init();
-          }
+        }
     componentWillUpdate(nextProps, nextState) {
         if(this.props.image.picture !== nextProps.image.picture){
             if(this.state.editMode) this.props.updateImage(this.props.image);

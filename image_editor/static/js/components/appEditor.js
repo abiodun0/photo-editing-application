@@ -7,6 +7,7 @@ import EditableDiv from './editpanel';
 
 
 export default class AppEditor extends React.Component{
+
     constructor(){
         super();
         this.state = {image:'',
@@ -15,19 +16,22 @@ export default class AppEditor extends React.Component{
            preview:'',
            filename:''};
     }
+
     componentWillMount() {
         ImageApi.getAllImages((object)=>{
                 this.setState(object)
             });
         }
+
     updateImage(image, filter=null){
         ImageApi.updateImage.call(this,image, filter);
         }
+
+    
     changeImage(image){
         this.setState({image: image});
-
-      
     }
+
     editImage(image){
         let index = _.findIndex(this.state.data, (img) => {
             return img.id == image.id;
@@ -40,15 +44,16 @@ export default class AppEditor extends React.Component{
         ImageApi.deleteImage.call(this, image);
 
     }
+
     uploadImage(files){
         ImageApi.uploadImage.call(this, files);
-
     }
 
     addImage(image){
         this.state.data.unshift(image);
         this.forceUpdate();
     }
+    
     render(){
         let loadingDiv;
         if(this.state.isLoading) {
@@ -59,8 +64,8 @@ export default class AppEditor extends React.Component{
              <div className="col-sm-3">
              <ImagesPanel data={this.state.data} uploadImage={this.uploadImage.bind(this)}
              filename={this.state.filename}
-             preview={this.state.preview} isUploading={this.state.isUploading} percentage={this.state.percentage}
-
+             preview={this.state.preview} isUploading={this.state.isUploading} 
+             percentage={this.state.percentage}
              changeImage={this.changeImage.bind(this)}/>
              </div>
             <div className="col-sm-9">

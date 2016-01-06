@@ -160,22 +160,26 @@ body{
   -o-filter: blur(1px);
   -ms-filter: blur(1px);
   -webkit-filter: blur(1px);
+  filter: blur(1px);
 }
 .CONTOUR{
   -moz-filter: brightness(1.5) grayscale(90%);
   -o-filter: brightness(1.5) grayscale(90%);
   -ms-filter: brightness(1.5) grayscale(90%);
   -webkit-filter: brightness(1.5) grayscale(90%);
+ filter: brightness(1.5) grayscale(90%);
 }
 .DETAIL{
     -moz-filter: saturate(200%);
   -o-filter: saturate(200%);
   -ms-filter: saturate(200%);
+ filter: saturate(200%);
 }
 .EMBOSS{
      -webkit-filter: contrast(800%) grayscale(100%);
     -moz-filter: contrast(800%) grayscale(100%);
     -ms-filter: contrast(800%) grayscale(100%);
+     filter: contrast(800%) grayscale(100%);
 }
 .slider button,.slider button:hover,.slider button:before, .slider button:after{
   background-color:#ccc;
