@@ -8,9 +8,9 @@ import json
 
 from django.core.files import File
 from django.core.urlresolvers import reverse
-from userprofile.models import UserProfile, Images
-from userprofile.views import ImagesView, DashBoardView,IndexView
-from userprofile.tests.test_authentication import UserSetupClass
+from imageditor.models import UserProfile, Images
+from imageditor.views import ImagesView, DashBoardView,IndexView
+from imageditor.tests.test_authentication import UserSetupClass
 
 
 class UserImagesTest(UserSetupClass):

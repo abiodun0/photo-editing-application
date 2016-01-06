@@ -12,7 +12,7 @@ install:
 script:
 - bower install --settings=image_editor.settings.test
 - python image_editor/manage.py collectstatic --noinput --settings=image_editor.settings.test
-- coverage run --source="image_editor" image_editor/manage.py test image_editor
+- coverage run --source="imageditor" image_editor/manage.py test image_editor
 after_success:
 - coveralls
 deploy:

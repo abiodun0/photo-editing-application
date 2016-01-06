@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'userprofile',
+    'imageditor',
     'useful',
 ]
 
@@ -74,7 +74,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'userprofile.context_processor.fb_id',
+                'imageditor.context_processor.fb_id',
             ],
         },
     },

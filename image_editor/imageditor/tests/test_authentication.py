@@ -3,7 +3,7 @@ from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.test import TestCase, RequestFactory
 from django.core.urlresolvers import reverse
-from userprofile.models import UserProfile
+from imageditor.models import UserProfile
 
 
 class UserSetupClass(TestCase):

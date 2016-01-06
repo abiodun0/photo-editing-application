@@ -8,9 +8,9 @@ from django.contrib.auth import authenticate, login
 from django.template import RequestContext, loader
 from django.views.generic import TemplateView,View
 from django.contrib.auth.models import User
-from userprofile.models import UserProfile, Images
-from userprofile.forms import ImageForm
-from userprofile.filter import apply_filter
+from imageditor.models import UserProfile, Images
+from imageditor.forms import ImageForm
+from imageditor.filter import apply_filter
 
 # Create your views here.
 
