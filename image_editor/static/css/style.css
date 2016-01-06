@@ -187,6 +187,11 @@ body{
 
 }
 .slick-prev.slick-disabled:before, .slick-next.slick-disabled:before { opacity:1 }
+button.btn a{
+  text-transform:none;
+  text-decoration: none;
+  color:inherit;
+}
 
 
 

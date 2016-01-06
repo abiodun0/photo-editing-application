@@ -31,7 +31,6 @@ const FaceBookApi = {
                 picture: source,
                 description: "I just updated my image",
             }, (res) =>{
-                console.log(res);
             });
         }
 
