@@ -40251,7 +40251,7 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var filters = ['BLUR', 'CONTOUR', 'DETAIL', 'EDGE_ENHANCE', 'EDGE_ENHANCE_MORE', 'EMBOSS', 'FIND_EDGES', 'SMOOTH'];
+	            var filters = document.querySelector("meta[name='filters']").getAttribute('content').split(",");
 	            var settings = {
 	                className: 'slider',
 	                infinite: false,
