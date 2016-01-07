@@ -22,10 +22,8 @@ deployment:
     branch: master
     commands:
       - git fetch origin --unshallow
-      - heroku run bower install --app imageditor
-      - heroku run webpack -p --app imageditor
       - git push -f git@heroku.com:imageditor.git $CIRCLE_SHA1:refs/heads/master
-      - heroku run python image_editor/manage.py collectstatic --noinput --settings=image_editor.settings.production --app imageditor
+      - heroku run python image_editor/manage.py collectstatic --noinput --app imageditor
       - heroku run python image_editor/manage.py makemigrations --settings=image_editor.settings.production --app imageditor
       - heroku run python image_editor/manage.py migrate --settings=image_editor.settings.production --app imageditor
       - heroku ps:scale web=1 --app imageditor
