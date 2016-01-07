@@ -19,7 +19,7 @@ test:
     - coveralls
 deployment:
   staging:
-    branch: develop
+    branch: master
     commands:
       - git fetch origin --unshallow
       - git push -f git@heroku.com:imageditor.git $CIRCLE_SHA1:refs/heads/master
