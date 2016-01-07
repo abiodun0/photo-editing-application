@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import _ from 'lodash';
-import FaceBookApi from './../api/FacebookApi';
+import FaceBookApi from './../api/facebookApi';
 const fbId = document.querySelector("meta[name='fb-id']").getAttribute('content');
 
 class ImageDiv extends React.Component{
