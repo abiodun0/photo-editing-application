@@ -7,6 +7,7 @@ __pycache__/
 staticfiles/
 # Distribution / packaging
 .Python
+bundle.js
 env/
 build/
 develop-eggs/

@@ -1,7 +1,6 @@
 """ Tests for authentication"""
-from django.test import TestCase, Client
 from django.contrib.auth.models import User
-from django.test import TestCase, RequestFactory
+from django.test import TestCase, RequestFactory, Client
 from django.core.urlresolvers import reverse
 from imageditor.models import UserProfile
 

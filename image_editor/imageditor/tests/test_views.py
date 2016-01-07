@@ -55,7 +55,7 @@ class UserImagesTest(UserSetupClass):
         url = reverse('images')
         json_data = json.dumps({
             'title': 'image',
-            'current_filter': 'BLUR',
+            'current_filter': 'grayscale',
             'filtered': True,
             'id': 1,
         })
@@ -84,7 +84,7 @@ class UserImagesTest(UserSetupClass):
         url = reverse('images')
         json_data = json.dumps({
             'title': 'image',
-            'current_filter': 'BLUR',
+            'current_filter': 'blur',
             'filtered': False,
             'id': 1,
         })

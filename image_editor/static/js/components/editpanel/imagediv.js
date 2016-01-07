@@ -37,7 +37,6 @@ class ImageDiv extends React.Component{
         if(!confirm("are you sure you want to reset the filters")) return;
         let image_copy = _.clone(this.props.image);
         image_copy['filtered'] = false;
-        console.log(image_copy)
         this.props.updateImage(image_copy);
     }
     shareImage(){
@@ -76,7 +75,11 @@ class ImageDiv extends React.Component{
             <button className={buttonClass} onClick={_.isObject(this.props.image)? this.resetImage.bind(this): ''}><span className="mdi mdi-backup-restore"></span></button>
 
             <button className={`${buttonClass} pull-sm-right`} onClick={_.isObject(this.props.image)? this.shareImage.bind(this): ''}><span className="mdi mdi-share-variant"></span></button>
-            <button className={`${buttonClass} pull-sm-right`}><span className="mdi mdi-download"></span></button></div>
+            <button className={`${buttonClass} pull-sm-right`}>
+            <a href={this.props.image.picture? `/media/${picture}`:'#'} download={this.props.image.title}>
+            <span className="mdi mdi-download">
+            </span></a>
+            </button></div>
             <div className="edit text-center">
             <img ref="filteredimage" src={this.props.image.picture? `/media/${picture}`:'/static/img/no_image_selected.gif'} />
             </div>

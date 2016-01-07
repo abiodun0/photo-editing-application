@@ -7,8 +7,9 @@ from django.dispatch import receiver
 
 # Create your models here.
 class UserProfile(models.Model):
+    """User profile model that has a one on one relationship with the User"""
 
-    user = models.OneToOneField(User,related_name="profile")
+    user = models.OneToOneField(User, related_name="profile")
     social_id = models.CharField(max_length=200, null=True)
     image = models.CharField(max_length=200, null=True)
 
@@ -19,40 +20,47 @@ User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 
 
 class Images(models.Model):
-    owner = models.ForeignKey(User,related_name="images")
+    owner = models.ForeignKey(User, related_name="images")
     image = models.ImageField(upload_to='uploads/')
     title = models.CharField(max_length=100, null=True)
     filtered = models.BooleanField(default=False)
-    current_filter = models.CharField(max_length=100, null=True,blank=True,default='')
-    filter_path = models.ImageField(upload_to='filtered/', null=True, default=None)
+    current_filter = models.CharField(max_length=100,
+                                      null=True, blank=True, default='')
+    filter_path = models.ImageField(upload_to='filtered/',
+                                    null=True, default=None)
     date_created = models.DateTimeField(
         auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
 
     def to_json(self):
         json_items = {
-        'id': self.id,
-        'title': self.title,
-        'picture': str(self.image),
-        'date_created': str(self.date_created),
-        'date_modified': str(self.date_modified),
-        'current_filter':self.current_filter,
-        'filter_path':str(self.filter_path),
-        'filtered': self.filtered
-        }
+                        'id': self.id,
+                        'title': self.title,
+                        'picture': str(self.image),
+                        'date_created': str(self.date_created),
+                        'date_modified': str(self.date_modified),
+                        'current_filter': self.current_filter,
+                        'filter_path': str(self.filter_path),
+                        'filtered': self.filtered
+                        }
         return json_items
+
     class Meta:
         ordering = ['-date_modified']
 
+
 @receiver(pre_delete, sender=Images)
 def delete_image(sender, instance, **kwargs):
-    # Pass false so modelfield so it doesnt save the model
+    """Deletes image after image model is deleted"""
     instance.image.delete(False)
     instance.filter_path.delete(False)
 
+
 @receiver(pre_save, sender=Images)
 def update_image(sender, instance, update_fields, **kwargs):
+    """Deletes image after image filter is changed"""
     try:
+        # checks if the image exist
         prev_instance = sender.objects.get(pk=instance.id)
     except:
         pass
