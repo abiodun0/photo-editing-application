@@ -155,31 +155,76 @@ body{
 .slick-next{
   right:20px;
 }
-.BLUR{
+.blur{
   -moz-filter: blur(1px);
   -o-filter: blur(1px);
   -ms-filter: blur(1px);
   -webkit-filter: blur(1px);
   filter: blur(1px);
 }
-.CONTOUR{
+.contour{
   -moz-filter: brightness(1.5) grayscale(90%);
   -o-filter: brightness(1.5) grayscale(90%);
   -ms-filter: brightness(1.5) grayscale(90%);
   -webkit-filter: brightness(1.5) grayscale(90%);
  filter: brightness(1.5) grayscale(90%);
 }
-.DETAIL{
+.brighten{
+  -moz-filter: brightness(1.5);
+  -o-filter: brightness(1.5);
+  -ms-filter: brightness(1.5);
+  -webkit-filter: brightness(1.5);
+ filter: brightness(1.5);
+}
+.darken{
+  -moz-filter: brightness(0.5);
+  -o-filter: brightness(0.5);
+  -ms-filter: brightness(0.5);
+  -webkit-filter: brightness(0.5);
+ filter: brightness(0.5);
+}
+
+.invert{
+  -moz-filter: invert();
+  -o-filter: invert();
+  -ms-filter: invert();
+  -webkit-filter: invert();
+ filter: invert();
+}
+
+.detail{
     -moz-filter: saturate(200%);
   -o-filter: saturate(200%);
   -ms-filter: saturate(200%);
  filter: saturate(200%);
 }
-.EMBOSS{
+.invert{
      -webkit-filter: contrast(800%) grayscale(100%);
     -moz-filter: contrast(800%) grayscale(100%);
     -ms-filter: contrast(800%) grayscale(100%);
      filter: contrast(800%) grayscale(100%);
+}
+.grayscale{
+    -moz-filter:  grayscale(90%);
+  -o-filter:grayscale(90%);
+  -ms-filter: grayscale(90%);
+  -webkit-filter:grayscale(90%);
+  filter: grayscale(90%);
+
+}
+.mirror img{
+  -moz-transform: scaleX(-1);
+  -o-transform: scaleX(-1);
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+
+}
+.flip img{
+  -moz-transform: scaleY(-1);
+  -o-transform: scaleY(-1);
+  -webkit-transform: scaleY(-1);
+  transform: scaleY(-1);
+
 }
 .slider button,.slider button:hover,.slider button:before, .slider button:after{
   background-color:#ccc;
