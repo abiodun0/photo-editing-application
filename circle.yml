@@ -9,10 +9,11 @@ dependencies:
     - pip install -r requirements.txt
     - npm install
     - npm install bower
+    - npm install webpack
 test:
   override:
-    - bower install
-    - webpack -p
+    - bower install --settings=image_editor.settings.test
+    - webpack -p --settings=image_editor.settings.test
     - python image_editor/manage.py collectstatic --noinput --settings=image_editor.settings.test
     - coverage run --source=imageditor image_editor/manage.py test image_editor --settings=image_editor.settings.test
   post:
@@ -21,10 +22,6 @@ deployment:
   staging:
     branch: master
     commands:
-      - npm install
-      - bower install
-      - npm install webpack
-      - webpack -p
       - git fetch origin --unshallow
       - git push -f git@heroku.com:imageditor.git $CIRCLE_SHA1:master
       - heroku run python image_editor/manage.py collectstatic --noinput --app imageditor
