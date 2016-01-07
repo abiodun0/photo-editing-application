@@ -8,9 +8,10 @@ install:
 - pip install --upgrade virtualenv
 - pip install -r requirements.txt
 - pip install coveralls
-- npm install bower
+- npm install 
 script:
-- bower install --settings=image_editor.settings.test
+- bower install
+- wepback
 - python image_editor/manage.py collectstatic --noinput --settings=image_editor.settings.test
 - coverage run --source="imageditor" image_editor/manage.py test image_editor
 after_success:
@@ -28,5 +29,6 @@ deploy:
     branch: master
   run:
     - "export DJANGO_SETTINGS_MODULE=image_editor.settings.production"
+    - "python image_editor/manage.py collectstatic --noinput"
   after_deploy:
     - "heroku ps:scale web=1 --app django-bucketlist"
