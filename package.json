@@ -10,6 +10,7 @@
     "bower": "^1.7.1",
     "classnames": "^2.2.1",
     "extract-text-webpack-plugin": "^0.9.1",
+    "jquery": "^2.1.4",
     "jsx-loader": "^0.13.2",
     "less-loader": "^2.2.2",
     "lodash": "^3.10.1",
