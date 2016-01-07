@@ -1,7 +1,7 @@
 module.exports = {
-  entry: './image_editor/static/js/app_dashboard.js',
+  entry: 'staticfiles/js/app_dashboard.js',
   output: {
-    path: 'image_editor/static/js/',
+    path: 'staticfiles/js/',
     filename: 'bundle.js'       
   },
   module: {

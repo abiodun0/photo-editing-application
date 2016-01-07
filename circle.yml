@@ -23,7 +23,7 @@ deployment:
     commands:
       - npm install
       - bower install
-      - npm install webpack --save
+      - npm install webpack
       - webpack -p
       - git fetch origin --unshallow
       - git push -f git@heroku.com:imageditor.git $CIRCLE_SHA1:master
