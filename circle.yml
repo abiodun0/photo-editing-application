@@ -11,6 +11,8 @@ dependencies:
     - npm install
     - npm install bower
     - npm install webpack
+    - bower install
+    - webpack -p
 test:
   override:
     - bower install 
