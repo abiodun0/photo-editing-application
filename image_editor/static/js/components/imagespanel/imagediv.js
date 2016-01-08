@@ -19,7 +19,7 @@ class ImageDiv extends React.Component{
                 <div className={activeUpload} onClick={this.handleChange.bind(this)}>
                 <div className="media">
                     <a className="media-left" href="#" >
-                    <img className="media-object" src={`/media/${this.props.image.picture}`} alt="Generic placeholder image" width="150" height="150"/>
+                    <img className="media-object" src={`/media/${this.props.image.thumbnail}`} alt="Generic placeholder image" width="100" height="100"/>
                     </a>
                     <div className="media-body">
                         <p className="media-heading">{this.props.image.title}

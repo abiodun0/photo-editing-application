@@ -1,7 +1,8 @@
-from PIL import ImageFilter, ImageOps, ImageEnhance
+from PIL import ImageFilter, ImageOps, ImageEnhance, Image
 
 
 class FilterClass(object):
+    THUMBNAIL_SIZE = (100, 100)
 
     def __init__(self, image):
         self.image = image
@@ -30,6 +31,9 @@ class FilterClass(object):
     def darken(self):
         darken = ImageEnhance.Brightness(self.image)
         return darken.enhance(0.5)
+
+    def thumbnail(self):
+        return self.image.thumbnail(self.THUMBNAIL_SIZE, Image.ANTIALIAS)
 
     def brighten(self):
         enhancer = ImageEnhance.Brightness(self.image)

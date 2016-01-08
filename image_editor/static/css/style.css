@@ -184,13 +184,14 @@ body{
  filter: brightness(0.5);
 }
 
-.invert{
-  -moz-filter: invert();
-  -o-filter: invert();
-  -ms-filter: invert();
-  -webkit-filter: invert();
- filter: invert();
+.invert img{
+  -moz-filter: invert(90%);
+  -o-filter: invert(90%);
+  -ms-filter: invert(90%);
+  -webkit-filter: invert(90%);
+ filter: invert(90%)
 }
+
 
 .detail{
     -moz-filter: saturate(200%);

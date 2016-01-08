@@ -2,21 +2,23 @@
 __pycache__/
 *.py[cod]
 
+
 # C extensions
 *.so
 staticfiles/
 # Distribution / packaging
 .Python
+.DS_Store
 env/
 build/
 develop-eggs/
-lib/
 dist/
 downloads/
 node_modules/
 eggs/
 media/
 .eggs/
+lib/
 lib64/
 parts/
 sdist/
@@ -68,25 +70,10 @@ venv/
 # Ide environment
 *.idea/
 
-# media files
-codango/media
-*.pdf
+
 
 # environment variables
 .env.yml
 
 # sqldatabase
 codango/mydatabase
-
-# db data
-codango/db-data.json
-codango/codangodb-backup.json
-codango/celerybeat-schedule
-
-# mac file
-.DS_Store
-
-# codango miscellaneous
-codango/bin
-codango/lib
-codango/include

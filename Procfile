@@ -1,1 +1,1 @@
-web: gunicorn image_editor.wsgi --pythonpath=image_editor --log-file -
+web: python image_editor/manage.py collectstatic --noinput --settings=image_editor.settings.production --verbosity 0; gunicorn image_editor.wsgi --pythonpath=image_editor --log-file -

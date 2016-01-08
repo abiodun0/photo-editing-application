@@ -1,7 +1,7 @@
 module.exports = {
   entry: './image_editor/static/js/app_dashboard.js',
   output: {
-    path: 'image_editor/static/js/',
+    path: './image_editor/static/js/',
     filename: 'bundle.js'       
   },
   module: {
@@ -9,6 +9,7 @@ module.exports = {
     {
             test: /\.jsx?$/,
             loader: 'babel',
+            exclude: /(node_modules|bower_components)/,
             query:
             {
                 presets:['es2015', 'react']
