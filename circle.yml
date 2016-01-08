@@ -12,8 +12,8 @@ dependencies:
     - npm install webpack
 test:
   override:
-    - bower install --settings=image_editor.settings.test
-    - webpack -p --settings=image_editor.settings.test
+    - bower install 
+    - webpack -p
     - python image_editor/manage.py collectstatic --noinput --settings=image_editor.settings.test
     - coverage run --source=imageditor image_editor/manage.py test image_editor --settings=image_editor.settings.test
   post:
