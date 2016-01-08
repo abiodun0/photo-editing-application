@@ -7,11 +7,10 @@ __pycache__/
 staticfiles/
 # Distribution / packaging
 .Python
-bundle.js
+
 env/
 build/
 develop-eggs/
-lib/
 dist/
 downloads/
 node_modules/
