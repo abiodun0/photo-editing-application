@@ -1,4 +1,4 @@
-#Django Powered Photo Editing Application [![Build Status](https://travis-ci.org/andela-ashuaib/photo-editing-application.svg?branch=feature-configuration-setup)](https://travis-ci.org/andela-ashuaib/photo-editing-application) [![Coverage Status](https://coveralls.io/repos/andela-ashuaib/photo-editing-application/badge.svg?branch=master&service=github)](https://coveralls.io/github/andela-ashuaib/photo-editing-application?branch=master)
+#Django Powered Photo Editing Application [![Circle CI](https://circleci.com/gh/andela-ashuaib/photo-editing-application/tree/master.svg?style=svg)](https://circleci.com/gh/andela-ashuaib/photo-editing-application/tree/master) [![Coverage Status](https://coveralls.io/repos/andela-ashuaib/photo-editing-application/badge.svg?branch=master&service=github)](https://coveralls.io/github/andela-ashuaib/photo-editing-application?branch=master)
 
 ### Challenge
 Build an image editing app powered by Django
