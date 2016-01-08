@@ -1,4 +1,5 @@
 import os
+from time import time
 from cStringIO import StringIO
 from django.core.files.uploadedfile import SimpleUploadedFile
 from PIL import Image
@@ -27,7 +28,8 @@ def apply_filter(image, filters):
                              temp_handle.read(),
                              content_type='image/%s' % (image_type))
 
-    image.filter_path.save('%s_filter.%s' % (os.path.splitext(suf.name)[0],
-                                             image_type), suf, save=False)
+    image.filter_path.save('%s_filter_%s.%s' %
+                           (os.path.splitext(suf.name)[0],
+                            int(time()*1000), image_type), suf, save=False)
 
     return image

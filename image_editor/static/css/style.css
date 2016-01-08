@@ -124,7 +124,7 @@ body{
   background-color:white;
 }
 .slider .slick-slide{
-  width:250px;
+  width:170px;
 }
 .slider div{
   cursor:pointer;
@@ -221,6 +221,8 @@ body{
 
 }
 .flip img{
+  padding-bottom:10px;
+  padding-top:0px;
   -moz-transform: scaleY(-1);
   -o-transform: scaleY(-1);
   -webkit-transform: scaleY(-1);
