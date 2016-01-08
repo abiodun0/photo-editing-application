@@ -26,10 +26,10 @@ deployment:
     commands:
       - git fetch origin --unshallow
       - git push -f git@heroku.com:imageditor.git $CIRCLE_SHA1:master
-      - npm install
-      - npm install bower
-      - npm install webpack
-      - bower install
+      - heroku run npm install
+      - heroku run npm install bower
+      - heroku run npm install webpack
+      - heroku run bower install
       - heroku run python image_editor/manage.py collectstatic --noinput --settings=image_editor.settings --app imageditor
       - heroku run python image_editor/manage.py makemigrations --settings=image_editor.settings --app imageditor
       - heroku run python image_editor/manage.py migrate --settings=image_editor.settings --app imageditor
