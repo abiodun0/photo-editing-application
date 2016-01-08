@@ -18,7 +18,6 @@ eggs/
 media/
 .eggs/
 lib/
-bundle.js
 lib64/
 parts/
 sdist/
