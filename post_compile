@@ -1,1 +1,2 @@
-bower install
+bower install;
+webpack -p
