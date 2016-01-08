@@ -1,4 +1,8 @@
 from __future__ import unicode_literals
+from PIL import Image
+from cStringIO import StringIO
+from django.core.files.uploadedfile import SimpleUploadedFile
+import os
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import pre_delete, pre_save
@@ -38,10 +42,6 @@ class Images(models.Model):
         """ creates thumbnail image for the image"""
         if not self.image:
             return
-        from PIL import Image
-        from cStringIO import StringIO
-        from django.core.files.uploadedfile import SimpleUploadedFile
-        import os
 
         # Set our max thumbnail size in a tuple (max width, max height)
         THUMBNAIL_SIZE = (100, 100)
@@ -72,6 +72,8 @@ class Images(models.Model):
             self.create_thumbnail()
 
         super(Images, self).save()
+
+
 
     def to_json(self):
         json_items = {
