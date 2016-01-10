@@ -1,70 +1,95 @@
 import React from 'react';
 import _ from 'lodash';
-import toastr from 'toastr';
 import ImageApi from './api/imageApi';
 import ImagesPanel from './imagespanel';
 import EditableDiv from './editpanel';
 
-
-export default class AppEditor extends React.Component{
-
-    constructor(){
-        super();
-        this.state = {image:'',
+export default class AppEditor extends React.Component {
+    /**
+    * Sets initial value of state variables to there default values
+    */
+    constructor() {
+      super();
+      this.state = {image: '',
            isUploading: false,
-           percentage:1,
-           preview:'',
-           filename:''};
+           percentage: 1,
+           preview: '',
+           filename: ''
+       };
     }
-
+    /**
+    * Before the component mounts send an ajax request that gets all the user images
+    */
     componentWillMount() {
-        ImageApi.getAllImages((object)=>{
-                this.setState(object)
-            });
-        }
-
-    updateImage(image, filter=null){
-        ImageApi.updateImage.call(this,image, filter);
-        }
-
-    
-    changeImage(image){
-        this.setState({image: image});
+      ImageApi.getAllImages(object => {
+        this.setState(object);
+      });
     }
-
-    editImage(image){
-        let index = _.findIndex(this.state.data, (img) => {
-            return img.id == image.id;
-        });
-        this.state.data[index] = image;
-        this.changeImage(image);
+    /**
+    * handles updating of images title & filter
+    *@param {object} image The image to be updated
+    *param {string} filter the string representation of the filter
+    */
+    updateImage(image, filter = null) {
+      ImageApi.updateImage.call(this, image, filter);
     }
+    /**
+    * changes the currently active image
+    *@param {object} image The image to be updated
+    */
 
-    deleteImage(image){
-        ImageApi.deleteImage.call(this, image);
-
+    changeImage(image) {
+      this.setState({image: image});
     }
-
-    uploadImage(files){
-        ImageApi.uploadImage.call(this, files);
+    /**
+    * Adds real time update to the image that is edited currently
+    *@param {object} image The image to be updated
+    */
+    editImage(image) {
+      let index = _.findIndex(this.state.data, img => {
+        return img.id === image.id;
+      });
+      this.state.data[index] = image;
+      this.changeImage(image);
     }
-
-    addImage(image){
-        this.state.data.unshift(image);
-        this.forceUpdate();
+    /**
+    * Handles image deletion
+    *@param {object} image The image to be updated
+    */
+    deleteImage(image) {
+      ImageApi.deleteImage.call(this, image);
     }
-    
-    render(){
-        let loadingDiv;
-        if(this.state.isLoading) {
-            loadingDiv = (<img src="https://raw.githubusercontent.com/BenBBear/ionic-cache-src/master/img/loader.gif" width="70" height="70" style={{marginLeft:'auto',marginRight: 'auto',display:'block',position:'absolute',top:-15+'px',left: 45+'%', right: 45 + '%'}}/>);
-        }
-        return(
+    /**
+    * Handles upload of multiple images
+    *@param {array} files The image to be updated
+    */
+    uploadImage(files) {
+      ImageApi.uploadImage.call(this, files);
+    }
+    /**
+    * Adds image to the state.data for live update
+    *@param {object} image The image to be updated
+    */
+    addImage(image) {
+      this.state.data.unshift(image);
+      this.forceUpdate();
+    }
+    /**
+    * render the AppEditor component
+    *@return {string} div component
+    */
+    render() {
+      let loadingDiv;
+      if (this.state.isLoading) {
+        loadingDiv = (<img src="https://raw.githubusercontent.com/BenBBear/ionic-cache-src/master/img/loader.gif" width="70" height="70" style={{marginLeft: 'auto', marginRight: 'auto', display: 'block', position: 'absolute', top: -15 + 'px', left: 45 + '%', right: 45 + '%'}}/>);
+      }
+      return (
              <div className="row">
              <div className="col-sm-3">
-             <ImagesPanel data={this.state.data} uploadImage={this.uploadImage.bind(this)}
+             <ImagesPanel data={this.state.data}
+             uploadImage={this.uploadImage.bind(this)}
              filename={this.state.filename}
-             preview={this.state.preview} isUploading={this.state.isUploading} 
+             preview={this.state.preview} isUploading={this.state.isUploading}
              percentage={this.state.percentage}
              changeImage={this.changeImage.bind(this)}/>
              </div>
@@ -72,15 +97,15 @@ export default class AppEditor extends React.Component{
                 <div className="edit-div">
                     {loadingDiv}
 
-                    <EditableDiv image={this.state.image} editImage={this.editImage.bind(this)} deleteImage={this.deleteImage.bind(this)}
+                    <EditableDiv image={this.state.image}
+                    editImage={this.editImage.bind(this)}
+                    deleteImage={this.deleteImage.bind(this)}
                     updateImage={this.updateImage.bind(this)}
                     />
                 </div>
             </div>
             </div>
             );
-
-
     }
 }
 

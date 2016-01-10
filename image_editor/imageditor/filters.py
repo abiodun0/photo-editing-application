@@ -2,6 +2,9 @@ from PIL import ImageFilter, ImageOps, ImageEnhance, Image
 
 
 class FilterClass(object):
+    """ Contains methods that handles different set
+    of FilterClass
+    """
     THUMBNAIL_SIZE = (100, 100)
 
     def __init__(self, image):

@@ -1,13 +1,15 @@
 import json
+
 from django.shortcuts import redirect
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from useful.helpers import json_response
 from django.contrib.auth import login
 from django.template import RequestContext
 from django.views.generic import TemplateView, View
 from django.contrib.auth.models import User
+
+from useful.helpers import json_response
 from imageditor.models import UserProfile, Images
 from imageditor.forms import ImageForm
 from imageditor.effects import apply_filter
@@ -35,25 +37,18 @@ class IndexView(TemplateView):
             )
         return super(IndexView, self).dispatch(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        context = super(IndexView, self).get_context_data(**kwargs)
-        return context
-
 
 class DashBoardView(LoginRequiredMixin, TemplateView):
     """Default dashboard view"""
     template_name = 'dashboard.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(DashBoardView, self).get_context_data(**kwargs)
-        return context
-
 
 class LoginView(IndexView):
     """Authentication and Signup View"""
+
     @staticmethod
-    def authentication(user, request):
-        """Static method that handles authentication and"""
+    def authenticate(user, request):
+        """Static method that handles authentication and registration"""
         user.backend = 'django.contrib.auth.backends.ModelBackend'
         login(request, user)
         return HttpResponse("success", content_type='text/plain')
@@ -66,7 +61,7 @@ class LoginView(IndexView):
                 userprofile = UserProfile.objects.get(
                     social_id=request.POST['id'])
                 user = userprofile.get_user()
-                return self.authentication(user, request)
+                return self.authenticate(user, request)
 
             except UserProfile.DoesNotExist:
                 # If user does not exist create one
@@ -82,7 +77,7 @@ class LoginView(IndexView):
                 profile.image = "https://graph.facebook.com/" + \
                                 request.POST['id'] + "/picture?type=small"
                 profile.save()
-                return self.authentication(user, request)
+                return self.authenticate(user, request)
 
 
 class ImagesView(LoginRequiredMixin, View):
@@ -117,18 +112,18 @@ class ImagesView(LoginRequiredMixin, View):
         image = Images.objects.get(pk=image_json['id'])
         if image.title != image_json['title']:
             image.title = image_json['title']
-            image.save()
+
         if image.filtered != image_json['filtered']:
             image.filtered = image_json['filtered']
             image.current_filter = None
-            image.save()
-        if image_json['filtered'] and \
-                image.current_filter != image_json['current_filter']:
-            image = apply_filter(image, image_json['current_filter'])
-            image.current_filter = image_json['current_filter']
-            image.filtered = image_json['filtered']
-            image.save()
 
+        if image_json['filtered'] and \
+                image.current_filter != image_json['currentFilter']:
+            image = apply_filter(image, image_json['currentFilter'])
+            image.current_filter = image_json['currentFilter']
+            image.filtered = image_json['filtered']
+
+        image.save()
         response_json = json.dumps(image.to_json())
         return HttpResponse(response_json, content_type="application/json")
 

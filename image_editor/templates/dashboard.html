@@ -2,12 +2,12 @@
 {% load staticfiles %}
 {% block content %}
 <div class="container-fluid">
-    <nav class="navbar navbar-light navbar-full navbar-light">
+    <nav class="navbar navbar-light navbar-fixed-top navbar-full navbar-light">
         <a class="navbar-brand" href="#">Image Editor</a>
-        <form class="form-inline pull-xs-right">
+        <div class="pull-xs-right">
             <img src="{{request.user.profile.image}}" alt="..." class="img-fluid img-circle" style="display:inline"> Logged In as {{request.user.first_name}} {{ request.user.last_name}}
             <a href="/logout" class="btn btn-link">Logout</a>
-        </form>
+        </div>
     </nav>
 </div>
 <div class="container-fluid" id="appeditor">

@@ -2,43 +2,47 @@ import React from 'react';
 import SearchBar from './searchbar';
 import ImagesContainer from './imagescontainer';
 
-
-class ImagesPanel extends React.Component{
-    constructor(){
-        super();
-
-        this.state = {filterText : ''};
+class ImagesPanel extends React.Component {
+    /**
+    * Sets initial value of this.state.filterText to ''
+    */
+    constructor() {
+      super();
+      this.state = {filterText: ''};
     }
-    handleUserInput(filterText){
-        this.setState({filterText: filterText});
+    /**
+    * Handles filtering of the image by the input filterText
+    *@param {string} filterText Sets the filterText state of the component
+    */
+    handleUserInput(filterText) {
+      this.setState({filterText: filterText});
     }
-
-    render(){
-        return (
-            <div className="upload-div">
-
-                <SearchBar filterText={this.state.filterText}
-                onUserInput={this.handleUserInput.bind(this)} 
-                />
-
-                <ImagesContainer data={this.props.data} uploadImage={this.props.uploadImage}
-                filterText={this.state.filterText} filename={this.props.filename}
-                preview={this.props.preview} isUploading={this.props.isUploading} percentage={this.props.percentage}
-                changeImage={this.props.changeImage}
-                />
+    /**
+    * render the ImagesPanel component
+    *@return {string} div component
+    */
+    render() {
+      return (
+        <div className="upload-div">
+            <SearchBar filterText={this.state.filterText}
+            onUserInput={this.handleUserInput.bind(this)}/>
+            <ImagesContainer data={this.props.data}
+            uploadImage={this.props.uploadImage}
+            filterText={this.state.filterText} filename={this.props.filename}
+            preview={this.props.preview} isUploading={this.props.isUploading}
+            percentage={this.props.percentage}
+            changeImage={this.props.changeImage}/>
             </div>
 
             );
     }
 }
+// Sets the required propTypes from the parent and give warnings if ts not present
 ImagesPanel.propTypes = {
-
-    data: React.PropTypes.array.isRequired,
-
-    preview: React.PropTypes.string.isRequired,
-
-    changeImage: React.PropTypes.func.isRequired,
-    uploadImage: React.PropTypes.func.isRequired
+  data: React.PropTypes.array.isRequired,
+  preview: React.PropTypes.string.isRequired,
+  changeImage: React.PropTypes.func.isRequired,
+  uploadImage: React.PropTypes.func.isRequired
 };
 
 export default ImagesPanel;

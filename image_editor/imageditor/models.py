@@ -1,5 +1,5 @@
 from __future__ import unicode_literals
-from PIL import Image
+from PIL import Image, ImageOps
 from cStringIO import StringIO
 from django.core.files.uploadedfile import SimpleUploadedFile
 import os
@@ -11,7 +11,7 @@ from django.dispatch import receiver
 
 # Create your models here.
 class UserProfile(models.Model):
-    """User profile model that has a one on one relationship with the User"""
+    """User profile model that has a one to one relationship with the User"""
 
     user = models.OneToOneField(User, related_name="profile")
     social_id = models.CharField(max_length=200, null=True)
@@ -25,7 +25,7 @@ User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 
 class Images(models.Model):
     owner = models.ForeignKey(User, related_name="images")
-    thumbnail = models.ImageField(upload_to='thumbnail',
+    thumbnail = models.ImageField(upload_to='thumbnail/',
                                   max_length=500, blank=True, null=True)
     image = models.ImageField(upload_to='uploads/')
     title = models.CharField(max_length=100, null=True)
@@ -51,8 +51,9 @@ class Images(models.Model):
 
         image_type = image.format.lower()
 
-        image.thumbnail(THUMBNAIL_SIZE, Image.ANTIALIAS)
+        #image.thumbnail(THUMBNAIL_SIZE, Image.ANTIALIAS)
 
+        image = ImageOps.fit(image, (100, 100))
         # Save the thumbnail
         temp_handle = StringIO()
         image.save(temp_handle, image_type)
@@ -73,8 +74,6 @@ class Images(models.Model):
 
         super(Images, self).save()
 
-
-
     def to_json(self):
         json_items = {
                         'id': self.id,
@@ -83,7 +82,7 @@ class Images(models.Model):
                         'picture': str(self.image),
                         'date_created': str(self.date_created),
                         'date_modified': str(self.date_modified),
-                        'current_filter': self.current_filter,
+                        'currentFilter': self.current_filter,
                         'filter_path': str(self.filter_path),
                         'filtered': self.filtered
                         }

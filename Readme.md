@@ -34,7 +34,7 @@ imagEditor is an image editing app allowing you to add different effects to your
 ## Installation
 1. Clone the repository into a Virtual Environment. 
 - Run `virtualenv <virtualenvname>` or `mkvirtualenv <virtualenvname>` if using virtualenv wrapper to create the virtual environment.
-2. Install all the necessary requirements by running `pip install -r requirements.txt` within the virtual environment.
+2. Install all the necessary requirements by running `pip install -r requirements.txt && npm install && bower install && webpack -p` within the virtual environment.
 3. Configure your database configurations in a development.py and save in the settings folder
 4. Create a .env.yml to hold all your environment variables, like your secret key, save in the same level as your README.md file (sample shown below)
 5. Run `bower install` to install all front end dependencies. Please ensure you are on the same level with .bowerrc when you run this command
