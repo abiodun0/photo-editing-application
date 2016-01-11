@@ -1,12 +1,10 @@
 from __future__ import unicode_literals
-from PIL import Image, ImageOps
-from cStringIO import StringIO
-from django.core.files.uploadedfile import SimpleUploadedFile
-import os
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import pre_delete, pre_save
 from django.dispatch import receiver
+
+from imageditor.effects import apply_filter
 
 
 # Create your models here.
@@ -43,29 +41,7 @@ class Images(models.Model):
         if not self.image:
             return
 
-        # Set our max thumbnail size in a tuple (max width, max height)
-        THUMBNAIL_SIZE = (100, 100)
-
-        # Open original photo which we want to thumbnail using PIL's Image
-        image = Image.open(StringIO(self.image.read()))
-
-        image_type = image.format.lower()
-
-        image.thumbnail(THUMBNAIL_SIZE, Image.ANTIALIAS)
-
-        image = ImageOps.fit(image, (100, 100))
-        # Save the thumbnail
-        temp_handle = StringIO()
-        image.save(temp_handle, image_type)
-        temp_handle.seek(0)
-        # Save image to a SimpleUploadedFile which can be saved into
-        # ImageField
-        suf = SimpleUploadedFile(os.path.split(self.image.name)[-1],
-                                 temp_handle.read(),
-                                 content_type=image_type)
-        # Save SimpleUploadedFile into image field
-        self.thumbnail.save('%s_thumbnail.%s' % (os.path.splitext(suf.name)[0],
-                                                 image_type), suf, save=False)
+        apply_filter(self, 'thumbnail')
 
     def save(self):
         # create a thumbnail

@@ -14,7 +14,7 @@ html {
     width: 450px;
 }
 
-.nav-brand {
+.navbar-brand {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);

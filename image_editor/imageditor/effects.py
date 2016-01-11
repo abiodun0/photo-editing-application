@@ -11,7 +11,10 @@ def apply_filter(image, filters):
     @params image(model class)
     @filters string
     return image instance of model class"""
-    original = Image.open(image.image.path)
+    if filters == 'thumbnail':
+        original = Image.open(StringIO(image.image.read()))
+    else:
+        original = Image.open(image.image.path)
     image_type = original.format.lower()
 
     # if original.mode not in ('L', 'RGB'):
@@ -28,8 +31,12 @@ def apply_filter(image, filters):
                              temp_handle.read(),
                              content_type='image/%s' % (image_type))
 
-    image.filter_path.save('%s_filter_%s.%s' %
-                           (os.path.splitext(suf.name)[0],
-                            int(time()*1000), image_type), suf, save=False)
-
-    return image
+    if filters != 'thumbnail':
+        image.filter_path.save('%s_filter_%s.%s' %
+                               (os.path.splitext(suf.name)[0],
+                                int(time()*1000), image_type), suf, save=False)
+        return image
+    else:
+        image.thumbnail.save('%s_thumbnail.%s' %
+                             (os.path.splitext(suf.name)[0],
+                              image_type), suf, save=False)

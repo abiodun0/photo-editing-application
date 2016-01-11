@@ -36,7 +36,7 @@ class FilterClass(object):
         return darken.enhance(0.5)
 
     def thumbnail(self):
-        return self.image.thumbnail(self.THUMBNAIL_SIZE, Image.ANTIALIAS)
+        return ImageOps.fit(self.image, self.THUMBNAIL_SIZE)
 
     def brighten(self):
         enhancer = ImageEnhance.Brightness(self.image)
