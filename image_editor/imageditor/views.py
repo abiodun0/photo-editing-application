@@ -9,12 +9,19 @@ from django.views.generic import TemplateView, View
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 
-from useful.helpers import json_response
 from imageditor.models import UserProfile, Images
 from imageditor.forms import ImageForm
 from imageditor.effects import apply_filter
+from imageditor.decorators import json_response
 
 # Create your views here.
+
+class JsonResponseView(object):
+    """Decorator that returns json views"""
+    @method_decorator(json_response)
+    def dispatch(self, request, *args, **kwargs):
+        return super(LoginRequiredMixin, self).dispatch(
+            request, *args, **kwargs)
 
 
 class LoginRequiredMixin(object):
@@ -80,7 +87,7 @@ class LoginView(IndexView):
                 return self.authenticate(user, request)
 
 
-class ImagesView(LoginRequiredMixin, View):
+class ImagesView(JsonResponseView, LoginRequiredMixin, View):
     """ inititalize the image form"""
     form_class = ImageForm
 
@@ -88,7 +95,7 @@ class ImagesView(LoginRequiredMixin, View):
         """Gets all the images for the specified user"""
         images = request.user.images.all()
         images_dict = [image.to_json() for image in images]
-        return JsonResponse({'data': images_dict})
+        return {'data': images_dict}
 
     def post(self, request, *args, **kwargs):
         """ Creates a new image from the upload form"""
@@ -96,12 +103,12 @@ class ImagesView(LoginRequiredMixin, View):
 
         # set the maximum upload file size to 10MB
         if form.files['image'].size > 10485760:
-            return json_response(data="file too large", status=500)
+            return {'status': 'file too large', 'status_code': 500}
         image = form.save(commit=False)
         image.owner = request.user
         image.title = form.files['image'].name
         image.save()
-        return JsonResponse(image.to_json())
+        return image.to_json()
 
     def put(self, request, *args, **kwargs):
         """Edits image upload image and changes filter"""
@@ -122,11 +129,11 @@ class ImagesView(LoginRequiredMixin, View):
             image.filtered = image_json['filtered']
 
         image.save()
-        return JsonResponse(image.to_json())
+        return image.to_json()
 
     def delete(self, request, *args, **kwargs):
         """ Deletes specified image form the delete request"""
         image_json = json.loads(request.body)
         image = Images.objects.get(pk=image_json['id'])
         image.delete()
-        return JsonResponse({'status': 'success'})
+        return {'status': 'success'}
