@@ -3,17 +3,41 @@ body {
     font-size: 16px;
 }
 
+body,
+html {
+    height: 100%;
+    min-height: 100%;
+    overflow: hidden;
+}
+
 .index-content {
     width: 450px;
 }
 
+.nav-brand {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
 .navbar-fixed-top {
+    box-shadow: 0 1px 12px 0 rgba(0, 0, 0, 0.2);
     height: 70px;
 }
 
 #appeditor {
     padding-top: 70px;
     min-height: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#appeditor > .row,
+#appeditor > .row > div[class*="col-"] {
+    height: 100%;
+    min-height: 100%;
+    overflow: hidden;
+    padding: 0;
 }
 
 .home.container {
@@ -23,47 +47,95 @@ body {
     height: 100vh;
 }
 
+.upload-div form {
+    min-height: 8%;
+    height: 8%;
+    padding: 15px;
+    border-bottom: solid 1px #dedede;
+}
+
+.slick-prev:before {
+    content: "«";
+}
+
+.slick-next:before {
+    content: "»";
+}
+
+.upload-div > div {
+    min-height: 40px;
+    height: 92%;
+}
+
 .upload-div {
     position: relative;
-    height: 900px;
+    height: 100%;
+    min-height: 100%;
     background-color: #fff;
 }
-.images-container{
+
+.images-container {
     position: relative;
     max-height: 700px;
     background-color: #fff;
     overflow-y: visible;
 }
-p.media-heading{
-    margin-left:20px;
+
+p.media-heading {
+    margin-left: 20px;
+}
+
+.upload-div .input-group {
+    border-right: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+}
+
+.upload-div .input-group .form-control,
+.upload-div .input-group-addon {
+    background-color: white;
+    border: none;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    border-radius: 0;
 }
 
 .upload-img {
-    max-height: 650px;
+    height: 70%;
     background-color: #fff;
     overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .upload-div .dropzone {
     background: #fff;
     position: relative;
-    padding:20px;
+    height: 30%;
+    padding: 20px;
     width: 100%;
 }
 
 .dropzone h5 {
-    line-height: 50px;
+    line-height: 1.1;
     margin: auto;
     text-align: center;
 }
 
 .drop {
     width: 100%;
-    height: 200px;
+    height: 100%;
     border: dashed 1px black;
     cursor: pointer;
     padding: 0 20px;
     overflow: hidden;
+    position: relative;
+}
+
+.drop > div {
+    width: 80%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .drop .progresszone {
@@ -79,19 +151,29 @@ p.media-heading{
 .navbar.navbar-light {
     background-color: #fff;
 }
-.slider button, .slider button:hover, .slider button:before, .slider button:after {
+
+.slider button,
+.slider button:hover,
+.slider button:before,
+.slider button:after {
     background-color: transparent !important;
-    color: #fff;
+    color: #33AF5B;
+}
 
+.slider button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
 
-    }
-.slider button:before, .slider button:after{
-        background-color: transparent !important;
-        font-size:40px;
-    }
+.slider button:before,
+.slider button:after {
+    background-color: transparent !important;
+    font-size: 40px;
+    color: #33AF5B;
+}
 
 .uploaded {
-
     background-color: #fff;
     min-height: 1px;
     padding: 20px;
@@ -113,12 +195,33 @@ p.media-heading{
 }
 
 .edit-div {
-    padding: 40px 30px 40px 30px;
-    max-height: 700px;
+    padding: 0 30px;
+    height: 100%;
+    min-height: 100%;
+    overflow: hidden;
 }
 
 .edit-div .edit-buttons {
-    margin-bottom: 10px;
+    margin: 2% 0;
+    position: relative;
+    height: 5%;
+}
+
+.edit-div .edit-buttons .text-xs-center {
+    position: absolute;
+    left: 50%;
+    top: 70%;
+    transform: translate(-50%, -50%);
+}
+
+.edit-container {
+    height: 100%;
+    min-height: 100%;
+}
+
+.edit-container > div:first-child {
+    height: 80%;
+    overflow: hidden;
 }
 
 .edit-div button {
@@ -141,11 +244,12 @@ p.media-heading{
 
 .edit {
     background-color: #fff;
-    height: 600px;
+    height: 95%;
     overflow-y: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100%;
 }
 
 .edit img {
@@ -199,11 +303,11 @@ p.media-heading{
 }
 
 .slick-prev {
-    left: 20px;
+    left: 10px;
 }
 
 .slick-next {
-    right: 20px;
+    right: 15px;
 }
 
 .blur {
@@ -289,7 +393,7 @@ p.media-heading{
 .slider button:before,
 .slider button:after {
     background-color: #ccc;
-    color: #fff;
+    color: #33AF5B;
 }
 
 .slick-prev.slick-disabled:before,

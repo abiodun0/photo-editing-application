@@ -79,9 +79,12 @@ export default class AppEditor extends React.Component {
     *@return {string} div component
     */
     render() {
-      let loadingDiv;
+      let loadingDiv = null;
       if (this.state.isLoading) {
-        loadingDiv = (<img src="https://raw.githubusercontent.com/BenBBear/ionic-cache-src/master/img/loader.gif" width="70" height="70" style={{marginLeft: 'auto', marginRight: 'auto', display: 'block', position: 'absolute', top: -15 + 'px', left: 45 + '%', right: 45 + '%'}}/>);
+        loadingDiv = (<img src="https://raw.githubusercontent.com/BenBBear/ionic-cache-src/master/img/loader.gif"
+            width="50" height="50"
+            style={{transform: 'translate(' - 50 + '%, ' + 50 + '%)',
+            position: 'absolute', top: -15 + 'px', left: 50 + '%'}}/>);
       }
       return (
              <div className="row">

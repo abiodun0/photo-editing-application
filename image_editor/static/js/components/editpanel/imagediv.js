@@ -56,7 +56,7 @@ class ImageDiv extends React.Component {
     * Resets filter for an image
     */
     resetImage() {
-      if (!confirm('are you sure you want to reset the filters')) return;
+      if (!confirm('are you sure you want to reset the image')) return;
       let imageCopy = _.clone(this.props.image);
       imageCopy.filtered = false;
       this.props.updateImage(imageCopy);
@@ -80,6 +80,22 @@ class ImageDiv extends React.Component {
                     this.props.image.filter_path : this.props.image.picture;
       return (
             <div>
+
+            <div className="edit-buttons">
+            <button className={buttonClass}
+            onClick={_.isObject(this.props.image) ?
+                this.toggleEdit.bind(this) : ''}>
+                <span className="mdi mdi-pencil"></span></button>
+            <button className={buttonClass}
+            onClick={_.isObject(this.props.image) ?
+                this.deleteImage.bind(this) : ''}>
+                <span className="mdi mdi-delete"></span></button>
+            <button className={buttonClass}
+            onClick={_.isObject(this.props.image) ?
+                this.resetImage.bind(this) : ''}>
+                <span className="mdi mdi-backup-restore">
+                </span></button>
+
             <div className="card text-xs-center">
                 <blockquote className="card-blockquote card-text">
                     <form
@@ -105,26 +121,12 @@ class ImageDiv extends React.Component {
                     </h6>
                   <h6 className="text-uppercase">
                   {_.isObject(this.props.image) ?
-                    (this.props.image.current_filter ||
+                    (this.props.image.currentFilter ||
                      'No Filter Applied') : ''}
                     </h6>
                 </blockquote>
 
             </div>
-            <div className="edit-buttons">
-            <button className={buttonClass}
-            onClick={_.isObject(this.props.image) ?
-                this.toggleEdit.bind(this) : ''}>
-                <span className="mdi mdi-pencil"></span></button>
-            <button className={buttonClass}
-            onClick={_.isObject(this.props.image) ?
-                this.deleteImage.bind(this) : ''}>
-                <span className="mdi mdi-delete"></span></button>
-            <button className={buttonClass}
-            onClick={_.isObject(this.props.image) ?
-                this.resetImage.bind(this) : ''}>
-                <span className="mdi mdi-backup-restore">
-                </span></button>
             <button className={`${buttonClass} pull-sm-right`}
             onClick={_.isObject(this.props.image) ?
                 this.shareImage.bind(this) : ''}>

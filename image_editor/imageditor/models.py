@@ -51,7 +51,7 @@ class Images(models.Model):
 
         image_type = image.format.lower()
 
-        #image.thumbnail(THUMBNAIL_SIZE, Image.ANTIALIAS)
+        image.thumbnail(THUMBNAIL_SIZE, Image.ANTIALIAS)
 
         image = ImageOps.fit(image, (100, 100))
         # Save the thumbnail

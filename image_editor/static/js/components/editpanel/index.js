@@ -9,7 +9,7 @@ class EditableDiv extends React.Component {
    */
     render() {
       return (
-            <div>
+            <div className="edit-container">
             <ImageDiv image={this.props.image} editImage={this.props.editImage}
             deleteImage={this.props.deleteImage}
             updateImage={this.props.updateImage}/>

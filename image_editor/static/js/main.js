@@ -10,17 +10,19 @@ $.ajaxSetup({
  * @param {object} user The response object.
  */
 function socialLogin(user) {
+  $('#status-msg').text('Hi ' + user.first_name + ' Loggin you in...');
   var ajaxInfo = {
     url: '/login',
     type: 'POST',
     data: user,
     success: function(data) {
-      if (data === 'success') {
+      if (data.status === 'success') {
         window.location.href = '/dashboard';
       }
     },
     error: function(error) {
-      console.log(error.responseText);
+      $('#status-msg').text('hi' + user.firstname +
+        ' An error occured' + error.responseText);
     }
   };
   $.ajax(ajaxInfo);
@@ -31,7 +33,10 @@ var facebookLogin = {
   config: {
     login: '#facebook-login'
   },
-  // This extends the input of the user and execute the login property
+  /**
+ * Extends user settings and add event listener for the facebook login button
+ * @param {object} config The extensible configuration info from the user.
+ */
   init: function(config) {
     $(facebookLogin.config.login).attr('disabled', true);
     if (config && typeof (config) === 'object') {
@@ -57,7 +62,7 @@ var facebookLogin = {
         FB.api('/me?fields=email,first_name,last_name,picture',
             socialLogin);
       } else {
-        console.log('Not logged in');
+        $('#status-msg').text('an error occured');
       }
     }, {
       scope: 'email,user_likes'

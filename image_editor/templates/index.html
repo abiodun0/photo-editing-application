@@ -1,31 +1,26 @@
-
 {% extends "layout/base.html" %}
 {% load staticfiles %}
-
 {% block content %}
-
-
 <div class="home container">
-<div class="index-content">
-<div class="card card-block text-xs-center">
-  <h4 class="card-title">Image Editing App</h4>
-  <p class="lead"><em>Edit your awesome photos </em></p>
-  <hr>
-<div class="card-block">
-    <blockquote class="card-blockquote">
-      <p>Login with your facebook account and edit your photos and share on your favourite social network :)</p>
-      <footer>Credits <cite title="Source Title">Andela</cite></footer>
-    </blockquote>
-  </div>
-  <a href="#" id="facebook-login" class="btn btn-primary btn-lg"><i class="mdi mdi-facebook"></i> Login with facebook to get started</a>
+    <div class="index-content">
+        <div class="card card-block text-xs-center">
+            <h4 class="card-title">Image Editing App</h4>
+            <p class="lead"><em>Edit your awesome photos </em></p>
+            <span id="status-msg"></span>
+            <hr>
+            <div class="card-block">
+                <blockquote class="card-blockquote">
+                    <p>Login with your facebook account and edit your photos and share on your favourite social network :)</p>
+                    <footer>Credits
+                        <cite title="Source Title">Andela</cite>
+                    </footer>
+                </blockquote>
+            </div>
+            <a href="#" id="facebook-login" class="btn btn-primary btn-lg"><i class="mdi mdi-facebook"></i> Login with facebook to get started</a>
+        </div>
+    </div>
 </div>
-
-</div>
-</div>
-
-
-{% endblock content %}
-
-    {% block scripts %}
-    <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
-    {% endblock scripts %}
+{% endblock content %} 
+{% block scripts %}
+<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+{% endblock scripts %}

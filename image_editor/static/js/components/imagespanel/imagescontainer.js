@@ -36,7 +36,7 @@ class ImagesContainer extends React.Component {
       if (data.length < 1) {
         return (
             <div className="upload-img"> <div className="uploaded">
-            <h6> You dont have any images yet </h6></div>
+            <p className="text-center"> You dont have any images yet </p></div>
             {dropzone}
             </div>
                 );

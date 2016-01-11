@@ -1,13 +1,13 @@
 import json
 
 from django.shortcuts import redirect
-from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from django.template import RequestContext
 from django.views.generic import TemplateView, View
 from django.contrib.auth.models import User
+from django.http import JsonResponse
 
 from useful.helpers import json_response
 from imageditor.models import UserProfile, Images
@@ -51,7 +51,7 @@ class LoginView(IndexView):
         """Static method that handles authentication and registration"""
         user.backend = 'django.contrib.auth.backends.ModelBackend'
         login(request, user)
-        return HttpResponse("success", content_type='text/plain')
+        return JsonResponse({'status': 'success'})
 
     def post(self, request, *args, **kwargs):
         """Method that handles authentication """
@@ -88,8 +88,7 @@ class ImagesView(LoginRequiredMixin, View):
         """Gets all the images for the specified user"""
         images = request.user.images.all()
         images_dict = [image.to_json() for image in images]
-        response_json = json.dumps(images_dict)
-        return HttpResponse(response_json, content_type="application/json")
+        return JsonResponse({'data': images_dict})
 
     def post(self, request, *args, **kwargs):
         """ Creates a new image from the upload form"""
@@ -102,8 +101,7 @@ class ImagesView(LoginRequiredMixin, View):
         image.owner = request.user
         image.title = form.files['image'].name
         image.save()
-        response_json = json.dumps(image.to_json())
-        return HttpResponse(response_json, content_type="application/json")
+        return JsonResponse(image.to_json())
 
     def put(self, request, *args, **kwargs):
         """Edits image upload image and changes filter"""
@@ -124,12 +122,11 @@ class ImagesView(LoginRequiredMixin, View):
             image.filtered = image_json['filtered']
 
         image.save()
-        response_json = json.dumps(image.to_json())
-        return HttpResponse(response_json, content_type="application/json")
+        return JsonResponse(image.to_json())
 
     def delete(self, request, *args, **kwargs):
         """ Deletes specified image form the delete request"""
         image_json = json.loads(request.body)
         image = Images.objects.get(pk=image_json['id'])
         image.delete()
-        return HttpResponse("success", content_type='text/plain')
+        return JsonResponse({'status': 'success'})
