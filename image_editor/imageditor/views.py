@@ -16,6 +16,7 @@ from imageditor.decorators import json_response
 
 # Create your views here.
 
+
 class JsonResponseView(object):
     """Decorator that returns json views"""
     @method_decorator(json_response)

@@ -17,9 +17,6 @@ def apply_filter(image, filters):
         original = Image.open(image.image.path)
     image_type = original.format.lower()
 
-    # if original.mode not in ('L', 'RGB'):
-    #     original = original.convert('RGB')
-
     image_object = FilterClass(original)
     effect = getattr(image_object, filters)()
 
