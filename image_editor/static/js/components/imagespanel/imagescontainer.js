@@ -56,7 +56,7 @@ class ImagesContainer extends React.Component {
         return (
             <div className="upload-img">
             <div className="uploaded">
-            <h5> No Images matches your criteria
+            <h5> No Images matched your criteria
             </h5></div>
             {dropzone}
             </div>

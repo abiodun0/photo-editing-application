@@ -27,6 +27,8 @@ FB_ID = os.getenv('FB_ID')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.getenv('APP_DEBUG') == 'true' else False
 
+
+
 ALLOWED_HOSTS = []
 
 STATICFILES_FINDERS = (
@@ -123,7 +125,6 @@ STATICFILES_DIRS = (
 STATIC_URL = '/static/'
 
 APPEND_SLASH = False
-
 # Media root for uploaded image files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = 'media'

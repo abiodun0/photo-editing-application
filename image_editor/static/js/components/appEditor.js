@@ -22,6 +22,7 @@ export default class AppEditor extends React.Component {
     */
     componentWillMount() {
       ImageApi.getAllImages(object => {
+        console.log(object);
         this.setState(object);
       });
     }
