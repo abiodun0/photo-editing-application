@@ -23,7 +23,6 @@ const ImageApi = {
     request.get(imageUrl)
       .set('Accept', 'application/json')
       .end((err, res) => {
-        debugger;
         console.log(res.body.data, 'something here');
         cb({
           isLoading: false
