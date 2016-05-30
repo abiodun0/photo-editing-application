@@ -2,7 +2,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import _ from 'lodash';
-import FaceBookApi from './../api/facebookApi';
+import FaceBookApi from '../../api/facebookApi';
 
 class ImageDiv extends React.Component {
     /**

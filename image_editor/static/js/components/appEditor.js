@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import ImageApi from './api/imageApi';
+import ImageApi from '../api/imageApi';
 import ImagesPanel from './imagespanel';
 import EditableDiv from './editpanel';
 
