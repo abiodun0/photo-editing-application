@@ -14,7 +14,8 @@ export default class AppEditor extends React.Component {
            isUploading: false,
            percentage: 1,
            preview: '',
-           filename: ''
+           filename: '',
+           data: []
        };
     }
     /**
@@ -80,6 +81,8 @@ export default class AppEditor extends React.Component {
     *@return {string} div component
     */
     render() {
+      console.log('did we even get here?');
+      console.log(this.context, 'context');
       let loadingDiv = null;
       if (this.state.isLoading) {
         loadingDiv = (<img src="https://raw.githubusercontent.com/BenBBear/ionic-cache-src/master/img/loader.gif"
