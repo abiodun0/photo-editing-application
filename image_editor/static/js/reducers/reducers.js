@@ -41,8 +41,12 @@ function allImages(state = [], action) {
     case ActionTypes.GET_ALL_IMAGES:
       console.log(action.data);
       return action.data;
-    case ActionTypes.DELETE_IMAGE:
-      return state.filter(image => image.id !== action.data.id);
+    case ActionTypes.FILTER_FROM_TITLE:
+      let filteredImages = state.filter(image => {
+        return image.title.toLowerCase()
+            .indexOf(action.data.toLowerCase()) !== -1;
+      });
+      return filteredImages;
     default:
       return state;
   }

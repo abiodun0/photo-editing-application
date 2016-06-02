@@ -22,6 +22,15 @@ export function getAllImages() {
     });
   };
 }
+
+export function filterFromTitles(value) {
+  console.log(value);
+  return {
+    type: ActionTypes.FILTER_FROM_TITLE,
+    data: value
+  };
+}
+
 /**
  * @param  {object} image passed in from the result of the api call
  * @return {object} returns the object to be used with the dispatch method

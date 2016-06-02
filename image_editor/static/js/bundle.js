@@ -21467,10 +21467,11 @@
 	    case ActionTypes.GET_ALL_IMAGES:
 	      console.log(action.data);
 	      return action.data;
-	    case ActionTypes.DELETE_IMAGE:
-	      return state.filter(function (image) {
-	        return image.id !== action.data.id;
+	    case ActionTypes.FILTER_FROM_TITLE:
+	      var filteredImages = state.filter(function (image) {
+	        return image.title.toLowerCase().indexOf(action.data.toLowerCase()) !== -1;
 	      });
+	      return filteredImages;
 	    default:
 	      return state;
 	  }
@@ -21551,6 +21552,7 @@
 	});
 	var GET_ALL_IMAGES = exports.GET_ALL_IMAGES = 'GET_ALL_IMAGES';
 	var ADD_IMAGE = exports.ADD_IMAGE = 'ADD_IMAGE';
+	var FILTER_FROM_TITLE = exports.FILTER_FROM_TITLE = 'FILTER_FROM_TITLE';
 	var DELETE_IMAGE = exports.DELETE_IMAGE = 'DELETE_IMAGE';
 	var UPDATE_IMAGE = exports.UPDATE_IMAGE = 'UPDATE_IMAGE';
 
@@ -21565,6 +21567,7 @@
 	});
 	exports.recieveImages = recieveImages;
 	exports.getAllImages = getAllImages;
+	exports.filterFromTitles = filterFromTitles;
 	exports.updateImage = updateImage;
 	exports.updateOrfilterImage = updateOrfilterImage;
 	exports.changeImage = changeImage;
@@ -21604,6 +21607,15 @@
 	    });
 	  };
 	}
+
+	function filterFromTitles(value) {
+	  console.log(value);
+	  return {
+	    type: ActionTypes.FILTER_FROM_TITLE,
+	    data: value
+	  };
+	}
+
 	/**
 	 * @param  {object} image passed in from the result of the api call
 	 * @return {object} returns the object to be used with the dispatch method
@@ -45544,8 +45556,6 @@
 
 	'use strict';
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
@@ -45556,66 +45566,44 @@
 
 	var _reactRedux = __webpack_require__(173);
 
+	var _actions = __webpack_require__(188);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	var SearchBar = function SearchBar(props) {
 
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var SearchBar = function (_React$Component) {
-	  _inherits(SearchBar, _React$Component);
-
-	  function SearchBar() {
-	    _classCallCheck(this, SearchBar);
-
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(SearchBar).apply(this, arguments));
-	  }
-
-	  _createClass(SearchBar, [{
-	    key: 'handleChange',
-
-	    /**
-	    * Handles the change in user input and anchor it to filtering
-	    * The supplied image datat in the imagePanel
-	    */
-	    value: function handleChange() {
-	      this.props.onUserInput(this.refs.filter.value);
-	    }
-	    /**
-	    * render the SearchBar component
-	    *@return {string} div component
-	    */
-
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'form',
-	        { className: 'form' },
+	  /**
+	  * render the SearchBar component
+	  *@return {string} div component
+	  */
+	  return _react2.default.createElement(
+	    'form',
+	    { className: 'form' },
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'form-group' },
+	      _react2.default.createElement(
+	        'div',
+	        { className: 'input-group' },
+	        _react2.default.createElement('input', { type: 'text', className: 'form-control',
+	          placeholder: 'Search your pictures...',
+	          onChange: props.filterFromTitle
+	        }),
 	        _react2.default.createElement(
 	          'div',
-	          { className: 'form-group' },
-	          _react2.default.createElement(
-	            'div',
-	            { className: 'input-group' },
-	            _react2.default.createElement('input', { type: 'text', className: 'form-control',
-	              placeholder: 'Search your pictures...'
-	            }),
-	            _react2.default.createElement(
-	              'div',
-	              { className: 'input-group-addon' },
-	              _react2.default.createElement('i', { className: 'mdi mdi-magnify' })
-	            )
-	          )
+	          { className: 'input-group-addon' },
+	          _react2.default.createElement('i', { className: 'mdi mdi-magnify' })
 	        )
-	      );
-	    }
-	  }]);
+	      )
+	    )
+	  );
+	};
 
-	  return SearchBar;
-	}(_react2.default.Component);
+	var filterFromTitle = function filterFromTitle(e) {
+	  return function (dispatch) {
+	    return dispatch((0, _actions.filterFromTitles)(e.target.value));
+	  };
+	};
 
 	// Sets the required propTypes from the parent and give warnings if ts not present
 	// SearchBar.propTypes = {
@@ -45623,7 +45611,7 @@
 	//   filterText: React.PropTypes.string.isRequired
 	// };
 
-	exports.default = SearchBar;
+	exports.default = (0, _reactRedux.connect)(null, { filterFromTitle: filterFromTitle })(SearchBar);
 
 /***/ },
 /* 202 */
@@ -48903,7 +48891,7 @@
 	    console.log(props);
 	    var activeUpload = (0, _classnames2.default)({
 	        uploaded: true,
-	        active: true
+	        active: false
 	    });
 	    return _react2.default.createElement(
 	        'div',

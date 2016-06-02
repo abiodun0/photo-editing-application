@@ -97,7 +97,7 @@ const ImageApi = {
   */
   uploadImage(files) {
     files.forEach(file => {
-      console.log(file, 'the single file')
+      console.log(file, 'the single file');
       this.setState({filename: file.name});
       let reader = new FileReader();
       reader.readAsDataURL(file);

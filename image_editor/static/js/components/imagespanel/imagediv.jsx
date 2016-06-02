@@ -6,7 +6,7 @@ const ImageDiv =  (props) => {
   console.log(props);
   var activeUpload = classNames({
         uploaded: true,
-        active: true
+        active: false
     });
   return (
     <div className={activeUpload}>

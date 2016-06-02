@@ -1,25 +1,20 @@
 import React from 'react';
 import {connect} from 'react-redux';
+import {filterFromTitles} from '../../actions'
 
-class SearchBar extends React.Component {
-  /**
-  * Handles the change in user input and anchor it to filtering
-  * The supplied image datat in the imagePanel
-  */
-  handleChange() {
-    this.props.onUserInput(this.refs.filter.value);
-  }
+const SearchBar =  (props) => {
+
   /**
   * render the SearchBar component
   *@return {string} div component
   */
-  render() {
     return (
             <form className="form">
               <div className="form-group">
                 <div className="input-group">
                 <input type="text" className="form-control"
                     placeholder="Search your pictures..."
+                    onChange={props.filterFromTitle}
                     />
                   <div className="input-group-addon">
                   <i className="mdi mdi-magnify"></i></div>
@@ -27,7 +22,10 @@ class SearchBar extends React.Component {
               </div>
             </form>
             );
-  }
+}
+
+const filterFromTitle = (e) => (dispatch) => {
+   return dispatch(filterFromTitles(e.target.value))
 }
 
 // Sets the required propTypes from the parent and give warnings if ts not present
@@ -36,4 +34,4 @@ class SearchBar extends React.Component {
 //   filterText: React.PropTypes.string.isRequired
 // };
 
-export default SearchBar;
+export default connect(null, {filterFromTitle})(SearchBar);
