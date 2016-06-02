@@ -1,13 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import AppEditor from './components/appEditor';
+import {createStore, applyMiddleware} from 'redux';
+import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
+import imageApp from './reducers/reducers';
+import {getAllImages} from './actions'
+import AppEditor from './components/appEditor';
 
 // Renders the predefined react components
-var objecta = {
-  name: "abidun"
-}
+let store = createStore(imageApp, applyMiddleware(thunk));
+store.dispatch(getAllImages());
 ReactDOM.render(
-  <Provider store={objecta}>
+  <Provider store={store}>
   < AppEditor / >
-  </Provider>, document.getElementById('appeditor'));
+  </Provider>, document.getElementById('appeditor')
+);

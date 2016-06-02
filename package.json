@@ -24,6 +24,7 @@
     "react-responsive-carousel": "^2.0.2",
     "react-slick": "^0.9.3",
     "redux": "^3.5.2",
+    "redux-thunk": "^2.1.0",
     "sass-loader": "^3.1.2",
     "superagent": "^1.6.1",
     "superagent-django-csrf": "^0.1.3",

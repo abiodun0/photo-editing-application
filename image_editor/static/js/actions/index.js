@@ -6,6 +6,7 @@ import imageApi from '../api/imageApi';
  * @return {object}  all the images from the dispatched action
  */
 export function recieveImages(images) {
+  console.log(images, 'from the actions');
   return {
     type: ActionTypes.GET_ALL_IMAGES,
     data: images

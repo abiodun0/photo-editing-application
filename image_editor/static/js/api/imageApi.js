@@ -13,23 +13,16 @@ const ImageApi = {
   *@param {function} cb the callback function supplied by the component
   */
   getAllImages: cb => {
-    cb({
-      data: [],
-      isLoading: true
-    });
     toastr.info('Loading your images...!', null, {
       timeOut: 0
     });
     request.get(imageUrl)
       .set('Accept', 'application/json')
       .end((err, res) => {
-        console.log(res.body.data, 'something here');
-        cb({
-          isLoading: false
-        });
         toastr.clear();
         if (!err) {
-          cb({data: res.body.data});
+          console.log(res.body.data, 'from the api');
+          cb(res.body.data);
         }
       });
   },

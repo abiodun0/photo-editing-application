@@ -1,6 +1,6 @@
 import React from 'react';
-import SearchBar from './searchbar';
-import ImagesContainer from './imagescontainer';
+import SearchBar from './searchbar.jsx';
+import ImagesContainer from './imagescontainer.jsx';
 
 class ImagesPanel extends React.Component {
     /**
@@ -24,25 +24,19 @@ class ImagesPanel extends React.Component {
     render() {
       return (
         <div className="upload-div">
-            <SearchBar filterText={this.state.filterText}
-            onUserInput={this.handleUserInput.bind(this)}/>
-            <ImagesContainer data={this.props.data}
-            uploadImage={this.props.uploadImage}
-            filterText={this.state.filterText} filename={this.props.filename}
-            preview={this.props.preview} isUploading={this.props.isUploading}
-            percentage={this.props.percentage}
-            changeImage={this.props.changeImage}/>
+            <SearchBar/>
+            <ImagesContainer />
             </div>
 
             );
     }
 }
 // Sets the required propTypes from the parent and give warnings if ts not present
-ImagesPanel.propTypes = {
-  data: React.PropTypes.array.isRequired,
-  preview: React.PropTypes.string.isRequired,
-  changeImage: React.PropTypes.func.isRequired,
-  uploadImage: React.PropTypes.func.isRequired
-};
+// ImagesPanel.propTypes = {
+//   data: React.PropTypes.array.isRequired,
+//   preview: React.PropTypes.string.isRequired,
+//   changeImage: React.PropTypes.func.isRequired,
+//   uploadImage: React.PropTypes.func.isRequired
+// };
 
 export default ImagesPanel;

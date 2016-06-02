@@ -1,4 +1,5 @@
 import React from 'react';
+import {connect} from 'react-redux';
 
 class SearchBar extends React.Component {
   /**
@@ -19,9 +20,7 @@ class SearchBar extends React.Component {
                 <div className="input-group">
                 <input type="text" className="form-control"
                     placeholder="Search your pictures..."
-                    ref="filter"
-                    value= {this.props.filterText}
-                    onChange= {this.handleChange.bind(this)}/>
+                    />
                   <div className="input-group-addon">
                   <i className="mdi mdi-magnify"></i></div>
                 </div>
@@ -32,9 +31,9 @@ class SearchBar extends React.Component {
 }
 
 // Sets the required propTypes from the parent and give warnings if ts not present
-SearchBar.propTypes = {
-  onUserInput: React.PropTypes.func.isRequired,
-  filterText: React.PropTypes.string.isRequired
-};
+// SearchBar.propTypes = {
+//   onUserInput: React.PropTypes.func.isRequired,
+//   filterText: React.PropTypes.string.isRequired
+// };
 
 export default SearchBar;
