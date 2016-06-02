@@ -6,11 +6,17 @@ import imageApi from '../api/imageApi';
  * @return {object}  all the images from the dispatched action
  */
 export function recieveImages(images) {
-  console.log(images, 'from the actions');
   return {
     type: ActionTypes.GET_ALL_IMAGES,
     data: images
   };
+}
+
+export function changeAcktiveImage(image) {
+  return {
+    type: ActionTypes.CHANGE_ACTIVE_IMAGE,
+    data: image
+  }
 }
 /**
  * @return {function} Returns a dispatch funciton
@@ -24,7 +30,6 @@ export function getAllImages() {
 }
 
 export function filterFromTitles(value) {
-  console.log(value);
   return {
     type: ActionTypes.FILTER_FROM_TITLE,
     data: value

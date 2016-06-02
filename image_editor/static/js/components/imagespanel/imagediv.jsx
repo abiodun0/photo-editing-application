@@ -1,35 +1,47 @@
 import React from 'react';
 import classNames from 'classnames';
 import moment from 'moment';
+import {changeAcktiveImage} from '../../actions';
+import {connect} from 'react-redux'
+
 
 const ImageDiv =  (props) => {
-  console.log(props);
-  var activeUpload = classNames({
+  let activeKey = props.activeImage ? props.activeImage.id: 0
+  let activeUpload = classNames({
         uploaded: true,
-        active: false
+        active: Number(props.image.id) === Number(activeKey)
     });
   return (
-    <div className={activeUpload}>
-                <div className="media">
-                    <div className="media-left" href="#"
-                    style={{backgroundImage: 'url(/media/' +
-                        props.image.picture + ')', width: 50 + '%',
-      backgroundSize: 'cover', backgroundPosition: 50 + '% ' + 50 + '%',
-      height: 180 + 'px'
-  }}>
-                    </div>
-                    <div className="media-body">
-                        <p className="media-heading">{props.image.title}
-                            <br/>
-                            <small> Modified {
-                                moment(props.image.date_modified).fromNow()
-                            }</small>
-                        </p>
-                    </div>
-                </div>
-            </div>);
+    <div className={activeUpload} onClick={props.changeActiveKey.bind(null, props.image)}>
+      <div className="media">
+        <div className="media-left" href="#" style={{backgroundImage: 'url(/media/' +
+            props.image.picture + ')', width: 50 + '%',
+            backgroundSize: 'cover', backgroundPosition: 50 + '% ' + 50 + '%',
+            height: 180 + 'px'
+          }}>
+      </div>
+        <div className="media-body">
+          <p className="media-heading">{props.image.title}
+            <br/>
+            <small> Modified {moment(props.image.date_modified).fromNow()}</small>
+          </p>
+        </div>
+      </div>
+    </div>
+    );
 
 }
+const mapStateToProps = (state) => {
+  return {
+    activeImage : state.activeImage
+  }
+}
+
+const changeActiveKey = (image) => (dispatch) => {
+   return dispatch(changeAcktiveImage(image))
+}
+export default connect(mapStateToProps, {changeActiveKey})(ImageDiv);
+
 
 // class ImageDiv extends React.Component {
 //     /**
@@ -82,4 +94,3 @@ const ImageDiv =  (props) => {
 //   changeKey: React.PropTypes.func.isRequired
 // };
 
-export default ImageDiv;

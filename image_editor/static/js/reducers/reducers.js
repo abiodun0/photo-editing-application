@@ -39,19 +39,26 @@ function isLoading(state = false, action) {
 function allImages(state = [], action) {
   switch (action.type) {
     case ActionTypes.GET_ALL_IMAGES:
-      console.log(action.data);
-      return action.data;
-    case ActionTypes.FILTER_FROM_TITLE:
-      let filteredImages = state.filter(image => {
+      return state.concat(action.data);
+    case ActionTypes.DELETE_IMAGE:
+      return state.filter(image => {
+        console.log(image);
         return image.title.toLowerCase()
             .indexOf(action.data.toLowerCase()) !== -1;
       });
-      return filteredImages;
     default:
       return state;
   }
 }
 
+function filterText(state = '', action) {
+  switch (action.type) {
+    case ActionTypes.FILTER_FROM_TITLE:
+      return action.data;
+    default:
+      return state;
+  }
+}
 /**
  * [filename description]
  * @param  {String} state  [description]
@@ -61,6 +68,15 @@ function allImages(state = [], action) {
 function filename(state = '', action) {
   switch (action.type) {
     case ActionTypes.CHANGE_NAME:
+      return action.data;
+    default:
+      return state;
+  }
+}
+
+export function activeImage(state = {}, action) {
+  switch (action.type) {
+    case ActionTypes.CHANGE_ACTIVE_IMAGE:
       return action.data;
     default:
       return state;
@@ -103,6 +119,8 @@ const imageApp = combineReducers({
   percentage,
   isUploading,
   preview,
-  isLoading
+  isLoading,
+  filterText,
+  activeImage
 });
 export default imageApp;

@@ -1,5 +1,6 @@
 /* eslint no-alert: 0*/
 import React from 'react';
+import {connect} from 'react-redux';
 import classNames from 'classnames';
 import _ from 'lodash';
 import FaceBookApi from '../../api/facebookApi';
@@ -33,6 +34,8 @@ class ImageDiv extends React.Component {
       this.props.editImage(imageCopy);
     }
     render() {
+      let picture = this.props.activeImage.filtered ?
+                    this.props.activeImage.filter_path : this.props.activeImage.picture;
       let buttonClass = classNames({
         btn: true,
         disabled: !_.isObject(this.props.image)
@@ -68,12 +71,12 @@ class ImageDiv extends React.Component {
                     </form>
                   <h6 className={`${this.state.editMode ? 'hide' : ''}
                    text-uppercase`}>
-                  {_.isObject(this.props.image) ?
-                    (this.props.image.title || 'No Name') : 'No Image Selected'}
+                  {_.isObject(this.props.activeImage) ?
+                    (this.props.activeImage.title || 'No Name') : 'No Image Selected'}
                     </h6>
                   <h6 className="text-uppercase">
-                  {_.isObject(this.props.image) ?
-                    (this.props.image.currentFilter ||
+                  {_.isObject(this.props.activeImage) ?
+                    (this.props.activeImage.currentFilter ||
                      'No Filter Applied') : ''}
                     </h6>
                 </blockquote>
@@ -91,14 +94,23 @@ class ImageDiv extends React.Component {
             </span></a>
             </button></div>
             <div className="edit text-center">
-            <img ref="filteredimage" src="http://placehold.it/40x40" />
+            <img ref="filteredimage" src={this.props.activeImage.picture?
+              `/media/${picture}` : '/static/img/no_image_selected.gif'} />
             </div>
             </div>
             );
     }
 }
 
-export default ImageDiv;
+const mapStateToProps = (state) => {
+  console.log(state);
+  return {
+    activeImage : state.activeImage
+  }
+}
+
+export default connect(mapStateToProps)(ImageDiv);
+
 
 
 // class ImageDiv extends React.Component {
@@ -254,4 +266,3 @@ export default ImageDiv;
 
 // };
 
-export default ImageDiv;

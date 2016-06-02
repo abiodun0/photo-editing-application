@@ -60,11 +60,11 @@ class FilterDiv extends React.Component {
     }
 }
 
-// Sets the required propTypes from the parent and give warnings if ts not present
-FilterDiv.propTypes = {
-  image: React.PropTypes.oneOfType(
-    [React.PropTypes.object, React.PropTypes.string]).isRequired,
-  changeFilter: React.PropTypes.func.isRequired
-};
+// // Sets the required propTypes from the parent and give warnings if ts not present
+// FilterDiv.propTypes = {
+//   image: React.PropTypes.oneOfType(
+//     [React.PropTypes.object, React.PropTypes.string]).isRequired,
+//   changeFilter: React.PropTypes.func.isRequired
+// };
 
 export default FilterDiv;

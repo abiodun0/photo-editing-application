@@ -3,3 +3,4 @@ export const ADD_IMAGE = 'ADD_IMAGE';
 export const FILTER_FROM_TITLE = 'FILTER_FROM_TITLE';
 export const DELETE_IMAGE = 'DELETE_IMAGE';
 export const UPDATE_IMAGE = 'UPDATE_IMAGE';
+export const CHANGE_ACTIVE_IMAGE = 'CHANGE_ACTIVE_IMAGE';

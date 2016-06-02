@@ -5,19 +5,13 @@ import {connect} from 'react-redux';
 
 
 class ImagesContainer extends React.Component {
-  constructor(){
-    super();
-    this.state = {
-      activeKey: 0
-    };
-  }
   render(){
           let dropzone = (<UploadPanel/>);
           let images = this.props.images? this.props.images: []
           let sections = []
           images.forEach((image, i) => {
-            sections.push(<ImageDiv key={i} getKey={image.id}
-                 image={image} activeKey={this.state.activeKey}
+            sections.push(<ImageDiv key={i}
+                 image={image}
                />);
           })
     return (
@@ -32,9 +26,12 @@ class ImagesContainer extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state.isLoading)
+  const {allImages, filterText} = state
   return {
-    images: state.allImages
+    images: allImages.filter((image)=> {
+      return image.title.toLowerCase()
+            .indexOf(filterText.toLowerCase()) !== -1
+  })
   }
 }
 export default connect(mapStateToProps)(ImagesContainer);
