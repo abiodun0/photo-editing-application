@@ -36,6 +36,13 @@ export function filterFromTitles(value) {
   };
 }
 
+export function deleteImageTest(image) {
+  return dispatch => {
+    dispatch(changeAcktiveImage({}));
+    dispatch(deleteImage(image));
+  };
+}
+
 /**
  * @param  {object} image passed in from the result of the api call
  * @return {object} returns the object to be used with the dispatch method
@@ -58,21 +65,13 @@ export function updateOrfilterImage(image, filter = null) {
     });
   };
 }
-/**
- * @param  {object} image instance object to be repalced with the active one on the preview component
- * @return {object} returns the actions to tbe passed to the dispatched action
- */
-export function changeImage(image) {
-  return {
-    type: ActionTypes.CHANGE_IMAGE,
-    data: image
-  };
-}
+
 /**
  * @param  {object} image instance that is being deleted
  * @return {object} the returned dispatched action
  */
 export function deleteImage(image) {
+  console.log(ActionTypes.DELETE_IMAGE);
   return {
     type: ActionTypes.DELETE_IMAGE,
     data: image

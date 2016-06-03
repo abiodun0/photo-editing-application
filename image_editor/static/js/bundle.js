@@ -21469,8 +21469,7 @@
 	      return state.concat(action.data);
 	    case ActionTypes.DELETE_IMAGE:
 	      return state.filter(function (image) {
-	        console.log(image);
-	        return image.title.toLowerCase().indexOf(action.data.toLowerCase()) !== -1;
+	        return Number(image.id) !== Number(action.data.id);
 	      });
 	    default:
 	      return state;
@@ -21595,9 +21594,9 @@
 	exports.changeAcktiveImage = changeAcktiveImage;
 	exports.getAllImages = getAllImages;
 	exports.filterFromTitles = filterFromTitles;
+	exports.deleteImageTest = deleteImageTest;
 	exports.updateImage = updateImage;
 	exports.updateOrfilterImage = updateOrfilterImage;
-	exports.changeImage = changeImage;
 	exports.deleteImage = deleteImage;
 	exports.deleteImagefromApi = deleteImagefromApi;
 
@@ -21648,6 +21647,13 @@
 	  };
 	}
 
+	function deleteImageTest(image) {
+	  return function (dispatch) {
+	    dispatch(changeAcktiveImage({}));
+	    dispatch(deleteImage(image));
+	  };
+	}
+
 	/**
 	 * @param  {object} image passed in from the result of the api call
 	 * @return {object} returns the object to be used with the dispatch method
@@ -21672,21 +21678,13 @@
 	    });
 	  };
 	}
-	/**
-	 * @param  {object} image instance object to be repalced with the active one on the preview component
-	 * @return {object} returns the actions to tbe passed to the dispatched action
-	 */
-	function changeImage(image) {
-	  return {
-	    type: ActionTypes.CHANGE_IMAGE,
-	    data: image
-	  };
-	}
+
 	/**
 	 * @param  {object} image instance that is being deleted
 	 * @return {object} the returned dispatched action
 	 */
 	function deleteImage(image) {
+	  console.log(ActionTypes.DELETE_IMAGE);
 	  return {
 	    type: ActionTypes.DELETE_IMAGE,
 	    data: image
@@ -57943,7 +57941,7 @@
 
 	var _imagediv2 = _interopRequireDefault(_imagediv);
 
-	var _filterdiv = __webpack_require__(299);
+	var _filterdiv = __webpack_require__(300);
 
 	var _filterdiv2 = _interopRequireDefault(_filterdiv);
 
@@ -57993,8 +57991,6 @@
 
 	'use strict';
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
@@ -58005,161 +58001,33 @@
 
 	var _reactRedux = __webpack_require__(173);
 
-	var _classnames = __webpack_require__(208);
-
-	var _classnames2 = _interopRequireDefault(_classnames);
-
 	var _lodash = __webpack_require__(196);
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
-	var _facebookApi = __webpack_require__(298);
+	var _topbuttons = __webpack_require__(298);
+
+	var _topbuttons2 = _interopRequireDefault(_topbuttons);
+
+	var _facebookApi = __webpack_require__(299);
 
 	var _facebookApi2 = _interopRequireDefault(_facebookApi);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /* eslint no-alert: 0*/
-
-	var ImageDiv = function (_React$Component) {
-	  _inherits(ImageDiv, _React$Component);
-
-	  function ImageDiv(props) {
-	    _classCallCheck(this, ImageDiv);
-
-	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(ImageDiv).call(this, props));
-
-	    _this.state = {};
-	    _this.displayName = 'ImageDiv';
-	    return _this;
-	  }
-	  /**
-	  * Togges the edit title form
-	  *@param {object} e the event object
-	  */
-
-	  _createClass(ImageDiv, [{
-	    key: 'toggleEdit',
-	    value: function toggleEdit(e) {
-	      e.preventDefault();
-	      if (this.state.editMode) this.props.updateImage(this.props.image);
-	      this.setState({ editMode: !this.state.editMode });
-	    }
-	    /**
-	    * sends the title to the python backend
-	    *@param {object} e the event object
-	    */
-
-	  }, {
-	    key: 'changeTitle',
-	    value: function changeTitle(e) {
-	      e.preventDefault();
-	      var imageCopy = _lodash2.default.clone(this.props.image);
-	      imageCopy.title = e.target.value;
-	      this.props.editImage(imageCopy);
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var picture = this.props.activeImage.filtered ? this.props.activeImage.filter_path : this.props.activeImage.picture;
-	      var buttonClass = (0, _classnames2.default)({
-	        btn: true,
-	        disabled: !_lodash2.default.isObject(this.props.image)
-	      });
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'edit-buttons' },
-	          _react2.default.createElement(
-	            'button',
-	            { className: buttonClass },
-	            _react2.default.createElement('span', { className: 'mdi mdi-pencil' })
-	          ),
-	          _react2.default.createElement(
-	            'button',
-	            { className: buttonClass },
-	            _react2.default.createElement('span', { className: 'mdi mdi-delete' })
-	          ),
-	          _react2.default.createElement(
-	            'button',
-	            { className: buttonClass },
-	            _react2.default.createElement('span', { className: 'mdi mdi-backup-restore' })
-	          ),
-	          _react2.default.createElement(
-	            'div',
-	            { className: 'card text-xs-center' },
-	            _react2.default.createElement(
-	              'blockquote',
-	              { className: 'card-blockquote card-text' },
-	              _react2.default.createElement(
-	                'form',
-	                {
-	                  className: (this.state.editMode ? '' : 'hide') + '\n                    form-inline',
-	                  action: '#', onSubmit: this.toggleEdit.bind(this) },
-	                _react2.default.createElement(
-	                  'div',
-	                  { className: 'form-group' },
-	                  _react2.default.createElement(
-	                    'div',
-	                    { className: 'input-group' },
-	                    _react2.default.createElement('input', { type: 'text', ref: 'title',
-	                      className: 'form-control',
-	                      onChange: this.changeTitle.bind(this) })
-	                  )
-	                ),
-	                _react2.default.createElement(
-	                  'button',
-	                  { type: 'submit',
-	                    className: 'btn btn-default' },
-	                  'Save'
-	                )
-	              ),
-	              _react2.default.createElement(
-	                'h6',
-	                { className: (this.state.editMode ? 'hide' : '') + '\n                   text-uppercase' },
-	                _lodash2.default.isObject(this.props.activeImage) ? this.props.activeImage.title || 'No Name' : 'No Image Selected'
-	              ),
-	              _react2.default.createElement(
-	                'h6',
-	                { className: 'text-uppercase' },
-	                _lodash2.default.isObject(this.props.activeImage) ? this.props.activeImage.currentFilter || 'No Filter Applied' : ''
-	              )
-	            )
-	          ),
-	          _react2.default.createElement(
-	            'button',
-	            { className: buttonClass + ' pull-sm-right',
-	              onClick: _lodash2.default.isObject(this.props.image) ? this.shareImage.bind(this) : '' },
-	            _react2.default.createElement('span', { className: 'mdi mdi-share-variant' })
-	          ),
-	          _react2.default.createElement(
-	            'button',
-	            { className: buttonClass + ' pull-sm-right' },
-	            _react2.default.createElement(
-	              'a',
-	              { href: '#',
-	                download: '#' },
-	              _react2.default.createElement('span', { className: 'mdi mdi-download' })
-	            )
-	          )
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'edit text-center' },
-	          _react2.default.createElement('img', { ref: 'filteredimage', src: this.props.activeImage.picture ? '/media/' + picture : '/static/img/no_image_selected.gif' })
-	        )
-	      );
-	    }
-	  }]);
-
-	  return ImageDiv;
-	}(_react2.default.Component);
+	var ImageDiv = function ImageDiv(props) {
+	  var picture = props.activeImage.filtered ? props.activeImage.filter_path : props.activeImage.picture;
+	  return _react2.default.createElement(
+	    'div',
+	    null,
+	    _react2.default.createElement(_topbuttons2.default, { activeImage: props.activeImage }),
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'edit text-center' },
+	      _react2.default.createElement('img', { src: props.activeImage.picture ? '/media/' + picture : '/static/img/no_image_selected.gif' })
+	    )
+	  );
+	}; /* eslint no-alert: 0*/
 
 	var mapStateToProps = function mapStateToProps(state) {
 	  console.log(state);
@@ -58325,6 +58193,158 @@
 
 /***/ },
 /* 298 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _classnames = __webpack_require__(208);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
+	var _reactRedux = __webpack_require__(173);
+
+	var _actions = __webpack_require__(188);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var TopButtons = function (_React$Component) {
+	  _inherits(TopButtons, _React$Component);
+
+	  function TopButtons(props) {
+	    _classCallCheck(this, TopButtons);
+
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(TopButtons).call(this, props));
+
+	    _this.state = {
+	      editMode: false,
+	      imageTitle: props.activeImage.title
+	    };
+	    _this.toggleEdit = _this.toggleEdit.bind(_this);
+	    return _this;
+	  }
+
+	  _createClass(TopButtons, [{
+	    key: 'toggleEdit',
+	    value: function toggleEdit() {
+	      this.setState({ editMode: !this.state.editMode });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this2 = this;
+
+	      var buttonClass = (0, _classnames2.default)({
+	        btn: true,
+	        disabled: !this.props.activeImage.picture
+	      });
+	      var formCalss = (0, _classnames2.default)({
+	        'form-inline': true,
+	        'hide': !this.state.editMode
+	      });
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'edit-buttons' },
+	        _react2.default.createElement(
+	          'button',
+	          { className: buttonClass, onClick: this.toggleEdit },
+	          _react2.default.createElement('span', { className: 'mdi mdi-pencil' })
+	        ),
+	        _react2.default.createElement(
+	          'button',
+	          { className: buttonClass, onClick: function onClick() {
+	              return _this2.props.deleteImageTest(_this2.props.activeImage);
+	            } },
+	          _react2.default.createElement('span', { className: 'mdi mdi-delete' })
+	        ),
+	        _react2.default.createElement(
+	          'button',
+	          { className: buttonClass },
+	          _react2.default.createElement('span', { className: 'mdi mdi-backup-restore' })
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'card text-xs-center' },
+	          _react2.default.createElement(
+	            'blockquote',
+	            { className: 'card-blockquote card-text' },
+	            _react2.default.createElement(
+	              'form',
+	              {
+	                className: formCalss,
+	                action: '#' },
+	              _react2.default.createElement(
+	                'div',
+	                { className: 'form-group' },
+	                _react2.default.createElement(
+	                  'div',
+	                  { className: 'input-group' },
+	                  _react2.default.createElement('input', { type: 'text',
+	                    className: 'form-control',
+	                    value: this.props.activeImage.title
+	                  })
+	                )
+	              ),
+	              _react2.default.createElement(
+	                'button',
+	                { type: 'submit',
+	                  className: 'btn btn-default' },
+	                'Save'
+	              )
+	            ),
+	            _react2.default.createElement(
+	              'h6',
+	              { className: 'text-uppercase' },
+	              this.props.activeImage.title || 'No Image Selected'
+	            ),
+	            _react2.default.createElement(
+	              'h6',
+	              { className: 'text-uppercase' },
+	              this.props.activeImage.currentFilter || 'No Filter Applied'
+	            )
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'button',
+	          { className: buttonClass + ' pull-sm-right' },
+	          _react2.default.createElement('span', { className: 'mdi mdi-share-variant' })
+	        ),
+	        _react2.default.createElement(
+	          'button',
+	          { className: buttonClass + ' pull-sm-right' },
+	          _react2.default.createElement(
+	            'a',
+	            { href: '#',
+	              download: '#' },
+	            _react2.default.createElement('span', { className: 'mdi mdi-download' })
+	          )
+	        )
+	      );
+	    }
+	  }]);
+
+	  return TopButtons;
+	}(_react2.default.Component);
+
+	exports.default = (0, _reactRedux.connect)(null, { deleteImageTest: _actions.deleteImageTest })(TopButtons);
+
+/***/ },
+/* 299 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -58383,7 +58403,7 @@
 	exports.default = FaceBookApi;
 
 /***/ },
-/* 299 */
+/* 300 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -58398,7 +58418,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactSlick = __webpack_require__(300);
+	var _reactSlick = __webpack_require__(301);
 
 	var _reactSlick2 = _interopRequireDefault(_reactSlick);
 
@@ -58410,7 +58430,7 @@
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
-	var _filterimage = __webpack_require__(319);
+	var _filterimage = __webpack_require__(320);
 
 	var _filterimage2 = _interopRequireDefault(_filterimage);
 
@@ -58507,15 +58527,15 @@
 	exports.default = FilterDiv;
 
 /***/ },
-/* 300 */
+/* 301 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(301);
+	module.exports = __webpack_require__(302);
 
 /***/ },
-/* 301 */
+/* 302 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -58526,21 +58546,21 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _innerSlider = __webpack_require__(302);
+	var _innerSlider = __webpack_require__(303);
 
-	var _objectAssign = __webpack_require__(306);
+	var _objectAssign = __webpack_require__(307);
 
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 
-	var _json2mq = __webpack_require__(314);
+	var _json2mq = __webpack_require__(315);
 
 	var _json2mq2 = _interopRequireDefault(_json2mq);
 
-	var _reactResponsiveMixin = __webpack_require__(316);
+	var _reactResponsiveMixin = __webpack_require__(317);
 
 	var _reactResponsiveMixin2 = _interopRequireDefault(_reactResponsiveMixin);
 
-	var _defaultProps = __webpack_require__(310);
+	var _defaultProps = __webpack_require__(311);
 
 	var _defaultProps2 = _interopRequireDefault(_defaultProps);
 
@@ -58617,7 +58637,7 @@
 	module.exports = Slider;
 
 /***/ },
-/* 302 */
+/* 303 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -58634,19 +58654,19 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _mixinsEventHandlers = __webpack_require__(303);
+	var _mixinsEventHandlers = __webpack_require__(304);
 
 	var _mixinsEventHandlers2 = _interopRequireDefault(_mixinsEventHandlers);
 
-	var _mixinsHelpers = __webpack_require__(307);
+	var _mixinsHelpers = __webpack_require__(308);
 
 	var _mixinsHelpers2 = _interopRequireDefault(_mixinsHelpers);
 
-	var _initialState = __webpack_require__(309);
+	var _initialState = __webpack_require__(310);
 
 	var _initialState2 = _interopRequireDefault(_initialState);
 
-	var _defaultProps = __webpack_require__(310);
+	var _defaultProps = __webpack_require__(311);
 
 	var _defaultProps2 = _interopRequireDefault(_defaultProps);
 
@@ -58654,11 +58674,11 @@
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
-	var _track = __webpack_require__(311);
+	var _track = __webpack_require__(312);
 
-	var _dots = __webpack_require__(312);
+	var _dots = __webpack_require__(313);
 
-	var _arrows = __webpack_require__(313);
+	var _arrows = __webpack_require__(314);
 
 	var InnerSlider = _react2['default'].createClass({
 	  displayName: 'InnerSlider',
@@ -58806,7 +58826,7 @@
 	exports.InnerSlider = InnerSlider;
 
 /***/ },
-/* 303 */
+/* 304 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -58816,9 +58836,9 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _trackHelper = __webpack_require__(304);
+	var _trackHelper = __webpack_require__(305);
 
-	var _objectAssign = __webpack_require__(306);
+	var _objectAssign = __webpack_require__(307);
 
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 
@@ -58972,7 +58992,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 304 */
+/* 305 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -58982,7 +59002,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _ReactDOM = __webpack_require__(305);
+	var _ReactDOM = __webpack_require__(306);
 
 	var _ReactDOM2 = _interopRequireDefault(_ReactDOM);
 
@@ -59098,7 +59118,7 @@
 	exports.getTrackLeft = getTrackLeft;
 
 /***/ },
-/* 305 */
+/* 306 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -59123,7 +59143,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 306 */
+/* 307 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -59155,7 +59175,7 @@
 
 
 /***/ },
-/* 307 */
+/* 308 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -59170,17 +59190,17 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _ReactDOM = __webpack_require__(305);
+	var _ReactDOM = __webpack_require__(306);
 
 	var _ReactDOM2 = _interopRequireDefault(_ReactDOM);
 
-	var _reactLibReactTransitionEvents = __webpack_require__(308);
+	var _reactLibReactTransitionEvents = __webpack_require__(309);
 
 	var _reactLibReactTransitionEvents2 = _interopRequireDefault(_reactLibReactTransitionEvents);
 
-	var _trackHelper = __webpack_require__(304);
+	var _trackHelper = __webpack_require__(305);
 
-	var _objectAssign = __webpack_require__(306);
+	var _objectAssign = __webpack_require__(307);
 
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 
@@ -59445,7 +59465,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 308 */
+/* 309 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -59559,7 +59579,7 @@
 	module.exports = ReactTransitionEvents;
 
 /***/ },
-/* 309 */
+/* 310 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -59609,7 +59629,7 @@
 	module.exports = initialState;
 
 /***/ },
-/* 310 */
+/* 311 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -59661,7 +59681,7 @@
 	module.exports = defaultProps;
 
 /***/ },
-/* 311 */
+/* 312 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -59676,7 +59696,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _objectAssign = __webpack_require__(306);
+	var _objectAssign = __webpack_require__(307);
 
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 
@@ -59810,7 +59830,7 @@
 	exports.Track = Track;
 
 /***/ },
-/* 312 */
+/* 313 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -59889,7 +59909,7 @@
 	exports.Dots = Dots;
 
 /***/ },
-/* 313 */
+/* 314 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -60006,10 +60026,10 @@
 	exports.NextArrow = NextArrow;
 
 /***/ },
-/* 314 */
+/* 315 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var camel2hyphen = __webpack_require__(315);
+	var camel2hyphen = __webpack_require__(316);
 
 	var isDimension = function (feature) {
 	  var re = /[height|width]$/;
@@ -60062,7 +60082,7 @@
 	module.exports = json2mq;
 
 /***/ },
-/* 315 */
+/* 316 */
 /***/ function(module, exports) {
 
 	var camel2hyphen = function (str) {
@@ -60076,12 +60096,12 @@
 	module.exports = camel2hyphen;
 
 /***/ },
-/* 316 */
+/* 317 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var canUseDOM = __webpack_require__(317);
-	var enquire = canUseDOM && __webpack_require__(318);
-	var json2mq = __webpack_require__(314);
+	var canUseDOM = __webpack_require__(318);
+	var enquire = canUseDOM && __webpack_require__(319);
+	var json2mq = __webpack_require__(315);
 
 	var ResponsiveMixin = {
 	  media: function (query, handler) {
@@ -60111,7 +60131,7 @@
 	module.exports = ResponsiveMixin;
 
 /***/ },
-/* 317 */
+/* 318 */
 /***/ function(module, exports) {
 
 	var canUseDOM = !!(
@@ -60123,7 +60143,7 @@
 	module.exports = canUseDOM;
 
 /***/ },
-/* 318 */
+/* 319 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -60421,7 +60441,7 @@
 	}));
 
 /***/ },
-/* 319 */
+/* 320 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";

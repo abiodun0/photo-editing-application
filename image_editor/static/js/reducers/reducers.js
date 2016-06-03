@@ -42,9 +42,7 @@ function allImages(state = [], action) {
       return state.concat(action.data);
     case ActionTypes.DELETE_IMAGE:
       return state.filter(image => {
-        console.log(image);
-        return image.title.toLowerCase()
-            .indexOf(action.data.toLowerCase()) !== -1;
+        return Number(image.id) !== Number(action.data.id);
       });
     default:
       return state;
