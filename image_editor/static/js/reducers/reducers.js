@@ -84,7 +84,6 @@ function filename(state = '', action) {
 export function activeImage(state = {}, action) {
   switch (action.type) {
     case ActionTypes.CHANGE_ACTIVE_IMAGE:
-      console.log(action.data, 'action data');
       return action.data;
     default:
       return state;

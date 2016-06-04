@@ -72,24 +72,21 @@ const ImageApi = {
   * deletes image object  from the database
   *@param {object} imageObj the image object to be updated
   */
-  deleteImage(imageObj) {
+  deleteImage(imageObj, cb) {
     toastr.error('Deleting ' + imageObj.title + '...', null, {
       timeOut: 0
     });
-    this.setState({isLoading: true});
+    store.dispatch(changeLoadingStatus(true));
     request.del(imageUrl)
       .send(imageObj)
       .end(err => {
         toastr.clear();
         if (!err) {
-          _.remove(this.state.data, m => {
-            return imageObj.id === m.id;
-          });
-          this.setState({isLoading: false});
+          store.dispatch(changeLoadingStatus(false));
           toastr.info('successfully removed ' + imageObj.title, '', {
             closeButton: true
           });
-          this.setState({image: ''});
+          cb();
         }
       });
   },

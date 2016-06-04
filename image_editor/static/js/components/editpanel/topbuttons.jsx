@@ -2,6 +2,7 @@ import React from 'react'
 import classNames from 'classnames';
 import {connect} from 'react-redux';
 import _ from 'lodash';
+import swal from 'sweetalert'
 import {deleteImagefromApi, updateImage} from '../../actions';
 import FaceBookApi from '../../api/facebookApi';
 
@@ -18,6 +19,7 @@ class TopButtons extends React.Component {
     this.onSubmit = this.onSubmit.bind(this);
     this.resetImage = this.resetImage.bind(this);
     this.shareImage = this.shareImage.bind(this);
+    this.deleteImage = this.deleteImage.bind(this);
     }
     componentWillMount() {
       FaceBookApi.init();
@@ -41,8 +43,20 @@ class TopButtons extends React.Component {
       tempImage.filtered = false;
       this.props.updateImage(tempImage, null, true);
     }
-  shareImage() {
+    shareImage() {
       FaceBookApi.share(this.props.activeImage, this.refs.filteredimage.href);
+    }
+    deleteImage(){
+      swal({   title: `Delete ${this.props.activeImage.title}`,
+        text: "Click okay to delete this image",
+        type: "info",
+        showCancelButton: true,
+        closeOnConfirm: true,
+        showLoaderOnConfirm: true,
+      }, () => {
+      this.props.deleteImagefromApi(this.props.activeImage)
+
+      });
     }
     render() {
       let buttonClass = classNames({
@@ -59,7 +73,7 @@ class TopButtons extends React.Component {
         <div className="edit-buttons">
             <button className={buttonClass} onClick={this.toggleEdit}>
                 <span className="mdi mdi-pencil"></span></button>
-            <button className={buttonClass} onClick={this.props.deleteImagefromApi.bind(null, this.props.activeImage)}>
+            <button className={buttonClass} onClick={this.deleteImage}>
                 <span className="mdi mdi-delete"></span></button>
             <button className={buttonClass} onClick={this.resetImage}>
                 <span className="mdi mdi-backup-restore">

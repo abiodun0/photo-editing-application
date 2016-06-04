@@ -5,7 +5,7 @@ import imageApi from '../api/imageApi';
  * @param  {array} images images recieved from the api
  * @return {object}  all the images from the dispatched action
  */
-export function recieveImages(images) {
+function recieveImages(images) {
   return {
     type: ActionTypes.GET_ALL_IMAGES,
     data: images
@@ -44,7 +44,7 @@ export function updatePercentage(value) {
   };
 }
 
-export function uploadImage(image) {
+function uploadImage(image) {
   return {
     type: ActionTypes.UPLOAD_IMAGE,
     data: image
@@ -57,6 +57,8 @@ export function filterFromTitles(value) {
     data: value
   };
 }
+
+
 
 export function changeUploadStatus(value) {
   return {
@@ -83,10 +85,13 @@ export function updateTitleFromImageArray(image) {
     data: image
   };
 }
+
 export function deleteImagefromApi(image) {
   return dispatch => {
-    dispatch(changeAcktiveImage({}));
-    dispatch(deleteImage(image));
+    imageApi.deleteImage(image, () => {
+      dispatch(changeAcktiveImage({}));
+      dispatch(deleteImage(image));
+    });
   };
 }
 
@@ -126,8 +131,7 @@ export function updateOrfilterImage(image, filter = null) {
  * @param  {object} image instance that is being deleted
  * @return {object} the returned dispatched action
  */
-export function deleteImage(image) {
-  console.log(ActionTypes.DELETE_IMAGE);
+function deleteImage(image) {
   return {
     type: ActionTypes.DELETE_IMAGE,
     data: image
