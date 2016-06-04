@@ -1,13 +1,11 @@
 /* eslint no-alert: 0*/
 import React from 'react';
 import TopButtons from './topbuttons.jsx';
-import FaceBookApi from '../../api/facebookApi';
 
 
 const ImageDiv = (props) => {
-  console.log(props.activeImage.filtered, 'is it filtered');
-  console.log(props.activeImage.filter_path);
-  let picture = props.activeImage.filtered ? props.activeImage.filter_path : props.activeImage.picture;
+  let picture = props.activeImage.filtered ?
+                props.activeImage.filter_path : props.activeImage.picture;
       return (
             <div>
               <TopButtons activeImage={props.activeImage}/>

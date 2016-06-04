@@ -58129,15 +58129,11 @@
 
 	var _topbuttons2 = _interopRequireDefault(_topbuttons);
 
-	var _facebookApi = __webpack_require__(300);
-
-	var _facebookApi2 = _interopRequireDefault(_facebookApi);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	/* eslint no-alert: 0*/
+
 	var ImageDiv = function ImageDiv(props) {
-	  console.log(props.activeImage.filtered, 'is it filtered');
-	  console.log(props.activeImage.filter_path);
 	  var picture = props.activeImage.filtered ? props.activeImage.filter_path : props.activeImage.picture;
 	  return _react2.default.createElement(
 	    'div',
@@ -58149,7 +58145,7 @@
 	      _react2.default.createElement('img', { src: props.activeImage.picture ? '/media/' + picture : '/static/img/no_image_selected.gif' })
 	    )
 	  );
-	}; /* eslint no-alert: 0*/
+	};
 
 	exports.default = ImageDiv;
 
@@ -58334,6 +58330,10 @@
 
 	var _actions = __webpack_require__(191);
 
+	var _facebookApi = __webpack_require__(300);
+
+	var _facebookApi2 = _interopRequireDefault(_facebookApi);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -58355,13 +58355,28 @@
 	    };
 	    _this.toggleEdit = _this.toggleEdit.bind(_this);
 	    _this.onChange = _this.onChange.bind(_this);
+	    _this.onSubmit = _this.onSubmit.bind(_this);
+	    _this.resetImage = _this.resetImage.bind(_this);
+	    _this.shareImage = _this.shareImage.bind(_this);
 	    return _this;
 	  }
 
 	  _createClass(TopButtons, [{
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {
+	      _facebookApi2.default.init();
+	    }
+	  }, {
 	    key: 'toggleEdit',
 	    value: function toggleEdit() {
 	      this.setState({ editMode: !this.state.editMode });
+	    }
+	  }, {
+	    key: 'onSubmit',
+	    value: function onSubmit(e) {
+	      e.preventDefault();
+	      this.setState({ editMode: false });
+	      this.props.updateImage(this.props.activeImage, null, true);
 	    }
 	  }, {
 	    key: 'onChange',
@@ -58369,6 +58384,18 @@
 	      var tempImage = _lodash2.default.clone(this.props.activeImage);
 	      tempImage.title = e.target.value;
 	      this.props.updateImage(tempImage);
+	    }
+	  }, {
+	    key: 'resetImage',
+	    value: function resetImage() {
+	      var tempImage = _lodash2.default.clone(this.props.activeImage);
+	      tempImage.filtered = false;
+	      this.props.updateImage(tempImage, null, true);
+	    }
+	  }, {
+	    key: 'shareImage',
+	    value: function shareImage() {
+	      _facebookApi2.default.share(this.props.activeImage, this.refs.filteredimage.href);
 	    }
 	  }, {
 	    key: 'render',
@@ -58381,7 +58408,7 @@
 	        'form-inline': true,
 	        'hide': !this.state.editMode
 	      });
-	      console.log(this.props.activeImage.title);
+	      var picture = this.props.activeImage.filtered ? this.props.activeImage.filter_path : this.props.activeImage.picture;
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'edit-buttons' },
@@ -58397,7 +58424,7 @@
 	        ),
 	        _react2.default.createElement(
 	          'button',
-	          { className: buttonClass },
+	          { className: buttonClass, onClick: this.resetImage },
 	          _react2.default.createElement('span', { className: 'mdi mdi-backup-restore' })
 	        ),
 	        _react2.default.createElement(
@@ -58410,7 +58437,7 @@
 	              'form',
 	              {
 	                className: formCalss,
-	                action: '#' },
+	                action: '#', onSubmit: this.onSubmit },
 	              _react2.default.createElement(
 	                'div',
 	                { className: 'form-group' },
@@ -58445,7 +58472,7 @@
 	        ),
 	        _react2.default.createElement(
 	          'button',
-	          { className: buttonClass + ' pull-sm-right' },
+	          { className: buttonClass + ' pull-sm-right', onClick: this.shareImage },
 	          _react2.default.createElement('span', { className: 'mdi mdi-share-variant' })
 	        ),
 	        _react2.default.createElement(
@@ -58453,8 +58480,8 @@
 	          { className: buttonClass + ' pull-sm-right' },
 	          _react2.default.createElement(
 	            'a',
-	            { href: '#',
-	              download: '#' },
+	            { ref: 'filteredimage', href: this.props.activeImage.picture ? '/media/' + picture : '#',
+	              download: this.props.activeImage.title },
 	            _react2.default.createElement('span', { className: 'mdi mdi-download' })
 	          )
 	        )
@@ -58515,7 +58542,7 @@
 	      method: 'feed',
 	      name: 'I just edited ' + image.title + ' on image editor',
 	      display: 'popup',
-	      link: window.location.protocol + '//' + window.location.host,
+	      link: window.location.origin,
 	      caption: 'Image editor is your instagram on web',
 	      picture: source,
 	      description: 'I just updated my image'

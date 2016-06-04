@@ -37,7 +37,7 @@ const FaceBookApi = {
       method: 'feed',
       name: 'I just edited ' + image.title + ' on image editor',
       display: 'popup',
-      link: window.location.protocol + '//' + window.location.host,
+      link: window.location.origin,
       caption: 'Image editor is your instagram on web',
       picture: source,
       description: 'I just updated my image'
