@@ -2,11 +2,11 @@ import React from 'react';
 
 const FilterImage = (props) => {
   return (
-      <div className="randomClass" onClick="random clicks">
-                  <img src="http://placehold.it/40x40" width="100" height="100"/>
-                  <p className="lead">"filter name"</p>
+      <div className={props.className} onClick={props.onClick}>
+                  <img src={props.image} width="100" height="100"/>
+                  <p className="lead">{props.filter}</p>
                   </div>
-                  );
+              );
 }
 
 // class FilterImage extends React.Component {

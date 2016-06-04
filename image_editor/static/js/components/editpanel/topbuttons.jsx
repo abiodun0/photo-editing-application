@@ -1,7 +1,8 @@
 import React from 'react'
 import classNames from 'classnames';
 import {connect} from 'react-redux';
-import {deleteImageTest} from '../../actions'
+import _ from 'lodash';
+import {deleteImagefromApi, changeImageName, updateTitleFromImageArray} from '../../actions'
 
 
 class TopButtons extends React.Component {
@@ -9,15 +10,19 @@ class TopButtons extends React.Component {
     super(props);
     this.state = {
       editMode: false,
-      imageTitle: props.activeImage.title
     }
     this.toggleEdit = this.toggleEdit.bind(this);
+    this.onChange = this.onChange.bind(this);
     }
 
     toggleEdit(){
       this.setState({editMode: !this.state.editMode});
     }
-
+    onChange(e){
+      let tempImage = _.clone(this.props.activeImage)
+      tempImage.title = e.target.value;
+      this.props.changeImageTitle(tempImage)
+    }
     render() {
       let buttonClass = classNames({
         btn: true,
@@ -27,11 +32,12 @@ class TopButtons extends React.Component {
         'form-inline': true,
         'hide': !this.state.editMode
       })
+      console.log(this.props.activeImage.title);
       return (
         <div className="edit-buttons">
             <button className={buttonClass} onClick={this.toggleEdit}>
                 <span className="mdi mdi-pencil"></span></button>
-            <button className={buttonClass} onClick={()=> this.props.deleteImageTest(this.props.activeImage)}>
+            <button className={buttonClass} onClick={this.props.deleteImagefromApi.bind(null, this.props.activeImage)}>
                 <span className="mdi mdi-delete"></span></button>
             <button className={buttonClass}>
                 <span className="mdi mdi-backup-restore">
@@ -47,6 +53,7 @@ class TopButtons extends React.Component {
                           <input type="text"
                           className="form-control"
                           value={this.props.activeImage.title}
+                          onChange={this.onChange}
                           />
                           </div>
                         </div>
@@ -78,8 +85,12 @@ class TopButtons extends React.Component {
           </div>
         );
     }
+}
+const changeImageTitle = (image) => (dispatch) => {
+  dispatch(changeImageName(image));
+  return dispatch(updateTitleFromImageArray(image));
 
 }
 
-export default connect(null, {deleteImageTest})(TopButtons);
+export default connect(null, {deleteImagefromApi, changeImageTitle})(TopButtons);
 

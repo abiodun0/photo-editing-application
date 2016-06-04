@@ -21417,6 +21417,12 @@
 
 	var _redux = __webpack_require__(159);
 
+	var _lodash = __webpack_require__(196);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	/**
@@ -21471,6 +21477,10 @@
 	      return state.filter(function (image) {
 	        return Number(image.id) !== Number(action.data.id);
 	      });
+	    case ActionTypes.UPDATE_TITLE_IN_IMAGE_ARRAY:
+	      var index = _lodash2.default.findIndex(state, { id: action.data.id });
+	      state[index].title = action.data.title;
+	      return state;
 	    default:
 	      return state;
 	  }
@@ -21511,6 +21521,7 @@
 
 	  switch (action.type) {
 	    case ActionTypes.CHANGE_ACTIVE_IMAGE:
+	    case ActionTypes.CHANGE_IMAGE_TITLE:
 	      return action.data;
 	    default:
 	      return state;
@@ -21580,6 +21591,8 @@
 	var DELETE_IMAGE = exports.DELETE_IMAGE = 'DELETE_IMAGE';
 	var UPDATE_IMAGE = exports.UPDATE_IMAGE = 'UPDATE_IMAGE';
 	var CHANGE_ACTIVE_IMAGE = exports.CHANGE_ACTIVE_IMAGE = 'CHANGE_ACTIVE_IMAGE';
+	var CHANGE_IMAGE_TITLE = exports.CHANGE_IMAGE_TITLE = 'CHANGE_IMAGE_TITLE';
+	var UPDATE_TITLE_IN_IMAGE_ARRAY = exports.UPDATE_TITLE_IN_IMAGE_ARRAY = 'UPDATE_TITLE_IN_IMAGE_ARRAY';
 
 /***/ },
 /* 188 */
@@ -21594,11 +21607,12 @@
 	exports.changeAcktiveImage = changeAcktiveImage;
 	exports.getAllImages = getAllImages;
 	exports.filterFromTitles = filterFromTitles;
-	exports.deleteImageTest = deleteImageTest;
+	exports.changeImageName = changeImageName;
+	exports.updateTitleFromImageArray = updateTitleFromImageArray;
+	exports.deleteImagefromApi = deleteImagefromApi;
 	exports.updateImage = updateImage;
 	exports.updateOrfilterImage = updateOrfilterImage;
 	exports.deleteImage = deleteImage;
-	exports.deleteImagefromApi = deleteImagefromApi;
 
 	var _actionTypes = __webpack_require__(187);
 
@@ -21647,7 +21661,20 @@
 	  };
 	}
 
-	function deleteImageTest(image) {
+	function changeImageName(value) {
+	  return {
+	    type: ActionTypes.CHANGE_IMAGE_TITLE,
+	    data: value
+	  };
+	}
+
+	function updateTitleFromImageArray(image) {
+	  return {
+	    type: ActionTypes.UPDATE_TITLE_IN_IMAGE_ARRAY,
+	    data: image
+	  };
+	}
+	function deleteImagefromApi(image) {
 	  return function (dispatch) {
 	    dispatch(changeAcktiveImage({}));
 	    dispatch(deleteImage(image));
@@ -21688,17 +21715,6 @@
 	  return {
 	    type: ActionTypes.DELETE_IMAGE,
 	    data: image
-	  };
-	}
-	/**
-	 * @param  {image} image instance to be deleted from the database
-	 * @return {function} the function that is being returned to the dispatch method
-	 */
-	function deleteImagefromApi(image) {
-	  return function (dispatch) {
-	    _imageApi2.default.deleteImage(image, function () {
-	      dispatch(deleteImage(image));
-	    });
 	  };
 	}
 
@@ -57930,12 +57946,14 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	          value: true
+	  value: true
 	});
 
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(173);
 
 	var _imagediv = __webpack_require__(297);
 
@@ -57948,12 +57966,12 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var EditableDiv = function EditableDiv(props) {
-	          return _react2.default.createElement(
-	                    'div',
-	                    { className: 'edit-container' },
-	                    _react2.default.createElement(_imagediv2.default, null),
-	                    _react2.default.createElement(_filterdiv2.default, null)
-	          );
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'edit-container' },
+	    _react2.default.createElement(_imagediv2.default, { activeImage: props.activeImage }),
+	    _react2.default.createElement(_filterdiv2.default, { activeImage: props.activeImage })
+	  );
 	};
 
 	// class EditableDiv extends React.Component {
@@ -57982,8 +58000,13 @@
 	//   editImage: React.PropTypes.func.isRequired
 
 	// };
+	var mapStateToProps = function mapStateToProps(state) {
+	  return {
+	    activeImage: state.activeImage
+	  };
+	};
 
-	exports.default = EditableDiv;
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(EditableDiv);
 
 /***/ },
 /* 297 */
@@ -57998,12 +58021,6 @@
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
-
-	var _reactRedux = __webpack_require__(173);
-
-	var _lodash = __webpack_require__(196);
-
-	var _lodash2 = _interopRequireDefault(_lodash);
 
 	var _topbuttons = __webpack_require__(298);
 
@@ -58029,14 +58046,7 @@
 	  );
 	}; /* eslint no-alert: 0*/
 
-	var mapStateToProps = function mapStateToProps(state) {
-	  console.log(state);
-	  return {
-	    activeImage: state.activeImage
-	  };
-	};
-
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(ImageDiv);
+	exports.default = ImageDiv;
 
 	// class ImageDiv extends React.Component {
 	//     /**
@@ -58213,6 +58223,10 @@
 
 	var _reactRedux = __webpack_require__(173);
 
+	var _lodash = __webpack_require__(196);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
+
 	var _actions = __webpack_require__(188);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -58232,10 +58246,10 @@
 	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(TopButtons).call(this, props));
 
 	    _this.state = {
-	      editMode: false,
-	      imageTitle: props.activeImage.title
+	      editMode: false
 	    };
 	    _this.toggleEdit = _this.toggleEdit.bind(_this);
+	    _this.onChange = _this.onChange.bind(_this);
 	    return _this;
 	  }
 
@@ -58245,10 +58259,15 @@
 	      this.setState({ editMode: !this.state.editMode });
 	    }
 	  }, {
+	    key: 'onChange',
+	    value: function onChange(e) {
+	      var tempImage = _lodash2.default.clone(this.props.activeImage);
+	      tempImage.title = e.target.value;
+	      this.props.changeImageTitle(tempImage);
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _this2 = this;
-
 	      var buttonClass = (0, _classnames2.default)({
 	        btn: true,
 	        disabled: !this.props.activeImage.picture
@@ -58257,6 +58276,7 @@
 	        'form-inline': true,
 	        'hide': !this.state.editMode
 	      });
+	      console.log(this.props.activeImage.title);
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'edit-buttons' },
@@ -58267,9 +58287,7 @@
 	        ),
 	        _react2.default.createElement(
 	          'button',
-	          { className: buttonClass, onClick: function onClick() {
-	              return _this2.props.deleteImageTest(_this2.props.activeImage);
-	            } },
+	          { className: buttonClass, onClick: this.props.deleteImagefromApi.bind(null, this.props.activeImage) },
 	          _react2.default.createElement('span', { className: 'mdi mdi-delete' })
 	        ),
 	        _react2.default.createElement(
@@ -58296,7 +58314,8 @@
 	                  { className: 'input-group' },
 	                  _react2.default.createElement('input', { type: 'text',
 	                    className: 'form-control',
-	                    value: this.props.activeImage.title
+	                    value: this.props.activeImage.title,
+	                    onChange: this.onChange
 	                  })
 	                )
 	              ),
@@ -58341,7 +58360,14 @@
 	  return TopButtons;
 	}(_react2.default.Component);
 
-	exports.default = (0, _reactRedux.connect)(null, { deleteImageTest: _actions.deleteImageTest })(TopButtons);
+	var changeImageTitle = function changeImageTitle(image) {
+	  return function (dispatch) {
+	    dispatch((0, _actions.changeImageName)(image));
+	    return dispatch((0, _actions.updateTitleFromImageArray)(image));
+	  };
+	};
+
+	exports.default = (0, _reactRedux.connect)(null, { deleteImagefromApi: _actions.deleteImagefromApi, changeImageTitle: changeImageTitle })(TopButtons);
 
 /***/ },
 /* 299 */
@@ -58459,8 +58485,8 @@
 	    * @param {string} filter the filter text
 	    */
 	    value: function activateFilter(filter) {
-	      if (filter !== this.props.image.current_filter) {
-	        var image = _lodash2.default.clone(this.props.image);
+	      if (filter !== this.props.activeImage.current_filter) {
+	        var image = _lodash2.default.clone(this.props.activeImage);
 	        image.filtered = true;
 	        image.currentFilter = filter;
 	        this.props.changeFilter(image, filter);
@@ -58477,10 +58503,10 @@
 	    key: '_createFilterDiv',
 	    value: function _createFilterDiv(filter, i) {
 	      var activeFilter = (0, _classnames2.default)({
-	        active: this.props.image.currentFilter === filter
+	        active: this.props.activeImage.currentFilter === filter
 	      });
 	      return _react2.default.createElement(_filterimage2.default, { filter: filter,
-	        image: '/media/' + this.props.image.thumbnail,
+	        image: '/media/' + this.props.activeImage.thumbnail,
 	        className: activeFilter + ' ' + filter, key: i,
 	        onClick: this.activateFilter.bind(this, filter) });
 	    }
@@ -58501,14 +58527,14 @@
 	        slidesToScroll: 5,
 	        arrows: true
 	      };
-	      if (this.props.image) {
+	      if (this.props.activeImage.title) {
 	        return _react2.default.createElement(
 	          _reactSlick2.default,
 	          settings,
 	          filters.map(this._createFilterDiv.bind(this))
 	        );
 	      }
-	      if (!this.props.image) {
+	      if (!this.props.activeImage.title) {
 	        return _react2.default.createElement('div', null);
 	      }
 	    }
@@ -60447,7 +60473,7 @@
 	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
-	            value: true
+	    value: true
 	});
 
 	var _react = __webpack_require__(1);
@@ -60457,16 +60483,16 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var FilterImage = function FilterImage(props) {
-	            return _react2.default.createElement(
-	                        "div",
-	                        { className: "randomClass", onClick: "random clicks" },
-	                        _react2.default.createElement("img", { src: "http://placehold.it/40x40", width: "100", height: "100" }),
-	                        _react2.default.createElement(
-	                                    "p",
-	                                    { className: "lead" },
-	                                    "\"filter name\""
-	                        )
-	            );
+	    return _react2.default.createElement(
+	        "div",
+	        { className: props.className, onClick: props.onClick },
+	        _react2.default.createElement("img", { src: props.image, width: "100", height: "100" }),
+	        _react2.default.createElement(
+	            "p",
+	            { className: "lead" },
+	            props.filter
+	        )
+	    );
 	};
 
 	// class FilterImage extends React.Component {

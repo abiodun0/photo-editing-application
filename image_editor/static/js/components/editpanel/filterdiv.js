@@ -10,8 +10,8 @@ class FilterDiv extends React.Component {
    * @param {string} filter the filter text
    */
     activateFilter(filter) {
-      if (filter !== this.props.image.current_filter) {
-        let image = _.clone(this.props.image);
+      if (filter !== this.props.activeImage.current_filter) {
+        let image = _.clone(this.props.activeImage);
         image.filtered = true;
         image.currentFilter = filter;
         this.props.changeFilter(image, filter);
@@ -25,10 +25,10 @@ class FilterDiv extends React.Component {
    */
     _createFilterDiv(filter, i) {
       var activeFilter = classNames({
-        active: this.props.image.currentFilter === filter
+        active: this.props.activeImage.currentFilter === filter
       });
       return (<FilterImage filter={filter}
-                image={`/media/${this.props.image.thumbnail}`}
+                image={`/media/${this.props.activeImage.thumbnail}`}
                 className={`${activeFilter} ${filter}`} key={i}
                 onClick={this.activateFilter.bind(this, filter)} />);
     }
@@ -47,14 +47,14 @@ class FilterDiv extends React.Component {
         slidesToScroll: 5,
         arrows: true
       };
-      if (this.props.image) {
+      if (this.props.activeImage.title) {
         return (
             <Slider {...settings}>
             {filters.map(this._createFilterDiv.bind(this))}
             </Slider>
             );
       }
-      if (!this.props.image) {
+      if (!this.props.activeImage.title) {
         return (<div />);
       }
     }

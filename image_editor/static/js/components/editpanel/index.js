@@ -1,12 +1,13 @@
 import React from 'react';
+import {connect} from 'react-redux';
 import ImageDiv from './imagediv';
 import FilterDiv from './filterdiv';
 
 const EditableDiv = (props) => {
   return (
             <div className="edit-container">
-            <ImageDiv />
-            <FilterDiv />
+            <ImageDiv activeImage={props.activeImage}/>
+            <FilterDiv activeImage={props.activeImage}/>
             </div>
             );
 }
@@ -37,5 +38,10 @@ const EditableDiv = (props) => {
 //   editImage: React.PropTypes.func.isRequired
 
 // };
+const mapStateToProps = (state) => {
+  return {
+    activeImage : state.activeImage
+  }
+}
 
-export default EditableDiv;
+export default connect(mapStateToProps)(EditableDiv);

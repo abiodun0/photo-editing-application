@@ -1,7 +1,5 @@
 /* eslint no-alert: 0*/
 import React from 'react';
-import {connect} from 'react-redux';
-import _ from 'lodash';
 import TopButtons from './topbuttons.jsx';
 import FaceBookApi from '../../api/facebookApi';
 
@@ -20,14 +18,7 @@ const ImageDiv = (props) => {
         );
     }
 
-const mapStateToProps = (state) => {
-  console.log(state);
-  return {
-    activeImage : state.activeImage
-  }
-}
-
-export default connect(mapStateToProps)(ImageDiv);
+export default ImageDiv;
 
 
 

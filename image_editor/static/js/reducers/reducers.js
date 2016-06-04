@@ -1,5 +1,6 @@
 import * as ActionTypes from '../constants/actionTypes';
 import {combineReducers} from 'redux';
+import _ from 'lodash';
 
 /**
  * Check for the state of the funciton that is being upload
@@ -44,6 +45,10 @@ function allImages(state = [], action) {
       return state.filter(image => {
         return Number(image.id) !== Number(action.data.id);
       });
+    case ActionTypes.UPDATE_TITLE_IN_IMAGE_ARRAY:
+      let index = _.findIndex(state, {id: action.data.id});
+      state[index].title = action.data.title;
+      return state;
     default:
       return state;
   }
@@ -75,6 +80,7 @@ function filename(state = '', action) {
 export function activeImage(state = {}, action) {
   switch (action.type) {
     case ActionTypes.CHANGE_ACTIVE_IMAGE:
+    case ActionTypes.CHANGE_IMAGE_TITLE:
       return action.data;
     default:
       return state;

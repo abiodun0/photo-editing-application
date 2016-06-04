@@ -36,7 +36,20 @@ export function filterFromTitles(value) {
   };
 }
 
-export function deleteImageTest(image) {
+export function changeImageName(value) {
+  return {
+    type: ActionTypes.CHANGE_IMAGE_TITLE,
+    data: value
+  };
+}
+
+export function updateTitleFromImageArray(image) {
+  return {
+    type: ActionTypes.UPDATE_TITLE_IN_IMAGE_ARRAY,
+    data: image
+  };
+}
+export function deleteImagefromApi(image) {
   return dispatch => {
     dispatch(changeAcktiveImage({}));
     dispatch(deleteImage(image));
@@ -77,14 +90,4 @@ export function deleteImage(image) {
     data: image
   };
 }
-/**
- * @param  {image} image instance to be deleted from the database
- * @return {function} the function that is being returned to the dispatch method
- */
-export function deleteImagefromApi(image) {
-  return dispatch => {
-    imageApi.deleteImage(image, () => {
-      dispatch(deleteImage(image));
-    });
-  };
-}
+
