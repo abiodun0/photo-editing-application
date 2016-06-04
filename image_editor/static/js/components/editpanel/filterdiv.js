@@ -1,8 +1,10 @@
 import React from 'react';
 import Slider from 'react-slick';
 import classNames from 'classnames';
+import {connect} from 'react-redux';
 import _ from 'lodash';
 import FilterImage from './filterimage';
+import {updateImageAsync} from '../../actions'
 
 class FilterDiv extends React.Component {
    /**
@@ -10,25 +12,25 @@ class FilterDiv extends React.Component {
    * @param {string} filter the filter text
    */
     activateFilter(filter) {
-      if (filter !== this.props.image.current_filter) {
-        let image = _.clone(this.props.image);
+      if (filter !== this.props.activeImage.current_filter) {
+        let image = _.clone(this.props.activeImage);
         image.filtered = true;
         image.currentFilter = filter;
-        this.props.changeFilter(image, filter);
+        this.props.updateImageAsync(image, filter, true)
       }
     }
    /**
-   * initializes facebook API
+   * creates different filter images for different tpe of filters
    * @param {string} filter the filter text
    * @param {int} i the index of the array set as the key
    *@return {string} the FilterImage Component
    */
     _createFilterDiv(filter, i) {
       var activeFilter = classNames({
-        active: this.props.image.currentFilter === filter
+        active: this.props.activeImage.currentFilter === filter
       });
       return (<FilterImage filter={filter}
-                image={`/media/${this.props.image.thumbnail}`}
+                image={`/media/${this.props.activeImage.thumbnail}`}
                 className={`${activeFilter} ${filter}`} key={i}
                 onClick={this.activateFilter.bind(this, filter)} />);
     }
@@ -47,24 +49,17 @@ class FilterDiv extends React.Component {
         slidesToScroll: 5,
         arrows: true
       };
-      if (this.props.image) {
+      if (this.props.activeImage.title) {
         return (
             <Slider {...settings}>
             {filters.map(this._createFilterDiv.bind(this))}
             </Slider>
             );
       }
-      if (!this.props.image) {
-        return (<div />);
-      }
+      return (<div />);
     }
 }
 
-// Sets the required propTypes from the parent and give warnings if ts not present
-FilterDiv.propTypes = {
-  image: React.PropTypes.oneOfType(
-    [React.PropTypes.object, React.PropTypes.string]).isRequired,
-  changeFilter: React.PropTypes.func.isRequired
-};
 
-export default FilterDiv;
+
+export default connect(null, {updateImageAsync})(FilterDiv);

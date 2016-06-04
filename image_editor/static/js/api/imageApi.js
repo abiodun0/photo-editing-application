@@ -1,7 +1,12 @@
 import request from 'superagent';
 import toastr from 'toastr';
-import _ from 'lodash';
 import 'superagent-django-csrf';
+import store from '../store';
+import {updatePercentage,
+  changeUploadStatus,
+  changePreview,
+  changeLoadingStatus,
+  changeFileName} from '../actions';
 
 // Sets the imageUrl from the preset Dom value
 const imageUrl = document.querySelector('meta[name="image_url"]')
@@ -13,23 +18,18 @@ const ImageApi = {
   *@param {function} cb the callback function supplied by the component
   */
   getAllImages: cb => {
-    cb({
-      data: [],
-      isLoading: true
-    });
+    store.dispatch(changeLoadingStatus(true));
     toastr.info('Loading your images...!', null, {
       timeOut: 0
     });
     request.get(imageUrl)
       .set('Accept', 'application/json')
       .end((err, res) => {
-        console.log(res.body.data, 'something here');
-        cb({
-          isLoading: false
-        });
+        store.dispatch(changeLoadingStatus(false));
         toastr.clear();
         if (!err) {
-          cb({data: res.body.data});
+          console.log(res.body.data, 'from the api');
+          cb(res.body.data);
         }
       });
   },
@@ -37,11 +37,10 @@ const ImageApi = {
   * Updates image object title and filters
   *@param {object} image the image object to be updated
   *@param {string} filter to be added if present
+  *@param {function} [cb] [call back function]
   */
-  updateImage(image, filter) {
-    this.setState({
-      isLoading: true
-    });
+  updateImage(image, filter, cb) {
+    store.dispatch(changeLoadingStatus(true));
     toastr.info('Updating ' + image.title + '...', null, {
       timeOut: 0
     });
@@ -52,7 +51,7 @@ const ImageApi = {
       .send(image)
       .end((err, res) => {
         toastr.clear();
-        this.setState({isLoading: false});
+        store.dispatch(changeLoadingStatus(false));
         if (err) {
           toastr.error(res.body, 'unable to update ' +
               image.title, {
@@ -69,58 +68,55 @@ const ImageApi = {
               closeButton: true
             });
           }
-          this.editImage(res.body);
+          cb(res.body);
         }
       });
   },
   /**
   * deletes image object  from the database
   *@param {object} imageObj the image object to be updated
+  *@param { function} [cb] [description]
   */
-  deleteImage(imageObj) {
+  deleteImage(imageObj, cb) {
     toastr.error('Deleting ' + imageObj.title + '...', null, {
       timeOut: 0
     });
-    this.setState({isLoading: true});
+    store.dispatch(changeLoadingStatus(true));
     request.del(imageUrl)
       .send(imageObj)
       .end(err => {
         toastr.clear();
         if (!err) {
-          _.remove(this.state.data, m => {
-            return imageObj.id === m.id;
-          });
-          this.setState({isLoading: false});
+          store.dispatch(changeLoadingStatus(false));
           toastr.info('successfully removed ' + imageObj.title, '', {
             closeButton: true
           });
-          this.setState({image: ''});
+          cb();
         }
       });
   },
   /**
   * Uploads image to the django  backend
   *@param {array} files The array of image files to be uploaded
+  *@param {function} [cb] [description]
   */
-  uploadImage(files) {
+  uploadImage(files, cb) {
     files.forEach(file => {
-      this.setState({filename: file.name});
+      store.dispatch(changeFileName(file.name));
       let reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = e => {
-        this.setState({preview: e.target.result});
+        store.dispatch(changePreview(e.target.result));
       };
       request.post(imageUrl)
         .attach('image', file, file.name)
         .set('Accept', 'application/json')
         .on('progress', e => {
-          this.setState({
-            percentage: e.percent,
-            isUploading: true
-          });
+          if (e.percentage) store.dispatch(updatePercentage(e.percent));
+          store.dispatch(changeUploadStatus(true));
         })
         .end((err, res) => {
-          this.setState({isUploading: false});
+          store.dispatch(changeUploadStatus(false));
           if (err) {
             return toastr.error(res.body, 'unable to upload ' +
               file.name, {
@@ -131,7 +127,7 @@ const ImageApi = {
           toastr.success('successfully uploaded ' + file.name, '', {
             closeButton: true
           });
-          this.addImage(res.body);
+          cb(res.body);
         });
     });
   }
