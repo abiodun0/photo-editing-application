@@ -98,9 +98,9 @@ export function deleteImagefromApi(image) {
 export function updateImage(image, filter = null, async) {
   if (async) {
     return dispatch => {
-      imageApi.updateImage(image, filter, () => {
-        dispatch(changeAcktiveImage(image));
-        return dispatch(updateTitleFromImageArray(image));
+      imageApi.updateImage(image, filter, filteredImage => {
+        dispatch(changeAcktiveImage(filteredImage));
+        return dispatch(updateTitleFromImageArray(filteredImage));
       });
     };
   }
