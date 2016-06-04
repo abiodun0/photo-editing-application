@@ -1,6 +1,5 @@
 import * as ActionTypes from '../constants/actionTypes';
 import {combineReducers} from 'redux';
-import _ from 'lodash';
 
 /**
  * Check for the state of the funciton that is being upload

@@ -2,7 +2,7 @@ import React from 'react'
 import classNames from 'classnames';
 import {connect} from 'react-redux';
 import _ from 'lodash';
-import {deleteImagefromApi, changeImageName, updateTitleFromImageArray} from '../../actions'
+import {deleteImagefromApi, updateImage} from '../../actions'
 
 
 class TopButtons extends React.Component {
@@ -21,7 +21,7 @@ class TopButtons extends React.Component {
     onChange(e){
       let tempImage = _.clone(this.props.activeImage)
       tempImage.title = e.target.value;
-      this.props.changeImageTitle(tempImage)
+      this.props.updateImage(tempImage)
     }
     render() {
       let buttonClass = classNames({
@@ -86,11 +86,6 @@ class TopButtons extends React.Component {
         );
     }
 }
-const changeImageTitle = (image) => (dispatch) => {
-  dispatch(changeImageName(image));
-  return dispatch(updateTitleFromImageArray(image));
 
-}
-
-export default connect(null, {deleteImagefromApi, changeImageTitle})(TopButtons);
+export default connect(null, {deleteImagefromApi, updateImage})(TopButtons);
 

@@ -60,11 +60,12 @@ export function deleteImagefromApi(image) {
  * @param  {object} image passed in from the result of the api call
  * @return {object} returns the object to be used with the dispatch method
  */
+
 export function updateImage(image) {
-  return {
-    type: ActionTypes.UPDATE_IMAGE,
-    data: image
-  };
+  return dispatch => {
+    dispatch(changeImageName(image));
+    return dispatch(updateTitleFromImageArray(image));
+  }
 }
 /**
  * @param  {object} image object to be passed in from the components

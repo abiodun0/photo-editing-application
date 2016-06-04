@@ -21417,12 +21417,6 @@
 
 	var _redux = __webpack_require__(159);
 
-	var _lodash = __webpack_require__(196);
-
-	var _lodash2 = _interopRequireDefault(_lodash);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	/**
@@ -21478,7 +21472,7 @@
 	        return Number(image.id) !== Number(action.data.id);
 	      });
 	    case ActionTypes.UPDATE_TITLE_IN_IMAGE_ARRAY:
-	      var index = _lodash2.default.findIndex(state, { id: action.data.id });
+	      var index = _.findIndex(state, { id: action.data.id });
 	      state[index].title = action.data.title;
 	      return state;
 	    default:
@@ -21685,10 +21679,11 @@
 	 * @param  {object} image passed in from the result of the api call
 	 * @return {object} returns the object to be used with the dispatch method
 	 */
+
 	function updateImage(image) {
-	  return {
-	    type: ActionTypes.UPDATE_IMAGE,
-	    data: image
+	  return function (dispatch) {
+	    dispatch(changeImageName(image));
+	    return dispatch(updateTitleFromImageArray(image));
 	  };
 	}
 	/**
@@ -58263,7 +58258,7 @@
 	    value: function onChange(e) {
 	      var tempImage = _lodash2.default.clone(this.props.activeImage);
 	      tempImage.title = e.target.value;
-	      this.props.changeImageTitle(tempImage);
+	      this.props.updateImage(tempImage);
 	    }
 	  }, {
 	    key: 'render',
@@ -58360,14 +58355,7 @@
 	  return TopButtons;
 	}(_react2.default.Component);
 
-	var changeImageTitle = function changeImageTitle(image) {
-	  return function (dispatch) {
-	    dispatch((0, _actions.changeImageName)(image));
-	    return dispatch((0, _actions.updateTitleFromImageArray)(image));
-	  };
-	};
-
-	exports.default = (0, _reactRedux.connect)(null, { deleteImagefromApi: _actions.deleteImagefromApi, changeImageTitle: changeImageTitle })(TopButtons);
+	exports.default = (0, _reactRedux.connect)(null, { deleteImagefromApi: _actions.deleteImagefromApi, updateImage: _actions.updateImage })(TopButtons);
 
 /***/ },
 /* 299 */
@@ -58452,6 +58440,8 @@
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
+	var _reactRedux = __webpack_require__(173);
+
 	var _lodash = __webpack_require__(196);
 
 	var _lodash2 = _interopRequireDefault(_lodash);
@@ -58459,6 +58449,8 @@
 	var _filterimage = __webpack_require__(320);
 
 	var _filterimage2 = _interopRequireDefault(_filterimage);
+
+	var _actions = __webpack_require__(188);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -58489,7 +58481,7 @@
 	        var image = _lodash2.default.clone(this.props.activeImage);
 	        image.filtered = true;
 	        image.currentFilter = filter;
-	        this.props.changeFilter(image, filter);
+	        this.props.updateImage(image);
 	      }
 	    }
 	    /**
@@ -58543,14 +58535,7 @@
 	  return FilterDiv;
 	}(_react2.default.Component);
 
-	// // Sets the required propTypes from the parent and give warnings if ts not present
-	// FilterDiv.propTypes = {
-	//   image: React.PropTypes.oneOfType(
-	//     [React.PropTypes.object, React.PropTypes.string]).isRequired,
-	//   changeFilter: React.PropTypes.func.isRequired
-	// };
-
-	exports.default = FilterDiv;
+	exports.default = (0, _reactRedux.connect)(null, { updateImage: _actions.updateImage })(FilterDiv);
 
 /***/ },
 /* 301 */

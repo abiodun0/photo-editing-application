@@ -1,8 +1,10 @@
 import React from 'react';
 import Slider from 'react-slick';
 import classNames from 'classnames';
+import {connect} from 'react-redux';
 import _ from 'lodash';
 import FilterImage from './filterimage';
+import {updateImage} from '../../actions'
 
 class FilterDiv extends React.Component {
    /**
@@ -14,7 +16,7 @@ class FilterDiv extends React.Component {
         let image = _.clone(this.props.activeImage);
         image.filtered = true;
         image.currentFilter = filter;
-        this.props.changeFilter(image, filter);
+        this.props.updateImage(image)
       }
     }
    /**
@@ -60,11 +62,6 @@ class FilterDiv extends React.Component {
     }
 }
 
-// // Sets the required propTypes from the parent and give warnings if ts not present
-// FilterDiv.propTypes = {
-//   image: React.PropTypes.oneOfType(
-//     [React.PropTypes.object, React.PropTypes.string]).isRequired,
-//   changeFilter: React.PropTypes.func.isRequired
-// };
 
-export default FilterDiv;
+
+export default connect(null, {updateImage})(FilterDiv);
