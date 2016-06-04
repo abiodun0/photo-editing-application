@@ -2,6 +2,8 @@ import request from 'superagent';
 import toastr from 'toastr';
 import _ from 'lodash';
 import 'superagent-django-csrf';
+import store from '../store';
+import {updatePercentage, changeUploadStatus, changePreview} from '../actions';
 
 // Sets the imageUrl from the preset Dom value
 const imageUrl = document.querySelector('meta[name="image_url"]')
@@ -95,26 +97,30 @@ const ImageApi = {
   * Uploads image to the django  backend
   *@param {array} files The array of image files to be uploaded
   */
-  uploadImage(files) {
+  uploadImage(files, cb) {
     files.forEach(file => {
       console.log(file, 'the single file');
-      this.setState({filename: file.name});
+      // this.setState({filename: file.name});
       let reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = e => {
-        this.setState({preview: e.target.result});
+        store.dispatch(changePreview(e.target.result));
+        // this.setState({preview: e.target.result});
+       // previewCb(e.target.result);
       };
       request.post(imageUrl)
         .attach('image', file, file.name)
         .set('Accept', 'application/json')
         .on('progress', e => {
-          this.setState({
-            percentage: e.percent,
-            isUploading: true
-          });
+          if (e.percentage) store.dispatch(updatePercentage(e.percent));
+          store.dispatch(changeUploadStatus(true));
+          // this.setState({
+          //   percentage: e.percent,
+          //   isUploading: true
+          // });
         })
         .end((err, res) => {
-          this.setState({isUploading: false});
+          store.dispatch(changeUploadStatus(false));
           if (err) {
             return toastr.error(res.body, 'unable to upload ' +
               file.name, {
@@ -125,7 +131,8 @@ const ImageApi = {
           toastr.success('successfully uploaded ' + file.name, '', {
             closeButton: true
           });
-          this.addImage(res.body);
+          // this.addImage(res.body);
+          cb(res.body);
         });
     });
   }

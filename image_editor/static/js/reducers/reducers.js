@@ -1,5 +1,6 @@
 import * as ActionTypes from '../constants/actionTypes';
 import {combineReducers} from 'redux';
+import _ from 'lodash';
 
 /**
  * Check for the state of the funciton that is being upload
@@ -10,7 +11,7 @@ import {combineReducers} from 'redux';
 function isUploading(state = false, action) {
   switch (action.type) {
     case ActionTypes.IS_UPLOADING:
-      return action.type;
+      return action.data;
     default:
       return state;
   }
@@ -48,6 +49,10 @@ function allImages(state = [], action) {
       let index = _.findIndex(state, {id: action.data.id});
       state[index].title = action.data.title;
       return state;
+    case ActionTypes.UPLOAD_IMAGE:
+      let tempState = _.clone(state);
+      tempState.unshift(action.data);
+      return tempState;
     default:
       return state;
   }
@@ -109,7 +114,7 @@ function percentage(state = 1, action) {
  */
 function preview(state = '', action) {
   switch (action.type) {
-    case ActionTypes.GET_PREVIEW:
+    case ActionTypes.CHANGE_PREVIEW:
       return action.data;
     default:
       return state;

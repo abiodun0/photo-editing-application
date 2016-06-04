@@ -1,4 +1,6 @@
 import React from 'react';
+import {connect} from 'react-redux'
+
 
 const ProgressBar = (props) => {
 
@@ -7,18 +9,25 @@ const ProgressBar = (props) => {
             <p>Uploading Sample file...</p>
             <div className="row">
             <div className="col-sm-4">
-             <img src="http://placehold.it/40x40" />
+             <img src={props.preview} />
              </div>
              <div className="col-sm-8">
             <progress className="progress progress-striped progress-info"
-            value={70} max="100">
-            70%</progress>
+            value={props.percentage} max="100">
+            {props.percentage}%</progress>
             </div>
             </div>
             </div>
         );
 
 }
+const mapStateToProps = (state) => {
+  return {
+    preview : state.preview,
+    perecentage: state.percentage,
+  }
+}
+export default connect(mapStateToProps)(ProgressBar);
 
 // class ProgressBar extends React.Component {
 //     /**
@@ -55,4 +64,3 @@ const ProgressBar = (props) => {
 //   percentage: React.PropTypes.number.isRequired
 // };
 
-export default ProgressBar;

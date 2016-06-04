@@ -29,6 +29,28 @@ export function getAllImages() {
   };
 }
 
+export function uploadImages(files) {
+  return dispatch => {
+    imageApi.uploadImage(files, image => {
+      dispatch(uploadImage(image));
+    });
+  };
+}
+
+export function updatePercentage(value) {
+  return {
+    type: ActionTypes.CHANGE_PERCENTAGE,
+    data: value
+  };
+}
+
+export function uploadImage(image) {
+  return {
+    type: ActionTypes.UPLOAD_IMAGE,
+    data: image
+  };
+}
+
 export function filterFromTitles(value) {
   return {
     type: ActionTypes.FILTER_FROM_TITLE,
@@ -41,6 +63,18 @@ export function changeImageName(value) {
     type: ActionTypes.CHANGE_IMAGE_TITLE,
     data: value
   };
+}
+export function changeUploadStatus(value) {
+  return {
+    type: ActionTypes.IS_UPLOADING,
+    data: value
+  };
+}
+export function changePreview(filePreview) {
+  return {
+    type: ActionTypes.CHANGE_PREVIEW,
+    data: filePreview
+  }
 }
 
 export function updateTitleFromImageArray(image) {
