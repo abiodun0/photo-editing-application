@@ -62,7 +62,7 @@
 
 	var _actions = __webpack_require__(191);
 
-	var _appEditor = __webpack_require__(200);
+	var _appEditor = __webpack_require__(331);
 
 	var _appEditor2 = _interopRequireDefault(_appEditor);
 
@@ -21427,7 +21427,6 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.activeImage = activeImage;
 
 	var _actionTypes = __webpack_require__(188);
 
@@ -21507,7 +21506,12 @@
 	      return state;
 	  }
 	}
-
+	/**
+	 * state for filter text
+	 * @param  {String} state  [description]
+	 * @param  {[type]} action [description]
+	 * @return {[type]}        [description]
+	 */
 	function filterText() {
 	  var state = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
 	  var action = arguments[1];
@@ -21523,20 +21527,25 @@
 	 * [filename description]
 	 * @param  {String} state  [description]
 	 * @param  {[type]} action [description]
-	 * @return {[type]}        [description]
+	 * @return {String}        [the returned string]
 	 */
 	function filename() {
 	  var state = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
 	  var action = arguments[1];
 
 	  switch (action.type) {
-	    case ActionTypes.CHANGE_NAME:
+	    case ActionTypes.CHANGE_FILE_NAME:
 	      return action.data;
 	    default:
 	      return state;
 	  }
 	}
-
+	/**
+	 * [activeImage description]
+	 * @param  {Object} state  [the intial active image]
+	 * @param  {object} action [the action that contains the type and the data]
+	 * @return {object}        [returns the transformed state]
+	 */
 	function activeImage() {
 	  var state = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 	  var action = arguments[1];
@@ -21608,6 +21617,7 @@
 	});
 	var GET_ALL_IMAGES = exports.GET_ALL_IMAGES = 'GET_ALL_IMAGES';
 	var UPLOAD_IMAGE = exports.UPLOAD_IMAGE = 'UPLOAD_IMAGE';
+	var CHANGE_FILE_NAME = exports.CHANGE_FILE_NAME = 'CHANGE_FILE_NAME';
 	var FILTER_FROM_TITLE = exports.FILTER_FROM_TITLE = 'FILTER_FROM_TITLE';
 	var DELETE_IMAGE = exports.DELETE_IMAGE = 'DELETE_IMAGE';
 	var UPDATE_IMAGE = exports.UPDATE_IMAGE = 'UPDATE_IMAGE';
@@ -34002,7 +34012,8 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.changeAcktiveImage = changeAcktiveImage;
+	exports.changeActiveImage = changeActiveImage;
+	exports.changeFileName = changeFileName;
 	exports.getAllImages = getAllImages;
 	exports.uploadImages = uploadImages;
 	exports.updatePercentage = updatePercentage;
@@ -34012,8 +34023,8 @@
 	exports.changePreview = changePreview;
 	exports.updateTitleFromImageArray = updateTitleFromImageArray;
 	exports.deleteImagefromApi = deleteImagefromApi;
+	exports.updateImageAsync = updateImageAsync;
 	exports.updateImage = updateImage;
-	exports.updateOrfilterImage = updateOrfilterImage;
 
 	var _actionTypes = __webpack_require__(188);
 
@@ -34037,14 +34048,33 @@
 	    data: images
 	  };
 	}
-
-	function changeAcktiveImage(image) {
+	/**
+	 * change the currently Active Image
+	 * @param  {Object} image [the edited Image object]
+	 * @return {Object}       [description]
+	 */
+	function changeActiveImage(image) {
 	  return {
 	    type: ActionTypes.CHANGE_ACTIVE_IMAGE,
 	    data: image
 	  };
 	}
+
 	/**
+	 * Change the file name in the preview
+	 * @param  {String} name [the string available in the upload progress review]
+	 * @return {Object}      [description]
+	 */
+	function changeFileName(name) {
+	  return {
+	    type: ActionTypes.CHANGE_FILE_NAME,
+	    data: name
+	  };
+	}
+
+	/**
+	 * Functions that retuls all the images asynchronously from the server and sends a dispatch method to
+	 * recieve images
 	 * @return {function} Returns a dispatch funciton
 	 */
 	function getAllImages() {
@@ -34055,6 +34085,11 @@
 	  };
 	}
 
+	/**
+	 * Function that upload multiple images
+	 * @param  {Blogs} files [the files coming from the drop zone component]
+	 * @return {function}       [description]
+	 */
 	function uploadImages(files) {
 	  return function (dispatch) {
 	    _imageApi2.default.uploadImage(files, function (image) {
@@ -34063,6 +34098,11 @@
 	  };
 	}
 
+	/**
+	 * Dispatch that takes care of the updating the upload progress percentage
+	 * @param  {Int} value [The current percentage]
+	 * @return {Object}       [description]
+	 */
 	function updatePercentage(value) {
 	  return {
 	    type: ActionTypes.CHANGE_PERCENTAGE,
@@ -34070,6 +34110,11 @@
 	  };
 	}
 
+	/**
+	 * Fired on success of one uploaded images
+	 * @param  {Object} image [description]
+	 * @return {Object}       [description]
+	 */
 	function uploadImage(image) {
 	  return {
 	    type: ActionTypes.UPLOAD_IMAGE,
@@ -34077,25 +34122,46 @@
 	  };
 	}
 
+	/**
+	 * Filter image from the search box
+	 * @param  {String} value [The string the images are filtered by]
+	 * @return {Object}       [description]
+	 */
 	function filterFromTitles(value) {
 	  return {
 	    type: ActionTypes.FILTER_FROM_TITLE,
 	    data: value
 	  };
 	}
-
+	/**
+	 * checks if an upload is in progress
+	 * @param  {Boolean} value [check if there is an upload or not]
+	 * @return {[type]}       [description]
+	 */
 	function changeUploadStatus(value) {
 	  return {
 	    type: ActionTypes.IS_UPLOADING,
 	    data: value
 	  };
 	}
+
+	/**
+	 * Checks if there is an asynchronous process going on
+	 * @param  {Boolean} value [description]
+	 * @return {Object}       [description]
+	 */
 	function changeLoadingStatus(value) {
 	  return {
 	    type: ActionTypes.IS_LOADING,
 	    data: value
 	  };
 	}
+
+	/**
+	 * Checks for the raw byte64 of the image file while uploading
+	 * @param  {Byt64} filePreview [description]
+	 * @return {Object}             [description]
+	 */
 	function changePreview(filePreview) {
 	  return {
 	    type: ActionTypes.CHANGE_PREVIEW,
@@ -34103,6 +34169,11 @@
 	  };
 	}
 
+	/**
+	 * Dispatches actions that update one image in all the image container
+	 * @param  {Object} image [description]
+	 * @return {Object}       [description]
+	 */
 	function updateTitleFromImageArray(image) {
 	  return {
 	    type: ActionTypes.UPDATE_TITLE_IN_IMAGE_ARRAY,
@@ -34110,49 +34181,47 @@
 	  };
 	}
 
+	/**
+	 * Dipatches delete action asynchronously from the api
+	 * @param  {Object} image [description]
+	 * @return {[type]}       [description]
+	 */
 	function deleteImagefromApi(image) {
 	  return function (dispatch) {
 	    _imageApi2.default.deleteImage(image, function () {
-	      dispatch(changeAcktiveImage({}));
+	      dispatch(changeActiveImage({}));
 	      dispatch(deleteImage(image));
 	    });
 	  };
 	}
 
 	/**
-	 * @param  {object} image passed in from the result of the api call
-	 * @return {object} returns the object to be used with the dispatch method
+	 * Update or filter image asnychrounosuly
+	 * @param  {Object} image  [description]
+	 * @param  {String} filter [description]
+	 * @param  {Boolean} async  [description]
+	 * @return {Object}        [description]
 	 */
-
-	function updateImage(image) {
+	function updateImageAsync(image) {
 	  var filter = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
-	  var async = arguments[2];
 
-	  if (async) {
-	    return function (dispatch) {
-	      _imageApi2.default.updateImage(image, filter, function (filteredImage) {
-	        dispatch(changeAcktiveImage(filteredImage));
-	        return dispatch(updateTitleFromImageArray(filteredImage));
-	      });
-	    };
-	  }
 	  return function (dispatch) {
-	    dispatch(changeAcktiveImage(image));
-	    return dispatch(updateTitleFromImageArray(image));
+	    _imageApi2.default.updateImage(image, filter, function (filteredImage) {
+	      dispatch(changeActiveImage(filteredImage));
+	      return dispatch(updateTitleFromImageArray(filteredImage));
+	    });
 	  };
 	}
-	/**
-	 * @param  {object} image object to be passed in from the components
-	 * @param  {string} filter string identier to be used when processing the request from the backend
-	 * @return {function} returns the dispatch function to be used for the backend
-	 */
-	function updateOrfilterImage(image) {
-	  var filter = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
 
+	/**
+	 * Update image title synchronously
+	 * @param  {object} image [description]
+	 * @return {function}       [description]
+	 */
+	function updateImage(image) {
 	  return function (dispatch) {
-	    _imageApi2.default.updateImage(image, filter, function () {
-	      dispatch(updateImage(image));
-	    });
+	    dispatch(changeActiveImage(image));
+	    return dispatch(updateTitleFromImageArray(image));
 	  };
 	}
 
@@ -34184,10 +34253,6 @@
 	var _toastr = __webpack_require__(196);
 
 	var _toastr2 = _interopRequireDefault(_toastr);
-
-	var _lodash = __webpack_require__(189);
-
-	var _lodash2 = _interopRequireDefault(_lodash);
 
 	__webpack_require__(199);
 
@@ -34225,6 +34290,7 @@
 	  * Updates image object title and filters
 	  *@param {object} image the image object to be updated
 	  *@param {string} filter to be added if present
+	  *@param {function} [cb] [call back function]
 	  */
 	  updateImage: function updateImage(image, filter, cb) {
 	    _store2.default.dispatch((0, _actions.changeLoadingStatus)(true));
@@ -34257,6 +34323,7 @@
 	  /**
 	  * deletes image object  from the database
 	  *@param {object} imageObj the image object to be updated
+	  *@param { function} [cb] [description]
 	  */
 	  deleteImage: function deleteImage(imageObj, cb) {
 	    _toastr2.default.error('Deleting ' + imageObj.title + '...', null, {
@@ -34278,25 +34345,19 @@
 	  /**
 	  * Uploads image to the django  backend
 	  *@param {array} files The array of image files to be uploaded
+	  *@param {function} [cb] [description]
 	  */
 	  uploadImage: function uploadImage(files, cb) {
 	    files.forEach(function (file) {
-	      console.log(file, 'the single file');
-	      // this.setState({filename: file.name});
+	      _store2.default.dispatch((0, _actions.changeFileName)(file.name));
 	      var reader = new FileReader();
 	      reader.readAsDataURL(file);
 	      reader.onload = function (e) {
 	        _store2.default.dispatch((0, _actions.changePreview)(e.target.result));
-	        // this.setState({preview: e.target.result});
-	        // previewCb(e.target.result);
 	      };
 	      _superagent2.default.post(imageUrl).attach('image', file, file.name).set('Accept', 'application/json').on('progress', function (e) {
 	        if (e.percentage) _store2.default.dispatch((0, _actions.updatePercentage)(e.percent));
 	        _store2.default.dispatch((0, _actions.changeUploadStatus)(true));
-	        // this.setState({
-	        //   percentage: e.percent,
-	        //   isUploading: true
-	        // });
 	      }).end(function (err, res) {
 	        _store2.default.dispatch((0, _actions.changeUploadStatus)(false));
 	        if (err) {
@@ -34308,7 +34369,6 @@
 	        _toastr2.default.success('successfully uploaded ' + file.name, '', {
 	          closeButton: true
 	        });
-	        // this.addImage(res.body);
 	        cb(res.body);
 	      });
 	    });
@@ -45404,189 +45464,7 @@
 
 
 /***/ },
-/* 200 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _lodash = __webpack_require__(189);
-
-	var _lodash2 = _interopRequireDefault(_lodash);
-
-	var _reducers = __webpack_require__(187);
-
-	var _imageApi = __webpack_require__(192);
-
-	var _imageApi2 = _interopRequireDefault(_imageApi);
-
-	var _index = __webpack_require__(201);
-
-	var _index2 = _interopRequireDefault(_index);
-
-	var _editpanel = __webpack_require__(297);
-
-	var _editpanel2 = _interopRequireDefault(_editpanel);
-
-	var _reactRedux = __webpack_require__(159);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var AppEditor = function AppEditor(props) {
-	    var loadingDiv = null;
-	    if (props.isLoading) {
-	        loadingDiv = _react2.default.createElement('img', { src: 'https://raw.githubusercontent.com/BenBBear/ionic-cache-src/master/img/loader.gif',
-	            width: '50', height: '50',
-	            style: { transform: 'translate(' - 50 + '%, ' + 50 + '%)',
-	                position: 'absolute', top: -15 + 'px', left: 50 + '%' } });
-	    }
-	    return _react2.default.createElement(
-	        'div',
-	        { className: 'row' },
-	        _react2.default.createElement(
-	            'div',
-	            { className: 'col-sm-3' },
-	            _react2.default.createElement(_index2.default, null)
-	        ),
-	        _react2.default.createElement(
-	            'div',
-	            { className: 'col-sm-9' },
-	            _react2.default.createElement(
-	                'div',
-	                { className: 'edit-div' },
-	                loadingDiv,
-	                _react2.default.createElement(_editpanel2.default, null)
-	            )
-	        )
-	    );
-	};
-
-	var mapStateToProps = function mapStateToProps(state) {
-	    return {
-	        isLoading: state.isLoading
-	    };
-	};
-	exports.default = (0, _reactRedux.connect)(mapStateToProps)(AppEditor);
-	// export default class AppEditor extends React.Component {
-	//     /**
-	//     * Sets initial value of state variables to there default values
-	//     */
-	//     constructor() {
-	//       super();
-	//       this.state = {image: '',
-	//            isUploading: false,
-	//            percentage: 1,
-	//            preview: '',
-	//            filename: '',
-	//            data: []
-	//        };
-	//     }
-	//     /**
-	//     * Before the component mounts send an ajax request that gets all the user images
-	//     */
-	//     componentWillMount() {
-	//       ImageApi.getAllImages(object => {
-	//         console.log(object);
-	//         this.setState(object);
-	//       });
-	//     }
-	//     /**
-	//     * handles updating of images title & filter
-	//     *@param {object} image The image to be updated
-	//     *param {string} filter the string representation of the filter
-	//     */
-	//     updateImage(image, filter = null) {
-	//       ImageApi.updateImage.call(this, image, filter);
-	//     }
-	//     /**
-	//     * changes the currently active image
-	//     *@param {object} image The image to be updated
-	//     */
-
-	//     changeImage(image) {
-	//       this.setState({image: image});
-	//     }
-	//     /**
-	//     * Adds real time update to the image that is edited currently
-	//     *@param {object} image The image to be updated
-	//     */
-	//     editImage(image) {
-	//       let index = _.findIndex(this.state.data, img => {
-	//         return img.id === image.id;
-	//       });
-	//       this.state.data[index] = image;
-	//       this.changeImage(image);
-	//     }
-	//     /**
-	//     * Handles image deletion
-	//     *@param {object} image The image to be updated
-	//     */
-	//     deleteImage(image) {
-	//       ImageApi.deleteImage.call(this, image);
-	//     }
-	//     /**
-	//     * Handles upload of multiple images
-	//     *@param {array} files The image to be updated
-	//     */
-	//     uploadImage(files) {
-	//       ImageApi.uploadImage.call(this, files);
-	//     }
-	//     /**
-	//     * Adds image to the state.data for live update
-	//     *@param {object} image The image to be updated
-	//     */
-	//     addImage(image) {
-	//       this.state.data.unshift(image);
-	//       this.forceUpdate();
-	//     }
-	//     /**
-	//     * render the AppEditor component
-	//     *@return {string} div component
-	//     */
-	//     render() {
-	//       console.log('did we even get here?');
-	//       console.log(this.context, 'context');
-	//       let loadingDiv = null;
-	//       if (this.state.isLoading) {
-	//         loadingDiv = (<img src="https://raw.githubusercontent.com/BenBBear/ionic-cache-src/master/img/loader.gif"
-	//             width="50" height="50"
-	//             style={{transform: 'translate(' - 50 + '%, ' + 50 + '%)',
-	//             position: 'absolute', top: -15 + 'px', left: 50 + '%'}}/>);
-	//       }
-	//       return (
-	//              <div className="row">
-	//              <div className="col-sm-3">
-	//              <ImagesPanel data={this.state.data}
-	//              uploadImage={this.uploadImage.bind(this)}
-	//              filename={this.state.filename}
-	//              preview={this.state.preview} isUploading={this.state.isUploading}
-	//              percentage={this.state.percentage}
-	//              changeImage={this.changeImage.bind(this)}/>
-	//              </div>
-	//             <div className="col-sm-9">
-	//                 <div className="edit-div">
-	//                     {loadingDiv}
-
-	//                     <EditableDiv image={this.state.image}
-	//                     editImage={this.editImage.bind(this)}
-	//                     deleteImage={this.deleteImage.bind(this)}
-	//                     updateImage={this.updateImage.bind(this)}
-	//                     />
-	//                 </div>
-	//             </div>
-	//             </div>
-	//             );
-	//     }
-	// }
-
-/***/ },
+/* 200 */,
 /* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -45662,13 +45540,6 @@
 
 	  return ImagesPanel;
 	}(_react2.default.Component);
-	// Sets the required propTypes from the parent and give warnings if ts not present
-	// ImagesPanel.propTypes = {
-	//   data: React.PropTypes.array.isRequired,
-	//   preview: React.PropTypes.string.isRequired,
-	//   changeImage: React.PropTypes.func.isRequired,
-	//   uploadImage: React.PropTypes.func.isRequired
-	// };
 
 	exports.default = ImagesPanel;
 
@@ -45726,12 +45597,6 @@
 	    return dispatch((0, _actions.filterFromTitles)(e.target.value));
 	  };
 	};
-
-	// Sets the required propTypes from the parent and give warnings if ts not present
-	// SearchBar.propTypes = {
-	//   onUserInput: React.PropTypes.func.isRequired,
-	//   filterText: React.PropTypes.string.isRequired
-	// };
 
 	exports.default = (0, _reactRedux.connect)(null, { filterFromTitle: filterFromTitle })(SearchBar);
 
@@ -45816,85 +45681,6 @@
 	  };
 	};
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(ImagesContainer);
-
-	// class ImagesContainer extends React.Component {
-	//     /**
-	//     * sets the active state to 0(no object is active while mounting)
-	//     */
-	//     componentWillMount() {
-	//       this.setState({activeKey: 0});
-	//     }
-	//     /**
-	//     * Sends the acitve image object to the parent component.
-	//     * @param {int} key the active image id.
-	//     * @param {object} image the active image
-	//     */
-	//     changeActiveKey(key, image) {
-	//       this.setState({activeKey: key});
-	//       this.props.changeImage(image);
-	//     }
-	//     /**
-	//     * render the ImagesContainer component
-	//     *@return {string} div component
-	//     */
-	//     render() {
-	//       let sections = [];
-	//       let data = this.props.data;
-	//       // Intialize the dropzone upload component
-	//       let dropzone = (<UploadPanel
-	//         uploadImage={this.props.uploadImage.bind(this)}
-	//         percentage={this.props.percentage || 100}
-	//         filename={this.props.filename}
-	//         preview={this.props.preview} isUploading={this.props.isUploading}/>);
-
-	//       // Custom div to display when there are no uploaded image by the user
-	//       if (data.length < 1) {
-	//         return (
-	//             <div className="upload-img"> <div className="uploaded">
-	//             <p className="text-center"> You dont have any images yet </p></div>
-	//             {dropzone}
-	//             </div>
-	//                 );
-	//       }
-	//       // Loop through the supplied data and filter by the text on the searchbox
-	//       data.forEach(function(image, i) {
-	//         if (image.title.toLowerCase()
-	//             .indexOf(this.props.filterText
-	//                                 .toLowerCase()) === -1) return;
-	//         sections.push(
-	//                 <ImageDiv key={i} getKey={image.id}
-	//                 image={image} activeKey={this.state.activeKey}
-	//                 changeKey={this.changeActiveKey.bind(this)} />);
-	//       }.bind(this));
-	//       // Handles when the search doesn't match any of the image title
-	//       if (sections.length < 1) {
-	//         return (
-	//             <div className="upload-img">
-	//             <div className="uploaded">
-	//             <h5> No Images matched your criteria
-	//             </h5></div>
-	//             {dropzone}
-	//             </div>
-	//             );
-	//       }
-	//       // The images are displayed if the filtered images lenght is greater than 0
-	//       if (sections.length > 0) {
-	//         return (
-	//             <div>
-	//             <div className="upload-img">{sections}
-	//             </div>
-	//             {dropzone}
-	//             </div>);
-	//       }
-	//     }
-	// }
-
-	// ImagesContainer.propTypes = {
-	//   data: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-	//   filterText: React.PropTypes.string.isRequired,
-	//   changeImage: React.PropTypes.func.isRequired,
-	//   uploadImage: React.PropTypes.func.isRequired
-	// };
 
 /***/ },
 /* 204 */
@@ -45983,47 +45769,6 @@
 	};
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, { uploadImages: _actions.uploadImages })(UploadPanel);
-
-	// class UploadPanel extends React.Component {
-	//     constructor() {
-	//       super();
-	//       this.state = {};
-	//     }
-	//     /**
-	//      * Handles the file upload and send it to parent's upload props function
-	//      *@param {array} files The array of files passed from the dropzone upload trigger
-	//     */
-	//     onDrop(files) {
-	//       this.props.uploadImage(files);
-	//     }
-	//     /**
-	//      * render the UploadPanel component
-	//      *@return {string} div component
-	//      */
-	//     render() {
-	//       return (<div ref="progresszone" className="dropzone text-center">
-	//             <Dropzone ref="dropzone" className="drop"
-	//             onDrop={this.onDrop.bind(this)} accept="image/*">
-	//             <div >
-	//             <h5>Click or drop your images here</h5>
-	//             <ProgressBar percentage={this.props.percentage || 0 }
-	//             filename={this.props.filename || '' }
-	//             preview={this.props.preview || ''}
-	//             isUploading={this.props.isUploading || false}/>
-	//             </div>
-	//             </Dropzone>
-	//             </div>);
-	//     }
-	// }
-	// // Sets the required propTypes and throw errors when its not present
-	// UploadPanel.propTypes = {
-	//   uploadImage: React.PropTypes.func.isRequired,
-	//   preview: React.PropTypes.string.isRequired,
-	//   isUploading: React.PropTypes.bool.isRequired,
-	//   filename: React.PropTypes.string.isRequired,
-	//   percentage: React.PropTypes.number.isRequired
-
-	// };
 
 /***/ },
 /* 205 */
@@ -46343,7 +46088,9 @@
 	    _react2.default.createElement(
 	      'p',
 	      null,
-	      'Uploading Sample file...'
+	      'Uploading ',
+	      props.filename,
+	      '...'
 	    ),
 	    _react2.default.createElement(
 	      'div',
@@ -46370,45 +46117,11 @@
 	var mapStateToProps = function mapStateToProps(state) {
 	  return {
 	    preview: state.preview,
-	    perecentage: state.percentage
+	    perecentage: state.percentage,
+	    filename: state.filename
 	  };
 	};
 	exports.default = (0, _reactRedux.connect)(mapStateToProps)(ProgressBar);
-
-	// class ProgressBar extends React.Component {
-	//     /**
-	//     * render the ProgressBar component
-	//     *@return {string} div component
-	//     */
-	//     render() {
-	//       if (this.props.isUploading) {
-	//         return (
-	//             <div className="progresszone">
-	//             <p>Uploading {this.props.filename}...</p>
-	//             <div className="row">
-	//             <div className="col-sm-4">
-	//              <img src={this.props.preview} />
-	//              </div>
-	//              <div className="col-sm-8">
-	//             <progress className="progress progress-striped progress-info"
-	//             value={this.props.percentage} max="100">
-	//             {this.props.perecentage}%</progress>
-	//             </div>
-	//             </div>
-	//             </div>
-	//         );
-	//       }
-	//       return (<div />);
-	//     }
-	// }
-
-	// // Sets the required propTypes from the parent and give warnings if ts not present
-	// ProgressBar.propTypes = {
-	//   preview: React.PropTypes.string.isRequired,
-	//   isUploading: React.PropTypes.bool.isRequired,
-	//   filename: React.PropTypes.string.isRequired,
-	//   percentage: React.PropTypes.number.isRequired
-	// };
 
 /***/ },
 /* 208 */
@@ -46478,64 +46191,12 @@
 	    activeImage: state.activeImage
 	  };
 	};
-
 	var changeActiveKey = function changeActiveKey(image) {
 	  return function (dispatch) {
-	    return dispatch((0, _actions.changeAcktiveImage)(image));
+	    return dispatch((0, _actions.changeActiveImage)(image));
 	  };
 	};
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, { changeActiveKey: changeActiveKey })(ImageDiv);
-
-	// class ImageDiv extends React.Component {
-	//     /**
-	//     * Sends the acitve image object to the parent component.
-	//     * @param {object} e event object
-	//     */
-	//     handleChange(e) {
-	//         // Function that handles seleciton of image and trigger the active class
-	//       e.preventDefault();
-	//       this.props.changeKey(this.props.getKey, this.props.image);
-	//     }
-	//     /**
-	//     * render the ImageDiv component
-	//     *@return {string} div component
-	//     */
-	//     render() {
-	//         // Sets dynamic class variables
-	//       var activeUpload = classNames({
-	//         uploaded: true,
-	//         active: this.props.getKey === this.props.activeKey
-	//       });
-	//       return (
-	//                 <div className={activeUpload}
-	//                 onClick={this.handleChange.bind(this)}>
-	//                 <div className="media">
-	//                     <div className="media-left" href="#"
-	//                     style={{backgroundImage: 'url(/media/' +
-	//                         this.props.image.picture + ')', width: 50 + '%',
-	//       backgroundSize: 'cover', backgroundPosition: 50 + '% ' + 50 + '%',
-	//       height: 180 + 'px'
-	//   }}>
-	//                     </div>
-	//                     <div className="media-body">
-	//                         <p className="media-heading">{this.props.image.title}
-	//                             <br/>
-	//                             <small> Modified {
-	//                                 moment(this.props.image.date_modified).fromNow()
-	//                             }</small>
-	//                         </p>
-	//                     </div>
-	//                 </div>
-	//             </div>);
-	//     }
-	// }
-	// Sets the required propTypes from the parent and give warnings if ts not present
-	// ImageDiv.propTypes = {
-	//   image: React.PropTypes.object.isRequired,
-	//   getKey: React.PropTypes.number.isRequired,
-	//   activeKey: React.PropTypes.number.isRequired,
-	//   changeKey: React.PropTypes.func.isRequired
-	// };
 
 /***/ },
 /* 209 */
@@ -58070,32 +57731,6 @@
 	  );
 	};
 
-	// class EditableDiv extends React.Component {
-	//    /**
-	//    * render the imageDiv component
-	//    *@return {string} div component
-	//    */
-	//     render() {
-	//       return (
-	//             <div className="edit-container">
-	//             <ImageDiv image={this.props.image} editImage={this.props.editImage}
-	//             deleteImage={this.props.deleteImage}
-	//             updateImage={this.props.updateImage}/>
-	//             <FilterDiv image={this.props.image}
-	//             changeFilter={this.props.updateImage}/>
-	//             </div>
-	//             );
-	//     }
-	// }
-	// // Sets the required propTypes from the parent and give warnings if ts not present
-	// ImageDiv.propTypes = {
-	//   image: React.PropTypes.oneOfType(
-	//     [React.PropTypes.object, React.PropTypes.string]).isRequired,
-	//   updateImage: React.PropTypes.func.isRequired,
-	//   deleteImage: React.PropTypes.func.isRequired,
-	//   editImage: React.PropTypes.func.isRequired
-
-	// };
 	var mapStateToProps = function mapStateToProps(state) {
 	  return {
 	    activeImage: state.activeImage
@@ -58141,159 +57776,6 @@
 	};
 
 	exports.default = ImageDiv;
-
-	// class ImageDiv extends React.Component {
-	//     /**
-	//     * Always set editMode to false when component is just mounting to hide the input form
-	//     */
-	//     componentWillMount() {
-	//       this.setState({editMode: false});
-	//       FaceBookApi.init();
-	//     }
-	//     /**
-	//     * Checks if the the recieved props picture is the same and set
-	//     * edit mode accordingly
-	//     *@param {object} nextProps the next set of properties that the component
-	//     * Will recieve.
-	//     */
-	//     componentWillUpdate(nextProps) {
-	//       if (this.props.image.picture !== nextProps.image.picture) {
-	//         if (this.state.editMode) this.props.updateImage(this.props.image);
-	//         this.setState({editMode: false});
-	//       }
-	//     }
-	//     /**
-	//     * Togges the edit title form
-	//     *@param {object} e the event object
-	//     */
-	//     toggleEdit(e) {
-	//       e.preventDefault();
-	//       if (this.state.editMode) this.props.updateImage(this.props.image);
-	//       this.setState({editMode: !this.state.editMode});
-	//     }
-	//     /**
-	//     * sends the title to the python backend
-	//     *@param {object} e the event object
-	//     */
-	//     changeTitle(e) {
-	//       e.preventDefault();
-	//       let imageCopy = _.clone(this.props.image);
-	//       imageCopy.title = e.target.value;
-	//       this.props.editImage(imageCopy);
-	//     }
-	//     /**
-	//     * deletes a particular image
-	//     *@param {object} e the event object
-	//     */
-	//     deleteImage(e) {
-	//       e.preventDefault();
-	//       if (!confirm('are you sure you want to delete this image')) return;
-	//       this.props.deleteImage(this.props.image);
-	//     }
-	//     /**
-	//     * Resets filter for an image
-	//     */
-	//     resetImage() {
-	//       if (!confirm('are you sure you want to reset the image')) return;
-	//       let imageCopy = _.clone(this.props.image);
-	//       imageCopy.filtered = false;
-	//       this.props.updateImage(imageCopy);
-	//     }
-	//     /**
-	//     * Handles share on facebook
-	//     */
-	//     shareImage() {
-	//       FaceBookApi.share(this.props.image, this.refs.filteredimage.src);
-	//     }
-	//    /**
-	//    * render the imageDiv component
-	//    *@return {string} div component
-	//    */
-	//     render() {
-	//       let buttonClass = classNames({
-	//         btn: true,
-	//         disabled: !_.isObject(this.props.image)
-	//       });
-	//       let picture = this.props.image.filtered ?
-	//                     this.props.image.filter_path : this.props.image.picture;
-	//       return (
-	//             <div>
-
-	//             <div className="edit-buttons">
-	//             <button className={buttonClass}
-	//             onClick={_.isObject(this.props.image) ?
-	//                 this.toggleEdit.bind(this) : ''}>
-	//                 <span className="mdi mdi-pencil"></span></button>
-	//             <button className={buttonClass}
-	//             onClick={_.isObject(this.props.image) ?
-	//                 this.deleteImage.bind(this) : ''}>
-	//                 <span className="mdi mdi-delete"></span></button>
-	//             <button className={buttonClass}
-	//             onClick={_.isObject(this.props.image) ?
-	//                 this.resetImage.bind(this) : ''}>
-	//                 <span className="mdi mdi-backup-restore">
-	//                 </span></button>
-
-	//             <div className="card text-xs-center">
-	//                 <blockquote className="card-blockquote card-text">
-	//                     <form
-	//                     className={`${this.state.editMode ? '' : 'hide'}
-	//                     form-inline`}
-	//                     action="#" onSubmit={this.toggleEdit.bind(this)}>
-	//                       <div className="form-group">
-	//                         <div className="input-group">
-	//                           <input type="text" ref="title"
-	//                           className="form-control"
-	//                           value={this.props.image.title}
-	//                           onChange={this.changeTitle.bind(this)}/>
-	//                           </div>
-	//                         </div>
-	//                       <button type="submit"
-	//                       className="btn btn-default">
-	//                       Save</button>
-	//                     </form>
-	//                   <h6 className={`${this.state.editMode ? 'hide' : ''}
-	//                    text-uppercase`}>
-	//                   {_.isObject(this.props.image) ?
-	//                     (this.props.image.title || 'No Name') : 'No Image Selected'}
-	//                     </h6>
-	//                   <h6 className="text-uppercase">
-	//                   {_.isObject(this.props.image) ?
-	//                     (this.props.image.currentFilter ||
-	//                      'No Filter Applied') : ''}
-	//                     </h6>
-	//                 </blockquote>
-
-	//             </div>
-	//             <button className={`${buttonClass} pull-sm-right`}
-	//             onClick={_.isObject(this.props.image) ?
-	//                 this.shareImage.bind(this) : ''}>
-	//                 <span className="mdi mdi-share-variant">
-	//                 </span></button>
-	//             <button className={`${buttonClass} pull-sm-right`}>
-	//             <a href={this.props.image.picture ?
-	//                 `/media/${picture}` : '#'}
-	//                 download={this.props.image.title}>
-	//             <span className="mdi mdi-download">
-	//             </span></a>
-	//             </button></div>
-	//             <div className="edit text-center">
-	//             <img ref="filteredimage" src={this.props.image.picture ?
-	//                 `/media/${picture}` : '/static/img/no_image_selected.gif'} />
-	//             </div>
-	//             </div>
-	//             );
-	//     }
-	// }
-	// // Sets the required propTypes from the parent and give warnings if ts not present
-	// ImageDiv.propTypes = {
-	//   image: React.PropTypes.oneOfType(
-	//     [React.PropTypes.object, React.PropTypes.string]).isRequired,
-	//   updateImage: React.PropTypes.func.isRequired,
-	//   deleteImage: React.PropTypes.func.isRequired,
-	//   editImage: React.PropTypes.func.isRequired
-
-	// };
 
 /***/ },
 /* 299 */
@@ -58374,7 +57856,7 @@
 	    value: function onSubmit(e) {
 	      e.preventDefault();
 	      this.setState({ editMode: false });
-	      this.props.updateImage(this.props.activeImage, null, true);
+	      this.props.updateImageAsync(this.props.activeImage);
 	    }
 	  }, {
 	    key: 'onChange',
@@ -58388,7 +57870,7 @@
 	    value: function resetImage() {
 	      var tempImage = _lodash2.default.clone(this.props.activeImage);
 	      tempImage.filtered = false;
-	      this.props.updateImage(tempImage, null, true);
+	      this.props.updateImageAsync(tempImage);
 	    }
 	  }, {
 	    key: 'shareImage',
@@ -58505,7 +57987,7 @@
 	  return TopButtons;
 	}(_react2.default.Component);
 
-	exports.default = (0, _reactRedux.connect)(null, { deleteImagefromApi: _actions.deleteImagefromApi, updateImage: _actions.updateImage })(TopButtons);
+	exports.default = (0, _reactRedux.connect)(null, { deleteImagefromApi: _actions.deleteImagefromApi, updateImage: _actions.updateImage, updateImageAsync: _actions.updateImageAsync })(TopButtons);
 
 /***/ },
 /* 300 */
@@ -58631,11 +58113,11 @@
 	        var image = _lodash2.default.clone(this.props.activeImage);
 	        image.filtered = true;
 	        image.currentFilter = filter;
-	        this.props.updateImage(image, filter, true);
+	        this.props.updateImageAsync(image, filter, true);
 	      }
 	    }
 	    /**
-	    * initializes facebook API
+	    * creates different filter images for different tpe of filters
 	    * @param {string} filter the filter text
 	    * @param {int} i the index of the array set as the key
 	    *@return {string} the FilterImage Component
@@ -58683,7 +58165,7 @@
 	  return FilterDiv;
 	}(_react2.default.Component);
 
-	exports.default = (0, _reactRedux.connect)(null, { updateImage: _actions.updateImage })(FilterDiv);
+	exports.default = (0, _reactRedux.connect)(null, { updateImageAsync: _actions.updateImageAsync })(FilterDiv);
 
 /***/ },
 /* 302 */
@@ -60627,27 +60109,6 @@
 	        )
 	    );
 	};
-
-	// class FilterImage extends React.Component {
-	//   /**
-	//   * render the FilterImage component
-	//   *@return {string} div component
-	//   */
-	//   render() {
-	//     return (<div className={this.props.className} onClick={this.props.onClick}>
-	//                 <img src={this.props.image} width="100" height="100"/>
-	//                 <p className="lead">{this.props.filter}</p>
-	//                 </div>);
-	//   }
-	// }
-	// // Sets the required propTypes from the parent and give warnings if ts not present
-	// FilterImage.propTypes = {
-	//   image: React.PropTypes.string.isRequired,
-	//   filter: React.PropTypes.string.isRequired,
-	//   className: React.PropTypes.string.isRequired,
-	//   onClick: React.PropTypes.func.isRequired
-	// };
-
 	exports.default = FilterImage;
 
 /***/ },
@@ -61941,6 +61402,78 @@
 
 	exports['default'] = setParameters;
 	module.exports = exports['default'];
+
+/***/ },
+/* 331 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _lodash = __webpack_require__(189);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
+
+	var _reactRedux = __webpack_require__(159);
+
+	var _reducers = __webpack_require__(187);
+
+	var _imageApi = __webpack_require__(192);
+
+	var _imageApi2 = _interopRequireDefault(_imageApi);
+
+	var _index = __webpack_require__(201);
+
+	var _index2 = _interopRequireDefault(_index);
+
+	var _editpanel = __webpack_require__(297);
+
+	var _editpanel2 = _interopRequireDefault(_editpanel);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var AppEditor = function AppEditor(props) {
+	    var loadingDiv = null;
+	    if (props.isLoading) {
+	        loadingDiv = _react2.default.createElement('img', { src: 'https://raw.githubusercontent.com/BenBBear/ionic-cache-src/master/img/loader.gif',
+	            width: '50', height: '50',
+	            style: { transform: 'translate(' - 50 + '%, ' + 50 + '%)',
+	                position: 'absolute', top: -15 + 'px', left: 50 + '%' } });
+	    }
+	    return _react2.default.createElement(
+	        'div',
+	        { className: 'row' },
+	        _react2.default.createElement(
+	            'div',
+	            { className: 'col-sm-3' },
+	            _react2.default.createElement(_index2.default, null)
+	        ),
+	        _react2.default.createElement(
+	            'div',
+	            { className: 'col-sm-9' },
+	            _react2.default.createElement(
+	                'div',
+	                { className: 'edit-div' },
+	                loadingDiv,
+	                _react2.default.createElement(_editpanel2.default, null)
+	            )
+	        )
+	    );
+	};
+
+	var mapStateToProps = function mapStateToProps(state) {
+	    return {
+	        isLoading: state.isLoading
+	    };
+	};
+	exports.default = (0, _reactRedux.connect)(mapStateToProps)(AppEditor);
 
 /***/ }
 /******/ ]);

@@ -1,9 +1,12 @@
 import request from 'superagent';
 import toastr from 'toastr';
-import _ from 'lodash';
 import 'superagent-django-csrf';
 import store from '../store';
-import {updatePercentage, changeUploadStatus, changePreview, changeLoadingStatus} from '../actions';
+import {updatePercentage,
+  changeUploadStatus,
+  changePreview,
+  changeLoadingStatus,
+  changeFileName} from '../actions';
 
 // Sets the imageUrl from the preset Dom value
 const imageUrl = document.querySelector('meta[name="image_url"]')
@@ -34,6 +37,7 @@ const ImageApi = {
   * Updates image object title and filters
   *@param {object} image the image object to be updated
   *@param {string} filter to be added if present
+  *@param {function} [cb] [call back function]
   */
   updateImage(image, filter, cb) {
     store.dispatch(changeLoadingStatus(true));
@@ -71,6 +75,7 @@ const ImageApi = {
   /**
   * deletes image object  from the database
   *@param {object} imageObj the image object to be updated
+  *@param { function} [cb] [description]
   */
   deleteImage(imageObj, cb) {
     toastr.error('Deleting ' + imageObj.title + '...', null, {
@@ -93,17 +98,15 @@ const ImageApi = {
   /**
   * Uploads image to the django  backend
   *@param {array} files The array of image files to be uploaded
+  *@param {function} [cb] [description]
   */
   uploadImage(files, cb) {
     files.forEach(file => {
-      console.log(file, 'the single file');
-      // this.setState({filename: file.name});
+      store.dispatch(changeFileName(file.name));
       let reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = e => {
         store.dispatch(changePreview(e.target.result));
-        // this.setState({preview: e.target.result});
-       // previewCb(e.target.result);
       };
       request.post(imageUrl)
         .attach('image', file, file.name)
@@ -111,10 +114,6 @@ const ImageApi = {
         .on('progress', e => {
           if (e.percentage) store.dispatch(updatePercentage(e.percent));
           store.dispatch(changeUploadStatus(true));
-          // this.setState({
-          //   percentage: e.percent,
-          //   isUploading: true
-          // });
         })
         .end((err, res) => {
           store.dispatch(changeUploadStatus(false));
@@ -128,7 +127,6 @@ const ImageApi = {
           toastr.success('successfully uploaded ' + file.name, '', {
             closeButton: true
           });
-          // this.addImage(res.body);
           cb(res.body);
         });
     });

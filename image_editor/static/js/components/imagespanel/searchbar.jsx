@@ -28,10 +28,4 @@ const filterFromTitle = (e) => (dispatch) => {
    return dispatch(filterFromTitles(e.target.value))
 }
 
-// Sets the required propTypes from the parent and give warnings if ts not present
-// SearchBar.propTypes = {
-//   onUserInput: React.PropTypes.func.isRequired,
-//   filterText: React.PropTypes.string.isRequired
-// };
-
 export default connect(null, {filterFromTitle})(SearchBar);

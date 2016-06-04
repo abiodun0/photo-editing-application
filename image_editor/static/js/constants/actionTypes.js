@@ -1,5 +1,6 @@
 export const GET_ALL_IMAGES = 'GET_ALL_IMAGES';
 export const UPLOAD_IMAGE = 'UPLOAD_IMAGE';
+export const CHANGE_FILE_NAME = 'CHANGE_FILE_NAME';
 export const FILTER_FROM_TITLE = 'FILTER_FROM_TITLE';
 export const DELETE_IMAGE = 'DELETE_IMAGE';
 export const UPDATE_IMAGE = 'UPDATE_IMAGE';

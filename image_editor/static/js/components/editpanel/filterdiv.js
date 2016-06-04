@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import {connect} from 'react-redux';
 import _ from 'lodash';
 import FilterImage from './filterimage';
-import {updateImage} from '../../actions'
+import {updateImageAsync} from '../../actions'
 
 class FilterDiv extends React.Component {
    /**
@@ -16,11 +16,11 @@ class FilterDiv extends React.Component {
         let image = _.clone(this.props.activeImage);
         image.filtered = true;
         image.currentFilter = filter;
-        this.props.updateImage(image, filter, true)
+        this.props.updateImageAsync(image, filter, true)
       }
     }
    /**
-   * initializes facebook API
+   * creates different filter images for different tpe of filters
    * @param {string} filter the filter text
    * @param {int} i the index of the array set as the key
    *@return {string} the FilterImage Component
@@ -62,4 +62,4 @@ class FilterDiv extends React.Component {
 
 
 
-export default connect(null, {updateImage})(FilterDiv);
+export default connect(null, {updateImageAsync})(FilterDiv);

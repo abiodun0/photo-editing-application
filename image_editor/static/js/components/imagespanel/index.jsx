@@ -31,12 +31,5 @@ class ImagesPanel extends React.Component {
             );
     }
 }
-// Sets the required propTypes from the parent and give warnings if ts not present
-// ImagesPanel.propTypes = {
-//   data: React.PropTypes.array.isRequired,
-//   preview: React.PropTypes.string.isRequired,
-//   changeImage: React.PropTypes.func.isRequired,
-//   uploadImage: React.PropTypes.func.isRequired
-// };
 
 export default ImagesPanel;

@@ -57,7 +57,12 @@ function allImages(state = [], action) {
       return state;
   }
 }
-
+/**
+ * state for filter text
+ * @param  {String} state  [description]
+ * @param  {[type]} action [description]
+ * @return {[type]}        [description]
+ */
 function filterText(state = '', action) {
   switch (action.type) {
     case ActionTypes.FILTER_FROM_TITLE:
@@ -70,18 +75,23 @@ function filterText(state = '', action) {
  * [filename description]
  * @param  {String} state  [description]
  * @param  {[type]} action [description]
- * @return {[type]}        [description]
+ * @return {String}        [the returned string]
  */
 function filename(state = '', action) {
   switch (action.type) {
-    case ActionTypes.CHANGE_NAME:
+    case ActionTypes.CHANGE_FILE_NAME:
       return action.data;
     default:
       return state;
   }
 }
-
-export function activeImage(state = {}, action) {
+/**
+ * [activeImage description]
+ * @param  {Object} state  [the intial active image]
+ * @param  {object} action [the action that contains the type and the data]
+ * @return {object}        [returns the transformed state]
+ */
+function activeImage(state = {}, action) {
   switch (action.type) {
     case ActionTypes.CHANGE_ACTIVE_IMAGE:
       return action.data;

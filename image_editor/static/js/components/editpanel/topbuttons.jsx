@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import {connect} from 'react-redux';
 import _ from 'lodash';
 import swal from 'sweetalert'
-import {deleteImagefromApi, updateImage} from '../../actions';
+import {deleteImagefromApi, updateImage, updateImageAsync} from '../../actions';
 import FaceBookApi from '../../api/facebookApi';
 
 
@@ -31,7 +31,7 @@ class TopButtons extends React.Component {
     onSubmit(e){
       e.preventDefault();
       this.setState({editMode: false});
-      this.props.updateImage(this.props.activeImage, null, true);
+      this.props.updateImageAsync(this.props.activeImage);
     }
     onChange(e){
       let tempImage = _.clone(this.props.activeImage)
@@ -41,7 +41,7 @@ class TopButtons extends React.Component {
     resetImage(){
       let tempImage = _.clone(this.props.activeImage)
       tempImage.filtered = false;
-      this.props.updateImage(tempImage, null, true);
+      this.props.updateImageAsync(tempImage);
     }
     shareImage() {
       FaceBookApi.share(this.props.activeImage, this.refs.filteredimage.href);
@@ -124,5 +124,5 @@ class TopButtons extends React.Component {
     }
 }
 
-export default connect(null, {deleteImagefromApi, updateImage})(TopButtons);
+export default connect(null, {deleteImagefromApi, updateImage, updateImageAsync})(TopButtons);
 
