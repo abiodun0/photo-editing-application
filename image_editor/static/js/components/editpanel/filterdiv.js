@@ -16,7 +16,7 @@ class FilterDiv extends React.Component {
         let image = _.clone(this.props.activeImage);
         image.filtered = true;
         image.currentFilter = filter;
-        this.props.updateImage(image)
+        this.props.updateImage(image, filter, true)
       }
     }
    /**
@@ -56,9 +56,7 @@ class FilterDiv extends React.Component {
             </Slider>
             );
       }
-      if (!this.props.activeImage.title) {
-        return (<div />);
-      }
+      return (<div />);
     }
 }
 

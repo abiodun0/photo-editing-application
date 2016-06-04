@@ -3,7 +3,7 @@ import toastr from 'toastr';
 import _ from 'lodash';
 import 'superagent-django-csrf';
 import store from '../store';
-import {updatePercentage, changeUploadStatus, changePreview} from '../actions';
+import {updatePercentage, changeUploadStatus, changePreview, changeLoadingStatus} from '../actions';
 
 // Sets the imageUrl from the preset Dom value
 const imageUrl = document.querySelector('meta[name="image_url"]')
@@ -15,12 +15,14 @@ const ImageApi = {
   *@param {function} cb the callback function supplied by the component
   */
   getAllImages: cb => {
+    store.dispatch(changeLoadingStatus(true));
     toastr.info('Loading your images...!', null, {
       timeOut: 0
     });
     request.get(imageUrl)
       .set('Accept', 'application/json')
       .end((err, res) => {
+        store.dispatch(changeLoadingStatus(false));
         toastr.clear();
         if (!err) {
           console.log(res.body.data, 'from the api');
@@ -33,10 +35,8 @@ const ImageApi = {
   *@param {object} image the image object to be updated
   *@param {string} filter to be added if present
   */
-  updateImage(image, filter) {
-    this.setState({
-      isLoading: true
-    });
+  updateImage(image, filter, cb) {
+    store.dispatch(changeLoadingStatus(true));
     toastr.info('Updating ' + image.title + '...', null, {
       timeOut: 0
     });
@@ -47,7 +47,7 @@ const ImageApi = {
       .send(image)
       .end((err, res) => {
         toastr.clear();
-        this.setState({isLoading: false});
+        store.dispatch(changeLoadingStatus(false));
         if (err) {
           toastr.error(res.body, 'unable to update ' +
               image.title, {
@@ -64,7 +64,7 @@ const ImageApi = {
               closeButton: true
             });
           }
-          this.editImage(res.body);
+          cb(res.body);
         }
       });
   },

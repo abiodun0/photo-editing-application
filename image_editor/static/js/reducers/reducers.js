@@ -26,7 +26,7 @@ function isUploading(state = false, action) {
 function isLoading(state = false, action) {
   switch (action.type) {
     case ActionTypes.IS_LOADING:
-      return action.type;
+      return action.data;
     default:
       return state;
   }
@@ -84,7 +84,7 @@ function filename(state = '', action) {
 export function activeImage(state = {}, action) {
   switch (action.type) {
     case ActionTypes.CHANGE_ACTIVE_IMAGE:
-    case ActionTypes.CHANGE_IMAGE_TITLE:
+      console.log(action.data, 'action data');
       return action.data;
     default:
       return state;

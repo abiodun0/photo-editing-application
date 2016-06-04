@@ -30,7 +30,6 @@ const AppEditor  = (props) => {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state.isLoading)
   return {
     isLoading: state.isLoading,
   }

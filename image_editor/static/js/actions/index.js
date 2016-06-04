@@ -58,15 +58,15 @@ export function filterFromTitles(value) {
   };
 }
 
-export function changeImageName(value) {
-  return {
-    type: ActionTypes.CHANGE_IMAGE_TITLE,
-    data: value
-  };
-}
 export function changeUploadStatus(value) {
   return {
     type: ActionTypes.IS_UPLOADING,
+    data: value
+  };
+}
+export function changeLoadingStatus(value) {
+  return {
+    type: ActionTypes.IS_LOADING,
     data: value
   };
 }
@@ -95,11 +95,19 @@ export function deleteImagefromApi(image) {
  * @return {object} returns the object to be used with the dispatch method
  */
 
-export function updateImage(image) {
-  return dispatch => {
-    dispatch(changeImageName(image));
-    return dispatch(updateTitleFromImageArray(image));
+export function updateImage(image, filter = null, async) {
+  if (async) {
+    return dispatch => {
+      imageApi.updateImage(image, filter, () => {
+        dispatch(changeAcktiveImage(image));
+        return dispatch(updateTitleFromImageArray(image));
+      });
+    };
   }
+  return dispatch => {
+    dispatch(changeAcktiveImage(image));
+    return dispatch(updateTitleFromImageArray(image));
+  };
 }
 /**
  * @param  {object} image object to be passed in from the components

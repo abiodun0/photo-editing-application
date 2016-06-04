@@ -21473,7 +21473,7 @@
 
 	  switch (action.type) {
 	    case ActionTypes.IS_LOADING:
-	      return action.type;
+	      return action.data;
 	    default:
 	      return state;
 	  }
@@ -21543,7 +21543,7 @@
 
 	  switch (action.type) {
 	    case ActionTypes.CHANGE_ACTIVE_IMAGE:
-	    case ActionTypes.CHANGE_IMAGE_TITLE:
+	      console.log(action.data, 'action data');
 	      return action.data;
 	    default:
 	      return state;
@@ -21618,6 +21618,7 @@
 	var CHANGE_PERCENTAGE = exports.CHANGE_PERCENTAGE = 'CHANGE_PERCENTAGE';
 	var IS_UPLOADING = exports.IS_UPLOADING = 'IS_UPLOADING';
 	var CHANGE_PREVIEW = exports.CHANGE_PREVIEW = 'CHANGE_PREVIEW';
+	var IS_LOADING = exports.IS_LOADING = 'IS_LOADING';
 
 /***/ },
 /* 189 */
@@ -21635,8 +21636,8 @@
 	exports.updatePercentage = updatePercentage;
 	exports.uploadImage = uploadImage;
 	exports.filterFromTitles = filterFromTitles;
-	exports.changeImageName = changeImageName;
 	exports.changeUploadStatus = changeUploadStatus;
+	exports.changeLoadingStatus = changeLoadingStatus;
 	exports.changePreview = changePreview;
 	exports.updateTitleFromImageArray = updateTitleFromImageArray;
 	exports.deleteImagefromApi = deleteImagefromApi;
@@ -21713,15 +21714,15 @@
 	  };
 	}
 
-	function changeImageName(value) {
-	  return {
-	    type: ActionTypes.CHANGE_IMAGE_TITLE,
-	    data: value
-	  };
-	}
 	function changeUploadStatus(value) {
 	  return {
 	    type: ActionTypes.IS_UPLOADING,
+	    data: value
+	  };
+	}
+	function changeLoadingStatus(value) {
+	  return {
+	    type: ActionTypes.IS_LOADING,
 	    data: value
 	  };
 	}
@@ -21751,8 +21752,19 @@
 	 */
 
 	function updateImage(image) {
+	  var filter = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+	  var async = arguments[2];
+
+	  if (async) {
+	    return function (dispatch) {
+	      _imageApi2.default.updateImage(image, filter, function () {
+	        dispatch(changeAcktiveImage(image));
+	        return dispatch(updateTitleFromImageArray(image));
+	      });
+	    };
+	  }
 	  return function (dispatch) {
-	    dispatch(changeImageName(image));
+	    dispatch(changeAcktiveImage(image));
 	    return dispatch(updateTitleFromImageArray(image));
 	  };
 	}
@@ -21824,10 +21836,12 @@
 	  *@param {function} cb the callback function supplied by the component
 	  */
 	  getAllImages: function getAllImages(cb) {
+	    _store2.default.dispatch((0, _actions.changeLoadingStatus)(true));
 	    _toastr2.default.info('Loading your images...!', null, {
 	      timeOut: 0
 	    });
 	    _superagent2.default.get(imageUrl).set('Accept', 'application/json').end(function (err, res) {
+	      _store2.default.dispatch((0, _actions.changeLoadingStatus)(false));
 	      _toastr2.default.clear();
 	      if (!err) {
 	        console.log(res.body.data, 'from the api');
@@ -21840,19 +21854,15 @@
 	  *@param {object} image the image object to be updated
 	  *@param {string} filter to be added if present
 	  */
-	  updateImage: function updateImage(image, filter) {
-	    var _this = this;
-
-	    this.setState({
-	      isLoading: true
-	    });
+	  updateImage: function updateImage(image, filter, cb) {
+	    _store2.default.dispatch((0, _actions.changeLoadingStatus)(true));
 	    _toastr2.default.info('Updating ' + image.title + '...', null, {
 	      timeOut: 0
 	    });
 
 	    _superagent2.default.put(imageUrl).set('Accept', 'application/json').set('Content-Type', 'application/json').send(image).end(function (err, res) {
 	      _toastr2.default.clear();
-	      _this.setState({ isLoading: false });
+	      _store2.default.dispatch((0, _actions.changeLoadingStatus)(false));
 	      if (err) {
 	        _toastr2.default.error(res.body, 'unable to update ' + image.title, {
 	          closeButton: true
@@ -21867,7 +21877,7 @@
 	            closeButton: true
 	          });
 	        }
-	        _this.editImage(res.body);
+	        cb(res.body);
 	      }
 	    });
 	  },
@@ -21877,7 +21887,7 @@
 	  *@param {object} imageObj the image object to be updated
 	  */
 	  deleteImage: function deleteImage(imageObj) {
-	    var _this2 = this;
+	    var _this = this;
 
 	    _toastr2.default.error('Deleting ' + imageObj.title + '...', null, {
 	      timeOut: 0
@@ -21886,14 +21896,14 @@
 	    _superagent2.default.del(imageUrl).send(imageObj).end(function (err) {
 	      _toastr2.default.clear();
 	      if (!err) {
-	        _lodash2.default.remove(_this2.state.data, function (m) {
+	        _lodash2.default.remove(_this.state.data, function (m) {
 	          return imageObj.id === m.id;
 	        });
-	        _this2.setState({ isLoading: false });
+	        _this.setState({ isLoading: false });
 	        _toastr2.default.info('successfully removed ' + imageObj.title, '', {
 	          closeButton: true
 	        });
-	        _this2.setState({ image: '' });
+	        _this.setState({ image: '' });
 	      }
 	    });
 	  },
@@ -45466,7 +45476,6 @@
 	};
 
 	var mapStateToProps = function mapStateToProps(state) {
-	    console.log(state.isLoading);
 	    return {
 	        isLoading: state.isLoading
 	    };
@@ -58580,7 +58589,7 @@
 	        var image = _lodash2.default.clone(this.props.activeImage);
 	        image.filtered = true;
 	        image.currentFilter = filter;
-	        this.props.updateImage(image);
+	        this.props.updateImage(image, filter, true);
 	      }
 	    }
 	    /**
@@ -58625,9 +58634,7 @@
 	          filters.map(this._createFilterDiv.bind(this))
 	        );
 	      }
-	      if (!this.props.activeImage.title) {
-	        return _react2.default.createElement('div', null);
-	      }
+	      return _react2.default.createElement('div', null);
 	    }
 	  }]);
 
