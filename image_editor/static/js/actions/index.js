@@ -35,31 +35,6 @@ export function changeFileName(name) {
   };
 }
 
-/**
- * Functions that retuls all the images asynchronously from the server and sends a dispatch method to
- * recieve images
- * @return {function} Returns a dispatch funciton
- */
-export function getAllImages() {
-  return dispatch => {
-    imageApi.getAllImages(images => {
-      dispatch(recieveImages(images));
-    });
-  };
-}
-
-/**
- * Function that upload multiple images
- * @param  {Blogs} files [the files coming from the drop zone component]
- * @return {function}       [description]
- */
-export function uploadImages(files) {
-  return dispatch => {
-    imageApi.uploadImage(files, image => {
-      dispatch(uploadImage(image));
-    });
-  };
-}
 
 /**
  * Dispatch that takes care of the updating the upload progress percentage
@@ -81,6 +56,17 @@ export function updatePercentage(value) {
 function uploadImage(image) {
   return {
     type: ActionTypes.UPLOAD_IMAGE,
+    data: image
+  };
+}
+
+/**
+ * @param  {object} image instance that is being deleted
+ * @return {object} the returned dispatched action
+ */
+function deleteImage(image) {
+  return {
+    type: ActionTypes.DELETE_IMAGE,
     data: image
   };
 }
@@ -151,7 +137,7 @@ export function updateTitleFromImageArray(image) {
  */
 export function deleteImagefromApi(image) {
   return dispatch => {
-    imageApi.deleteImage(image, () => {
+    imageApi.deleteImage(dispatch, image, () => {
       dispatch(changeActiveImage({}));
       dispatch(deleteImage(image));
     });
@@ -167,7 +153,7 @@ export function deleteImagefromApi(image) {
  */
 export function updateImageAsync(image, filter = null) {
   return dispatch => {
-    imageApi.updateImage(image, filter, filteredImage => {
+    imageApi.updateImage(dispatch, image, filter, filteredImage => {
       dispatch(changeActiveImage(filteredImage));
       return dispatch(updateTitleFromImageArray(filteredImage));
     });
@@ -187,13 +173,27 @@ export function updateImage(image) {
 }
 
 /**
- * @param  {object} image instance that is being deleted
- * @return {object} the returned dispatched action
+ * Functions that retuls all the images asynchronously from the server and sends a dispatch method to
+ * recieve images
+ * @return {function} Returns a dispatch funciton
  */
-function deleteImage(image) {
-  return {
-    type: ActionTypes.DELETE_IMAGE,
-    data: image
+export function getAllImages() {
+  return dispatch => {
+    imageApi.getAllImages(dispatch, images => {
+      dispatch(recieveImages(images));
+    });
   };
 }
 
+/**
+ * Function that upload multiple images
+ * @param  {Blogs} files [the files coming from the drop zone component]
+ * @return {function}       [description]
+ */
+export function uploadImages(files) {
+  return dispatch => {
+    imageApi.uploadImage(dispatch, files, image => {
+      dispatch(uploadImage(image));
+    });
+  };
+}

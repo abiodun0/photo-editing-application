@@ -19,6 +19,7 @@ imagEditor is an image editing app allowing you to add different effects to your
 
 ### Dependencies
 - [Pillow](https://github.com/python-pillow/Pillow)
+- [Django](https://www.djangoproject.com/)
 - [bootstrap v4](v4-alpha.getbootstrap.com)
 - [material design icons](https://materialdesignicons.com/)
 - [jquery](https://github.com/jquery/jquery)

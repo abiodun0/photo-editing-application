@@ -1,7 +1,6 @@
 import request from 'superagent';
 import toastr from 'toastr';
 import 'superagent-django-csrf';
-import store from '../store';
 import {updatePercentage,
   changeUploadStatus,
   changePreview,
@@ -15,17 +14,18 @@ const imageUrl = document.querySelector('meta[name="image_url"]')
 const ImageApi = {
   /**
   * Gets all the images from the django backend
+  *@param {function} [dispatch] [dispatch action]
   *@param {function} cb the callback function supplied by the component
   */
-  getAllImages: cb => {
-    store.dispatch(changeLoadingStatus(true));
+  getAllImages: (dispatch, cb) => {
+    dispatch(changeLoadingStatus(true));
     toastr.info('Loading your images...!', null, {
       timeOut: 0
     });
     request.get(imageUrl)
       .set('Accept', 'application/json')
       .end((err, res) => {
-        store.dispatch(changeLoadingStatus(false));
+        dispatch(changeLoadingStatus(false));
         toastr.clear();
         if (!err) {
           console.log(res.body.data, 'from the api');
@@ -35,12 +35,13 @@ const ImageApi = {
   },
   /**
   * Updates image object title and filters
+  *@param {function} [dispatch] [dispatch action]
   *@param {object} image the image object to be updated
   *@param {string} filter to be added if present
   *@param {function} [cb] [call back function]
   */
-  updateImage(image, filter, cb) {
-    store.dispatch(changeLoadingStatus(true));
+  updateImage(dispatch, image, filter, cb) {
+    dispatch(changeLoadingStatus(true));
     toastr.info('Updating ' + image.title + '...', null, {
       timeOut: 0
     });
@@ -51,7 +52,7 @@ const ImageApi = {
       .send(image)
       .end((err, res) => {
         toastr.clear();
-        store.dispatch(changeLoadingStatus(false));
+        dispatch(changeLoadingStatus(false));
         if (err) {
           toastr.error(res.body, 'unable to update ' +
               image.title, {
@@ -74,20 +75,21 @@ const ImageApi = {
   },
   /**
   * deletes image object  from the database
+  *@param {function} [dispatch] [dispatch action]
   *@param {object} imageObj the image object to be updated
   *@param { function} [cb] [description]
   */
-  deleteImage(imageObj, cb) {
+  deleteImage(dispatch, imageObj, cb) {
     toastr.error('Deleting ' + imageObj.title + '...', null, {
       timeOut: 0
     });
-    store.dispatch(changeLoadingStatus(true));
+    dispatch(changeLoadingStatus(true));
     request.del(imageUrl)
       .send(imageObj)
       .end(err => {
         toastr.clear();
         if (!err) {
-          store.dispatch(changeLoadingStatus(false));
+          dispatch(changeLoadingStatus(false));
           toastr.info('successfully removed ' + imageObj.title, '', {
             closeButton: true
           });
@@ -97,26 +99,27 @@ const ImageApi = {
   },
   /**
   * Uploads image to the django  backend
+  *@param {function} [dispatch] [dispatch action]
   *@param {array} files The array of image files to be uploaded
   *@param {function} [cb] [description]
   */
-  uploadImage(files, cb) {
+  uploadImage(dispatch, files, cb) {
     files.forEach(file => {
-      store.dispatch(changeFileName(file.name));
+      dispatch(changeFileName(file.name));
       let reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = e => {
-        store.dispatch(changePreview(e.target.result));
+        dispatch(changePreview(e.target.result));
       };
       request.post(imageUrl)
         .attach('image', file, file.name)
         .set('Accept', 'application/json')
         .on('progress', e => {
-          if (e.percentage) store.dispatch(updatePercentage(e.percent));
-          store.dispatch(changeUploadStatus(true));
+          if (e.percentage) dispatch(updatePercentage(e.percent));
+          dispatch(changeUploadStatus(true));
         })
         .end((err, res) => {
-          store.dispatch(changeUploadStatus(false));
+          dispatch(changeUploadStatus(false));
           if (err) {
             return toastr.error(res.body, 'unable to upload ' +
               file.name, {
