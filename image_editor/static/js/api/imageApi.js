@@ -115,7 +115,7 @@ const ImageApi = {
         .attach('image', file, file.name)
         .set('Accept', 'application/json')
         .on('progress', e => {
-          if (e.percentage) dispatch(updatePercentage(e.percent));
+          if (e.percent) dispatch(updatePercentage(e.percent));
           dispatch(changeUploadStatus(true));
         })
         .end((err, res) => {
